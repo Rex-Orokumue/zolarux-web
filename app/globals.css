@@ -1,0 +1,93 @@
+/* Fonts */
+@import '@fontsource/syne/400.css';
+@import '@fontsource/syne/600.css';
+@import '@fontsource/syne/700.css';
+@import '@fontsource/syne/800.css';
+@import '@fontsource/dm-sans/300.css';
+@import '@fontsource/dm-sans/400.css';
+@import '@fontsource/dm-sans/500.css';
+@import '@fontsource/dm-sans/700.css';
+
+/* Tailwind v4 */
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+
+  --color-primary: #4064D7;
+  --color-primary-dark: #2E4FBF;
+  --color-primary-light: #EEF2FF;
+  --color-primary-50: #EEF2FF;
+  --color-primary-100: #D4DCFA;
+  --color-primary-500: #4064D7;
+  --color-primary-600: #3554C7;
+  --color-primary-700: #2E4FBF;
+  --color-primary-900: #1a2b6b;
+
+  --color-accent: #FFA600;
+  --color-accent-dark: #E69500;
+  --color-accent-light: #FFF8E6;
+
+  --color-surface: #F9FAFB;
+
+  --shadow-primary: 0 8px 32px rgba(64, 100, 215, 0.25);
+  --shadow-primary-lg: 0 16px 48px rgba(64, 100, 215, 0.3);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    color: #111827;
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: 'Syne', system-ui, sans-serif; }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #4064D7 0%, #6B8EF5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .animate-fade-up {
+    animation: fadeSlideUp 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+
+  .animate-nav-pulse {
+    animation: navPulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes navPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 166, 0, 0.4); }
+    50%       { box-shadow: 0 0 0 8px rgba(255, 166, 0, 0); }
+  }
+}
