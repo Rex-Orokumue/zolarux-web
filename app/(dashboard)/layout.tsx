@@ -1,14 +1,12 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Shield, ShoppingBag, Package, User, LogOut, Home } from 'lucide-react'
+import { Shield, ShoppingBag, Package, User, LogOut, Home, ShoppingCart, Heart } from 'lucide-react'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Middleware already protects /buyer and /vendor routes,
-  // but guard here too in case of direct server render
   if (!user) redirect('/login')
 
   // Check if vendor or buyer
@@ -26,9 +24,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
     { label: 'Orders',     href: '/vendor/orders',   icon: Package },
     { label: 'Profile',    href: '/vendor/profile',  icon: User },
   ] : [
-    { label: 'Dashboard',  href: '/buyer',         icon: Home },
-    { label: 'My Orders',  href: '/buyer/orders',  icon: Package },
-    { label: 'Profile',    href: '/buyer/profile', icon: User },
+    { label: 'Dashboard',  href: '/buyer',           icon: Home },
+    { label: 'My Orders',  href: '/buyer/orders',    icon: Package },
+    { label: 'Cart',       href: '/buyer/cart',      icon: ShoppingCart },
+    { label: 'Wishlist',   href: '/buyer/wishlist',  icon: Heart },
+    { label: 'Profile',    href: '/buyer/profile',   icon: User },
   ]
 
   return (

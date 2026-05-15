@@ -48,3 +48,16 @@ export function truncate(text: string, length: number): string {
   if (text.length <= length) return text
   return text.slice(0, length).trimEnd() + '…'
 }
+
+export function calculateProtectionFee(amount: number): number {
+  if (amount <= 50000)  return 2000
+  if (amount <= 150000) return 3500
+  if (amount <= 300000) return 5000
+  return Math.round(amount * 0.02) // 2% for above 300k
+}
+
+export function generateOrderRef(): string {
+  const timestamp = Date.now().toString(36).toUpperCase()
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase()
+  return `ZLX-${timestamp}-${random}`
+}
