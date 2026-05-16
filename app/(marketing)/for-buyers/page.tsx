@@ -41,10 +41,10 @@ const NOT_COVERED = [
 ]
 
 const FEES = [
-  { range: 'Up to ₦50,000',        fee: '₦2,000' },
-  { range: '₦50,001 – ₦150,000',   fee: '₦3,500' },
-  { range: '₦150,001 – ₦300,000',  fee: '₦5,000' },
-  { range: 'Above ₦300,000',       fee: 'Contact us' },
+  { range: 'Up to ₦50,000',        fee: '₦1,500' },
+  { range: '₦50,001 – ₦150,000',   fee: '₦2,500' },
+  { range: '₦150,001 – ₦300,000',  fee: '₦4,000' },
+  { range: 'Above ₦300,000',       fee: '₦5,000 (flat cap)' },
 ]
 
 export default function ForBuyersPage() {

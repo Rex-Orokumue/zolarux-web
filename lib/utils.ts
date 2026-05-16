@@ -50,10 +50,10 @@ export function truncate(text: string, length: number): string {
 }
 
 export function calculateProtectionFee(amount: number): number {
-  if (amount <= 50000)  return 2000
-  if (amount <= 150000) return 3500
-  if (amount <= 300000) return 5000
-  return Math.round(amount * 0.02) // 2% for above 300k
+  if (amount <= 50000)  return 1500
+  if (amount <= 150000) return 2500
+  if (amount <= 300000) return 4000
+  return 5000 // flat cap above ₦300,000
 }
 
 export function generateOrderRef(): string {
