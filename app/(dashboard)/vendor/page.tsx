@@ -14,11 +14,11 @@ export default async function VendorDashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Get vendor record
+  // Get vendor record by auth user ID
   const { data: vendor } = await supabase
     .from('vendors')
     .select('*')
-    .eq('phone_number', user.phone ?? '')
+    .eq('auth_user_id', user.id)
     .single()
 
   if (!vendor) {
@@ -27,7 +27,7 @@ export default async function VendorDashboardPage() {
         <AlertTriangle size={28} className="text-amber-500 mx-auto mb-4" />
         <h2 className="font-display text-xl font-800 text-gray-900 mb-2">Vendor Profile Not Found</h2>
         <p className="text-gray-500 text-sm mb-6">
-          Your phone number is not linked to a verified vendor account.
+          Your account is not linked to a verified vendor profile.
           Apply to become a vendor or contact us for support.
         </p>
         <Link href="/register/vendor" className="inline-flex items-center gap-2 bg-primary text-white font-700 px-5 py-3 rounded-xl hover:bg-primary-dark transition-all">

@@ -30,22 +30,26 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // Proxy must not make external network calls (Next.js docs: "not intended
-  // for slow data fetching"). getSession() reads the JWT from the cookie
-  // (optimistic check — no network). Real auth validation happens in each
-  // server component/layout via supabase.auth.getUser().
-  const { data: { session } } = await supabase.auth.getSession()
-
-  // Protect dashboard routes
+  // IMPORTANT: Do NOT use getSession() alone for auth checks.
+  // getSession() reads from the cookie without server validation —
+  // it can return null when the token is refreshing, causing false
+  // redirects to /login even when the user is logged in.
+  //
+  // Instead, use getUser() which validates the token server-side.
+  // This is slightly slower but prevents the random-redirect bug.
   const isDashboardRoute =
     request.nextUrl.pathname.startsWith('/buyer') ||
     request.nextUrl.pathname.startsWith('/vendor')
 
-  if (isDashboardRoute && !session) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    url.searchParams.set('redirectTo', request.nextUrl.pathname)
-    return NextResponse.redirect(url)
+  if (isDashboardRoute) {
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      url.searchParams.set('redirectTo', request.nextUrl.pathname)
+      return NextResponse.redirect(url)
+    }
   }
 
   return supabaseResponse

@@ -12,10 +12,12 @@ export default async function VendorProfilePage() {
   const { data: vendor } = await supabase
     .from('vendors')
     .select('*')
-    .eq('phone_number', user.phone ?? '')
+    .eq('auth_user_id', user.id)
     .single()
 
   if (!vendor) redirect('/vendor')
+
+  const vendorEmail = vendor.email || user.email || '—'
 
   const statusConfig = {
     verified:  { label: 'Verified',  color: 'text-green-700',  bg: 'bg-green-50 border-green-200',  icon: CheckCircle },
@@ -51,8 +53,8 @@ export default async function VendorProfilePage() {
           { label: 'Vendor ID',      value: vendor.vendor_id,      mono: true },
           { label: 'Category',       value: vendor.category },
           { label: 'Phone',          value: vendor.phone_number },
-          { label: 'Email',          value: vendor.email || '—' },
-          { label: 'Address',        value: vendor.business_address || '—' },
+          { label: 'Email',          value: vendorEmail },
+          { label: 'Address',        value: vendor.address || '—' },
           { label: 'Trust Score',    value: vendor.risk_score ? `${vendor.risk_score}/100` : '—' },
           { label: 'Member Since',   value: vendor.created_at ? formatDate(vendor.created_at) : '—' },
         ].map(({ label, value, mono }) => (

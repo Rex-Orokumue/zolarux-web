@@ -26,7 +26,8 @@ export default function CartPage() {
 
   const loadCart = async () => {
     const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) { router.push('/login'); return }
 
     setUserEmail(user.email || '')
@@ -132,12 +133,13 @@ export default function CartPage() {
 
             return Promise.all(orderPromises)
           })
-          .then(() => {
-            // Clear cart
+          .then(async () => {
+            // Clear cart from database
             const supabase = createClient()
-            supabase.from('cart_items').delete().eq('buyer_id', userId).then(() => {
-              router.push('/buyer/orders?success=true')
-            })
+            await supabase.from('cart_items').delete().eq('buyer_id', userId)
+            // Clear local state
+            setItems([])
+            router.push('/buyer/orders?success=true')
           })
           .catch(() => {
             setError('Payment received but order creation failed. Contact support with: ' + response.reference)

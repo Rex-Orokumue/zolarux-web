@@ -2,61 +2,108 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Mail, ArrowRight, Shield } from 'lucide-react'
+import { Mail, Lock, ArrowRight, Shield, Store, ShoppingBag, AlertTriangle, Eye, EyeOff } from 'lucide-react'
 
-type Step = 'email' | 'otp'
+type Role = 'buyer' | 'vendor'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [step, setStep] = useState<Step>('email')
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo')
+  const [role, setRole] = useState<Role>('buyer')
   const [email, setEmail] = useState('')
-  const [otp, setOtp] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const handleSendOTP = async () => {
+  const handleSignIn = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
     setError('')
     if (!email.trim()) { setError('Enter your email address'); return }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email.trim())) { setError('Enter a valid email address'); return }
+    if (!password) { setError('Enter your password'); return }
     setLoading(true)
-    const supabase = createClient()
-    const { error: err } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-    })
-    if (err) {
-      setError(err.message)
-    } else {
-      setStep('otp')
+
+    try {
+      const supabase = createClient()
+
+      // If vendor, verify they have an activated account first
+      if (role === 'vendor') {
+        const { data: vendor } = await supabase
+          .from('vendors')
+          .select('vendor_id, status, activated_at')
+          .eq('email', email.trim().toLowerCase())
+          .single()
+
+        if (!vendor) {
+          setError('No vendor account found with this email. Have you applied and been activated?')
+          setLoading(false)
+          return
+        }
+
+        if (vendor.status === 'pending') {
+          setError('Your application is still under review. We\'ll notify you on WhatsApp once approved.')
+          setLoading(false)
+          return
+        }
+
+        if (vendor.status === 'rejected') {
+          setError('Your vendor application was not approved. Contact us on WhatsApp.')
+          setLoading(false)
+          return
+        }
+
+        if (!vendor.activated_at) {
+          setError('Your account hasn\'t been activated yet. Please activate first.')
+          setLoading(false)
+          return
+        }
+      }
+
+      // Sign in with email and password
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password,
+      })
+
+      if (signInErr) {
+        if (signInErr.message.includes('Invalid login credentials')) {
+          setError('Wrong email or password. Try again or reset your password.')
+        } else {
+          setError(signInErr.message)
+        }
+        setLoading(false)
+        return
+      }
+
+      // Update user metadata with the selected role so the Navbar
+      // and other components know which dashboard to show
+      await supabase.auth.updateUser({
+        data: { role },
+      })
+
+      // Redirect to the right dashboard
+      const destination = redirectTo || (role === 'vendor' ? '/vendor' : '/buyer')
+      router.push(destination)
+    } catch (e) {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
-  const handleVerifyOTP = async () => {
+  const switchRole = (newRole: Role) => {
+    setRole(newRole)
+    setPassword('')
     setError('')
-    if (otp.length < 6) { setError('Enter the 6-digit code'); return }
-    setLoading(true)
-    const supabase = createClient()
-    const { error: err } = await supabase.auth.verifyOtp({
-      email: email.trim(),
-      token: otp,
-      type: 'email',
-    })
-    if (err) {
-      setError(err.message)
-    } else {
-      // Small delay to let session cookies propagate
-      await new Promise(resolve => setTimeout(resolve, 500))
-      window.location.href = '/buyer'
-    }
-    setLoading(false)
   }
 
   return (
     <div className="w-full max-w-md">
       <div className="bg-white rounded-3xl shadow-card border border-gray-100 overflow-hidden">
+        {/* Header */}
         <div className="bg-primary p-6 text-center">
           <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center mx-auto mb-3">
             <Shield size={22} className="text-white" />
@@ -65,106 +112,137 @@ export default function LoginPage() {
           <p className="text-white/70 text-sm mt-1">Sign in to your Zolarux account</p>
         </div>
 
-        <div className="p-6">
-          {step === 'email' ? (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-700 text-gray-700 mb-1.5">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSendOTP()}
-                    placeholder="you@example.com"
-                    className="w-full border border-gray-200 rounded-xl pl-9 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
-                  />
-                </div>
-              </div>
+        {/* Role Tabs */}
+        <div className="flex border-b border-gray-100">
+          <button
+            onClick={() => switchRole('buyer')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-700 transition-all ${
+              role === 'buyer'
+                ? 'text-primary border-b-2 border-primary bg-primary/5'
+                : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <ShoppingBag size={16} />
+            Buyer
+          </button>
+          <button
+            onClick={() => switchRole('vendor')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-700 transition-all ${
+              role === 'vendor'
+                ? 'text-primary border-b-2 border-primary bg-primary/5'
+                : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <Store size={16} />
+            Vendor
+          </button>
+        </div>
 
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-
-              <button
-                onClick={handleSendOTP}
-                disabled={loading}
-                className="w-full bg-primary text-white font-display font-700 py-3.5 rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 disabled:opacity-60"
-              >
-                {loading ? (
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>Send OTP <ArrowRight size={16} /></>
-                )}
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="text-center mb-4">
-                <div className="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <Mail size={18} className="text-green-600" />
-                </div>
-                <p className="text-sm text-gray-600">
-                  Code sent to <strong>{email}</strong>
+        <form onSubmit={handleSignIn} className="p-6">
+          <div className="space-y-4">
+            {role === 'vendor' && (
+              <div className="bg-gray-950 rounded-xl p-3 flex items-start gap-2">
+                <Store size={14} className="text-accent shrink-0 mt-0.5" />
+                <p className="text-gray-300 text-xs leading-relaxed">
+                  Sign in with the email you used in your vendor application.
+                  Your account must be verified and activated.
                 </p>
-                <p className="text-xs text-gray-400 mt-1">Check your inbox (and spam folder)</p>
               </div>
+            )}
 
-              <div>
-                <label className="block text-sm font-700 text-gray-700 mb-1.5">
-                  6-Digit Code
-                </label>
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-700 text-gray-700 mb-1.5">
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={6}
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                  onKeyDown={(e) => e.key === 'Enter' && handleVerifyOTP()}
-                  placeholder="000000"
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-center text-2xl font-display font-700 tracking-widest focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                 />
               </div>
-
-              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
-              <button
-                onClick={handleVerifyOTP}
-                disabled={loading || otp.length < 6}
-                className="w-full bg-primary text-white font-display font-700 py-3.5 rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 disabled:opacity-60"
-              >
-                {loading ? (
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  'Verify & Sign In'
-                )}
-              </button>
-
-              <button
-                onClick={() => { setStep('email'); setOtp(''); setError('') }}
-                className="w-full text-sm text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                Change email
-              </button>
             </div>
-          )}
 
-          <div className="mt-6 pt-6 border-t border-gray-100 text-center space-y-2">
-            <p className="text-sm text-gray-500">
-              No account?{' '}
-              <Link href="/register" className="text-primary font-700 hover:underline">
-                Create one free
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-700 text-gray-700 mb-1.5">
+                Password
+              </label>
+              <div className="relative">
+                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  id="password-input"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full border border-gray-200 rounded-xl pl-10 pr-11 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="text-right">
+              <Link href="/reset-password" className="text-xs text-primary font-600 hover:underline">
+                Forgot password? / First time with password?
               </Link>
-            </p>
-            <p className="text-sm text-gray-500">
-              Are you a vendor?{' '}
-              <Link href="/register/vendor" className="text-primary font-700 hover:underline">
-                Register your business
-              </Link>
-            </p>
+            </div>
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2">
+                <AlertTriangle size={14} className="text-red-500 shrink-0 mt-0.5" />
+                <p className="text-red-600 text-sm">{error}</p>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading || !email.trim() || !password}
+              className="w-full bg-primary text-white font-display font-700 py-3.5 rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+            >
+              {loading ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>Sign In <ArrowRight size={16} /></>
+              )}
+            </button>
           </div>
-        </div>
+
+          <div className="mt-6 pt-5 border-t border-gray-100 text-center space-y-2">
+            {role === 'buyer' ? (
+              <p className="text-sm text-gray-500">
+                No account?{' '}
+                <Link href="/register" className="text-primary font-700 hover:underline">
+                  Create one free
+                </Link>
+              </p>
+            ) : (
+              <>
+                <p className="text-sm text-gray-500">
+                  Not a vendor yet?{' '}
+                  <Link href="/register/vendor" className="text-primary font-700 hover:underline">
+                    Apply as a vendor
+                  </Link>
+                </p>
+                <p className="text-sm text-gray-500">
+                  Approved but not activated?{' '}
+                  <Link href="/vendor/activate" className="text-primary font-700 hover:underline">
+                    Activate account
+                  </Link>
+                </p>
+              </>
+            )}
+          </div>
+        </form>
       </div>
     </div>
   )

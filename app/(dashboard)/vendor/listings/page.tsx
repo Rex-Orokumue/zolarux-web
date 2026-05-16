@@ -13,7 +13,7 @@ export default async function VendorListingsPage() {
   const { data: vendor } = await supabase
     .from('vendors')
     .select('vendor_id, business_name')
-    .eq('phone_number', user.phone ?? '')
+    .eq('auth_user_id', user.id)
     .single()
 
   if (!vendor) redirect('/vendor')

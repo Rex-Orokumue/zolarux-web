@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Shield, CheckCircle, ArrowRight, ArrowLeft, Upload, AlertTriangle } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { VENDOR_CATEGORIES } from '@/lib/constants'
 
 type Step = 1 | 2 | 3 | 'success'
@@ -142,46 +141,28 @@ export default function VendorRegisterPage() {
 
     setLoading(true)
     try {
-      const supabase = createClient()
-      const ref = `ZLX-V-${Date.now().toString(36).toUpperCase()}`
+      const res = await fetch('/api/vendor-apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
 
-      const { error: dbErr } = await supabase
-        .from('vendor_applications')
-        .insert({
-          reference: ref,
-          business_name: form.business_name,
-          category: form.category,
-          phone_number: form.phone_number,
-          email: form.email || null,
-          business_address: form.business_address || null,
-          instagram_handle: form.instagram_handle || null,
-          whatsapp_number: form.whatsapp_number,
-          years_in_business: form.years_in_business || null,
-          owner_full_name: form.owner_full_name,
-          nin_number: form.nin_number,
-          id_type: form.id_type || null,
-          supplier_name: form.supplier_name,
-          supplier_relationship: form.supplier_relationship || null,
-          business_description: form.business_description,
-          guarantor_name: form.guarantor_name,
-          guarantor_phone: form.guarantor_phone,
-          status: 'pending',
-          submitted_at: new Date().toISOString(),
-        })
+      const data = await res.json()
 
-      if (dbErr) {
-        // If table doesn't exist yet, still show success — data will be sent via WhatsApp
-        console.warn('DB insert warning:', dbErr.message)
+      if (!res.ok) {
+        throw new Error(data.error || 'Submission failed')
       }
 
-      // Also send summary to WhatsApp as backup
-      const summary = `New Vendor Application:\n\nRef: ${ref}\nBusiness: ${form.business_name}\nCategory: ${form.category}\nPhone: ${form.phone_number}\nOwner: ${form.owner_full_name}\nNIN: ${form.nin_number}\nSupplier: ${form.supplier_name}`
+      const ref = data.reference
+
+      // Send WhatsApp backup
+      const summary = `New Vendor Application:\n\nRef: ${ref}\nBusiness: ${form.business_name}\nCategory: ${form.category}\nPhone: ${form.phone_number}\nWhatsApp: ${form.whatsapp_number}\nOwner: ${form.owner_full_name}\nNIN: ${form.nin_number}\nSupplier: ${form.supplier_name}`
       window.open(`https://wa.me/2347063107314?text=${encodeURIComponent(summary)}`, '_blank')
 
       setReference(ref)
       setStep('success')
-    } catch (e) {
-      setError('Submission failed. Please try again or contact us on WhatsApp.')
+    } catch (e: any) {
+      setError(e.message || 'Submission failed. Please try again or contact us on WhatsApp.')
     } finally {
       setLoading(false)
     }

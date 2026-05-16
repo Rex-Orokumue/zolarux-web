@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
-import { usePathname } from 'next/navigation'
-import { Menu, X, ChevronDown, Shield, Smartphone, Scan, Flag, Link2 } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { Menu, X, ChevronDown, Shield, Smartphone, Scan, Flag, Link2, ShoppingCart, UserCircle, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { NAV_LINKS } from '@/lib/constants'
+import { createClient } from '@/lib/supabase/client'
 
 const SAFETY_TOOLS = [
   { label: 'Check Vendor',    href: '/check-vendor',   icon: Shield,     desc: 'Verify a vendor identity' },
@@ -18,9 +18,13 @@ const SAFETY_TOOLS = [
 
 export default function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [safetyOpen, setSafetyOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [userRole, setUserRole] = useState<string | null>(null)
+  const [authChecked, setAuthChecked] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
@@ -31,6 +35,65 @@ export default function Navbar() {
   useEffect(() => {
     setMobileOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    const supabase = createClient()
+
+    // Check auth state and determine role
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      const user = session?.user
+      if (user) {
+        setUser(user)
+
+        // Determine role: check metadata first, then fall back to checking vendors table
+        const metadataRole = user.user_metadata?.role
+        if (metadataRole) {
+          setUserRole(metadataRole)
+        } else {
+          // No role in metadata — check if they have a vendor record
+          const { data: vendor } = await supabase
+            .from('vendors')
+            .select('vendor_id')
+            .eq('auth_user_id', user.id)
+            .single()
+          setUserRole(vendor ? 'vendor' : 'buyer')
+        }
+      } else {
+        setUser(null)
+        setUserRole(null)
+      }
+      setAuthChecked(true)
+    }
+
+    checkAuth()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user)
+        setUserRole(session.user.user_metadata?.role || userRole)
+      } else {
+        setUser(null)
+        setUserRole(null)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleSignOut = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    setUser(null)
+    setUserRole(null)
+    router.push('/')
+  }
+
+  // Where the account icon should go
+  const getAccountHref = () => {
+    if (!user) return '/login'
+    return userRole === 'vendor' ? '/vendor' : '/buyer'
+  }
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
 
@@ -129,12 +192,37 @@ export default function Navbar() {
             >
               Cart
             </Link>
-            <Link
-              href="/login"
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all"
-            >
-              Sign In
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  href={getAccountHref()}
+                  className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="text-sm font-medium text-gray-600 hover:text-red-600 px-3 py-2 rounded-lg hover:bg-red-50 transition-all flex items-center gap-1.5"
+                >
+                  <LogOut size={14} /> Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register/vendor"
+                  className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 border border-gray-200 transition-all"
+                >
+                  Sell on Zolarux
+                </Link>
+              </>
+            )}
             <Link
               href="/downloads"
               className="animate-nav-pulse inline-flex items-center gap-2 bg-accent text-white px-5 py-2.5 rounded-full font-display font-700 text-sm hover:bg-accent-dark transition-all hover:scale-105 shadow-sm"
@@ -143,14 +231,30 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* Mobile icons + menu button */}
+          <div className="lg:hidden flex items-center gap-1">
+            <Link
+              href="/buyer/cart"
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 transition-colors relative"
+              aria-label="Cart"
+            >
+              <ShoppingCart size={20} />
+            </Link>
+            <Link
+              href={getAccountHref()}
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+              aria-label="Account"
+            >
+              <UserCircle size={20} />
+            </Link>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -193,12 +297,29 @@ export default function Navbar() {
             </div>
 
             <div className="pt-3 border-t border-gray-100 space-y-2">
-              <Link
-                href="/login"
-                className="block w-full text-center px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
-              >
-                Sign In
-              </Link>
+              {user ? (
+                <>
+                  <Link
+                    href={getAccountHref()}
+                    className="block w-full text-center px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="block w-full text-center px-4 py-3 rounded-xl border border-red-200 text-sm font-medium text-red-600 hover:bg-red-50 transition-all"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  className="block w-full text-center px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+                >
+                  Sign In
+                </Link>
+              )}
               <Link
                 href="/buyer/cart"
                 className="block w-full text-center px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"

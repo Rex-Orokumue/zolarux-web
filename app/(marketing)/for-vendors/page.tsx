@@ -85,7 +85,7 @@ export default function ForVendorsPage() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
-                href="/vendor-registration"
+                href="/register/vendor"
                 className="inline-flex items-center gap-2 bg-accent text-white font-display font-700 px-7 py-4 rounded-xl hover:bg-accent-dark transition-all shadow-lg animate-nav-pulse"
               >
                 Apply to Become a Vendor <ArrowRight size={18} />
