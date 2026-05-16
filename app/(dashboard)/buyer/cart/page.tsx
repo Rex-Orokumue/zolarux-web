@@ -101,8 +101,16 @@ export default function CartPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ reference: response.reference }),
         })
-          .then(res => res.json())
+          .then(async res => {
+            const text = await res.text()
+            try {
+              return JSON.parse(text)
+            } catch (e) {
+              throw new Error('Invalid response from verification server')
+            }
+          })
           .then(verifyData => {
+            if (verifyData.error) throw new Error(verifyData.error)
             if (!verifyData.verified) throw new Error('Payment not verified')
 
             // Create one order per vendor
@@ -131,10 +139,17 @@ export default function CartPage() {
                   paystack_reference: response.reference,
                 }),
               })
-                .then(res => res.json())
+                .then(async res => {
+                  const text = await res.text()
+                  try {
+                    return JSON.parse(text)
+                  } catch (e) {
+                    throw new Error('Invalid response from order creation server')
+                  }
+                })
                 .then(data => {
                   if (!data.success) {
-                    console.error('Order creation failed:', data.error, data.details)
+                    throw new Error(data.error || 'Failed to create order')
                   }
                   return data
                 })
@@ -143,18 +158,15 @@ export default function CartPage() {
             return Promise.all(orderPromises)
           })
           .then(async (results) => {
-            const allSucceeded = results && results.every((r: any) => r?.success)
-            if (!allSucceeded) {
-              console.warn('Some orders may have failed:', results)
-            }
-            // Clear cart regardless — payment was taken
+            // Clear cart since all orders succeeded
             const supabase = createClient()
             await supabase.from('cart_items').delete().eq('buyer_id', userId)
             setItems([])
             router.push('/buyer/orders?success=true')
           })
-          .catch(() => {
-            setError('Payment received but order creation failed. Contact support with: ' + response.reference)
+          .catch((err) => {
+            console.error('Checkout error:', err)
+            setError(`Payment received but order creation failed (${err.message}). Contact support with: ` + response.reference)
           })
           .finally(() => {
             setCheckingOut(false)
