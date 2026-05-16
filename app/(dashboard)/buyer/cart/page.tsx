@@ -126,18 +126,30 @@ export default function CartPage() {
                   amount: orderAmount,
                   delivery_address: deliveryAddress,
                   buyer_name: buyerName,
+                  buyer_email: userEmail,
+                  buyer_id: userId,
                   paystack_reference: response.reference,
                 }),
               })
+                .then(res => res.json())
+                .then(data => {
+                  if (!data.success) {
+                    console.error('Order creation failed:', data.error, data.details)
+                  }
+                  return data
+                })
             })
 
             return Promise.all(orderPromises)
           })
-          .then(async () => {
-            // Clear cart from database
+          .then(async (results) => {
+            const allSucceeded = results && results.every((r: any) => r?.success)
+            if (!allSucceeded) {
+              console.warn('Some orders may have failed:', results)
+            }
+            // Clear cart regardless — payment was taken
             const supabase = createClient()
             await supabase.from('cart_items').delete().eq('buyer_id', userId)
-            // Clear local state
             setItems([])
             router.push('/buyer/orders?success=true')
           })
