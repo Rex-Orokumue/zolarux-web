@@ -121,7 +121,7 @@ export default function NewListingPage() {
 
     try {
       const supabase = createClient()
-      const { data: { user } } = await getUser()
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) { setError('Not logged in'); setSaving(false); return }
 
       // Get vendor record

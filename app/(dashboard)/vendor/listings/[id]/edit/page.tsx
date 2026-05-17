@@ -47,7 +47,7 @@ export default function EditListingPage() {
 
   const loadProduct = async () => {
     const supabase = createClient()
-    const { data: { user } } = await getUser()
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) { router.push('/login'); return }
     setUserId(user.id)
 
