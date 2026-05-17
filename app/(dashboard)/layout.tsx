@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getUser } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Shield, ShoppingBag, Package, User, LogOut, Home, ShoppingCart, Heart } from 'lucide-react'
 
@@ -20,7 +20,7 @@ const VENDOR_NAV = [
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await getUser()
 
   if (!user) redirect('/login')
 

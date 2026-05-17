@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getUser } from '@/lib/supabase/server'
 import Link from 'next/link'
 import {
   Package, ShoppingBag, Shield, ArrowRight,
@@ -20,7 +20,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof
 
 export default async function BuyerDashboardPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await getUser()
 
   const phone = user?.phone ?? ''
   const email = user?.email ?? ''

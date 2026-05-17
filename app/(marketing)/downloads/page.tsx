@@ -1,22 +1,19 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import {
-  Smartphone, Download, Shield, CheckCircle,
-  AlertTriangle, ArrowRight, Star
-} from 'lucide-react'
+import { Download, Smartphone, Shield, CheckCircle, AlertTriangle, Star, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Download the App',
-  description: 'Download the Zolarux app for Android. Browse verified gadget listings, track escrow orders, check vendors, and report stolen devices — all in one place.',
+  description: 'Download the Zolarux Android app. Browse verified gadget listings, track escrow orders, verify vendors and check stolen devices — all in one place.',
 }
 
 const APP_FEATURES = [
-  { title: 'Browse Verified Listings',    desc: 'Phones, laptops, accessories — all from verified vendors' },
-  { title: 'Track Your Escrow Orders',    desc: 'Real-time order status from payment to delivery confirmation' },
-  { title: 'Check Vendor Instantly',      desc: 'Scan any vendor ID or phone number for verification status' },
-  { title: 'Report Stolen Devices',       desc: 'Add a stolen device to the national registry from your phone' },
-  { title: 'Dispute Management',          desc: 'Raise and track disputes directly from the app' },
-  { title: 'App Update Notifications',    desc: 'Always stay on the latest version with forced update alerts' },
+  { title: 'Browse Verified Listings',   desc: 'Phones, laptops, accessories — all from verified vendors' },
+  { title: 'Track Escrow Orders',        desc: 'Real-time order status from payment to delivery confirmation' },
+  { title: 'Check Vendor Instantly',     desc: 'Scan any vendor ID or phone number for verification status' },
+  { title: 'Report Stolen Devices',      desc: 'Add a stolen device to the national registry from your phone' },
+  { title: 'Dispute Management',         desc: 'Raise and track disputes directly from the app' },
+  { title: 'App Update Notifications',   desc: 'Always stay on the latest version with forced update alerts' },
 ]
 
 const INSTALL_STEPS = [
@@ -24,35 +21,39 @@ const INSTALL_STEPS = [
     step: '1',
     title: 'Download the APK',
     desc: 'Tap the download button above. The APK file will save to your Downloads folder.',
+    note: null,
   },
   {
     step: '2',
     title: 'Allow Unknown Sources',
     desc: 'Go to Settings → Security (or Privacy) → Install Unknown Apps. Enable for your file manager or browser.',
-    note: 'This is required because Zolarux is not yet on the Google Play Store. We are working on it.',
+    note: 'This is required because Zolarux is not yet on the Google Play Store. We are actively working on this.',
   },
   {
     step: '3',
     title: 'Open the APK File',
     desc: 'Go to your Downloads folder and tap the Zolarux APK file to begin installation.',
+    note: null,
   },
   {
     step: '4',
     title: 'Tap Install',
     desc: 'Follow the on-screen prompts. The installation takes about 10 seconds.',
+    note: null,
   },
   {
     step: '5',
     title: 'Open Zolarux',
     desc: 'Find the Zolarux icon on your home screen or app drawer and launch it.',
+    note: null,
   },
 ]
 
 const APP_INFO = [
-  { label: 'Version',       value: '1.0.0' },
-  { label: 'Platform',      value: 'Android 6.0+' },
-  { label: 'File Size',     value: '~18 MB' },
-  { label: 'Last Updated',  value: 'May 2026' },
+  { label: 'Version',      value: '1.0.0' },
+  { label: 'Platform',     value: 'Android 6.0+' },
+  { label: 'File Size',    value: '~18 MB' },
+  { label: 'Last Updated', value: 'May 2026' },
 ]
 
 export default function DownloadsPage() {
@@ -76,7 +77,7 @@ export default function DownloadsPage() {
 
               {/* Download button */}
               <a
-                href="/downloads/zolarux.apk"
+                href="https://zolarux.com.ng/downloads/zolarux.apk"
                 className="inline-flex items-center gap-3 bg-white text-primary font-display font-700 px-8 py-4 rounded-2xl hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 mb-4"
               >
                 <Download size={22} />
@@ -86,15 +87,15 @@ export default function DownloadsPage() {
                 </div>
               </a>
 
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-2 mt-3">
                 <AlertTriangle size={13} className="text-white/50" />
                 <p className="text-white/50 text-xs">
-                  Not yet on Google Play Store. See installation guide below.
+                  Not yet on Google Play Store. See the installation guide below.
                 </p>
               </div>
 
-              {/* App info */}
-              <div className="flex flex-wrap gap-4 mt-8">
+              {/* App info pills */}
+              <div className="flex flex-wrap gap-3 mt-8">
                 {APP_INFO.map(({ label, value }) => (
                   <div key={label} className="bg-white/10 border border-white/15 rounded-xl px-4 py-2 text-center">
                     <p className="text-white/50 text-xs">{label}</p>
@@ -104,7 +105,7 @@ export default function DownloadsPage() {
               </div>
             </div>
 
-            {/* Phone mockup placeholder */}
+            {/* Phone mockup */}
             <div className="hidden lg:flex justify-center">
               <div className="w-64 h-[500px] bg-white/10 border-2 border-white/20 rounded-[3rem] flex flex-col items-center justify-center gap-4 relative">
                 <div className="w-24 h-2 bg-white/20 rounded-full absolute top-6" />
@@ -117,6 +118,7 @@ export default function DownloadsPage() {
                     <Star key={i} size={12} className="text-accent fill-accent" />
                   ))}
                 </div>
+                <p className="text-white/40 text-xs">Android</p>
                 <div className="w-24 h-1 bg-white/20 rounded-full absolute bottom-6" />
               </div>
             </div>
@@ -129,8 +131,9 @@ export default function DownloadsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-10">
             <h2 className="font-display text-3xl font-800 text-gray-900 mb-3">
-              What You Can Do in the App
+              Everything You Can Do in the App
             </h2>
+            <p className="text-gray-500">One app. Complete trust infrastructure.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {APP_FEATURES.map(({ title, desc }) => (
@@ -156,7 +159,7 @@ export default function DownloadsPage() {
               How to Install the APK
             </h2>
             <p className="text-gray-500">
-              Android blocks unknown apps by default for security. Follow these steps to install safely.
+              Android blocks unknown apps by default for security. These steps take under 2 minutes.
             </p>
           </div>
 
@@ -186,11 +189,22 @@ export default function DownloadsPage() {
             <div>
               <p className="font-700 text-primary mb-1 text-sm">Is this safe to install?</p>
               <p className="text-primary/80 text-xs leading-relaxed">
-                Yes. The Zolarux APK is built and distributed directly by Zolarux Limited.
-                We recommend only downloading from this official page (zolarux.com.ng/downloads)
-                to avoid tampered versions. The app does not request unnecessary permissions.
+                Yes. The Zolarux APK is built and signed directly by Zolarux Limited.
+                Only download from this official page (zolarux.com.ng/downloads) to avoid
+                tampered versions. The app does not request unnecessary permissions.
               </p>
             </div>
+          </div>
+
+          {/* Direct download CTA */}
+          <div className="mt-8 text-center">
+            <a
+              href="https://zolarux.com.ng/downloads/zolarux.apk"
+              className="inline-flex items-center gap-3 bg-primary text-white font-display font-700 px-8 py-4 rounded-2xl hover:bg-primary-dark transition-all shadow-primary"
+            >
+              <Download size={20} />
+              Download Zolarux APK
+            </a>
           </div>
         </div>
       </section>
@@ -200,9 +214,8 @@ export default function DownloadsPage() {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
           <p className="text-gray-400 text-sm mb-2">Looking for iOS?</p>
           <p className="text-gray-600 text-sm max-w-md mx-auto mb-4">
-            The Zolarux iOS app is currently in development. In the meantime,
-            iPhone users can access all features through our website at zolarux.com.ng
-            or via WhatsApp.
+            The Zolarux iOS app is currently in development. iPhone users can access all features
+            through our website or via WhatsApp in the meantime.
           </p>
           <Link
             href="https://wa.me/2347063107314?text=I use iPhone — how can I use Zolarux?"

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getUser } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, ShoppingBag, Edit, Eye, ArrowRight } from 'lucide-react'
@@ -7,7 +7,7 @@ import type { Product } from '@/types/product'
 
 export default async function VendorListingsPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await getUser()
   if (!user) redirect('/login')
 
   const { data: vendor } = await supabase

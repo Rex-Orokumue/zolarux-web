@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getUser } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Shield, CheckCircle, AlertTriangle, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -6,7 +6,7 @@ import { formatDate } from '@/lib/utils'
 
 export default async function VendorProfilePage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await getUser()
   if (!user) redirect('/login')
 
   const { data: vendor } = await supabase

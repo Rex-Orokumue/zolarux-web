@@ -111,50 +111,33 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reference: response.reference }),
     })
-      .then(async res => {
-        const text = await res.text()
-        try {
-          return JSON.parse(text)
-        } catch (e) {
-          throw new Error('Invalid response from verification server')
+      .then(res => res.json())
+      .then(verifyData => {
+        if (verifyData.verified) {
+          return fetch('/api/orders/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              product_id: product.id,
+              product_name: product.name,
+              vendor_id: product.vendor_id,
+              vendor_name: product.vendor_name,
+              amount: product.price,
+              delivery_address: deliveryAddress,
+              buyer_name: buyerName,
+              paystack_reference: response.reference,
+            }),
+          })
+            .then(res => res.json())
+            .then(orderData => {
+              if (orderData.success) {
+                router.push(`/buyer/orders/success?ref=${orderData.order.order_ref}`)
+              }
+            })
         }
       })
-      .then(verifyData => {
-        if (verifyData.error) throw new Error(verifyData.error)
-        if (!verifyData.verified) throw new Error('Payment not verified')
-        
-        return fetch('/api/orders/create', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            product_id: product.id,
-            product_name: product.name,
-            vendor_id: product.vendor_id,
-            vendor_name: product.vendor_name,
-            amount: product.price,
-            delivery_address: deliveryAddress,
-            buyer_name: buyerName,
-            paystack_reference: response.reference,
-          }),
-        })
-          .then(async res => {
-            const text = await res.text()
-            try {
-              return JSON.parse(text)
-            } catch (e) {
-              throw new Error('Invalid response from order creation server')
-            }
-          })
-          .then(orderData => {
-            if (!orderData.success) {
-              throw new Error(orderData.error || 'Failed to create order')
-            }
-            router.push(`/buyer/orders?ref=${orderData.order.order_ref}&success=true`)
-          })
-      })
-      .catch((err) => {
-        console.error('Checkout error:', err)
-        setError(`Payment received but order creation failed (${err.message}). Contact support with reference: ` + response.reference)
+      .catch(() => {
+        setError('Payment received but order creation failed. Contact support with reference: ' + response.reference)
       })
       .finally(() => {
         setLoading(null)
@@ -197,7 +180,7 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
       }
 
       const handler = (window as any).PaystackPop.setup({
-        key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_d645f64a3f39a5e0e997616562ae17f6567be254',
+        key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_live_9dabe1a01f1dc84d295b7294c46f42984204cbcf',
         email: userEmail,
         amount: totalAmount * 100, // Convert to kobo
         currency: 'NGN',

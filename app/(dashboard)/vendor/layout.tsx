@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getUser } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Home, ShoppingBag, Package, User, Shield } from 'lucide-react'
 
@@ -11,7 +11,7 @@ const NAV = [
 
 export default async function VendorLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await getUser()
 
   let vendorStatus = ''
   if (user) {

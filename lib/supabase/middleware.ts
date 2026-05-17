@@ -8,11 +8,6 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-        detectSessionInUrl: false,
-      },
       cookies: {
         getAll() {
           return request.cookies.getAll()
@@ -30,25 +25,37 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // IMPORTANT: Do NOT use getSession() alone for auth checks.
-  // getSession() reads from the cookie without server validation —
-  // it can return null when the token is refreshing, causing false
-  // redirects to /login even when the user is logged in.
-  //
-  // Instead, use getUser() which validates the token server-side.
-  // This is slightly slower but prevents the random-redirect bug.
   const isDashboardRoute =
     request.nextUrl.pathname.startsWith('/buyer') ||
     request.nextUrl.pathname.startsWith('/vendor')
 
-  if (isDashboardRoute) {
+  try {
     const { data: { user } } = await supabase.auth.getUser()
 
-    if (!user) {
+    if (isDashboardRoute && !user) {
       const url = request.nextUrl.clone()
       url.pathname = '/login'
       url.searchParams.set('redirectTo', request.nextUrl.pathname)
       return NextResponse.redirect(url)
+    }
+  } catch (error) {
+    // Supabase timed out or network error
+    // If it's a dashboard route, let it through — the page itself will handle auth
+    // Better to show the page than loop-redirect on a network hiccup
+    console.warn('Middleware auth check failed (network issue):', (error as any)?.message)
+
+    if (isDashboardRoute) {
+      // Check if session cookie exists as a fallback
+      const hasSessionCookie = request.cookies.getAll().some(
+        c => c.name.includes('sb-') && c.name.includes('-auth-token')
+      )
+      if (!hasSessionCookie) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/login'
+        url.searchParams.set('redirectTo', request.nextUrl.pathname)
+        return NextResponse.redirect(url)
+      }
+      // Has session cookie — let them through, page will re-verify
     }
   }
 

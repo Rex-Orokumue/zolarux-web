@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getUser } from '@/lib/supabase/server'
 import { formatPrice, calculateProtectionFee } from '@/lib/utils'
 import { Shield, ArrowLeft, CheckCircle, Lock, MessageCircle, Info } from 'lucide-react'
 import type { Product } from '@/types/product'
@@ -39,7 +39,7 @@ export default async function ListingDetailPage({ params }: Props) {
   if (!product) notFound()
 
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await getUser()
 
   const imageUrl = product.main_image_url || product.image_url || product.image_urls?.[0] || null
   const allImages = [imageUrl, ...(product.image_urls || [])].filter(Boolean) as string[]
