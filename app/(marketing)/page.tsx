@@ -286,7 +286,7 @@ export default function HomePage() {
             <div className="inline-flex items-center gap-3 bg-gray-950 text-white px-6 py-3 rounded-xl text-sm font-500">
               <Lock size={15} className="text-accent" />
               <span>
-                &ldquo;Vendor money is sacred&rdquo; — the vendor doesn&apos;t
+                &ldquo;Buyer money is sacred&rdquo; — the vendor doesn&apos;t
                 touch your funds until <strong>you</strong> say confirmed.
               </span>
             </div>
