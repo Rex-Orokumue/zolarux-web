@@ -36,7 +36,7 @@ export default function FloatingActions() {
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-card hover:shadow-card-hover hover:border-primary hover:text-primary text-gray-500 transition-all duration-300 hover:-translate-y-0.5"
+          className="w-12 h-12 bg-[#FF6600] text-white rounded-full flex items-center justify-center shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5"
           aria-label="Scroll to top"
         >
           <ArrowUp size={18} />
