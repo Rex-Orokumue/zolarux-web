@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.8",
+    "@fontsource/montserrat": "^5.2.8",
+    "@fontsource/open-sans": "^5.2.7",
     "@fontsource/syne": "^5.2.7",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",

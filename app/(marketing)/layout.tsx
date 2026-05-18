@@ -1,13 +1,9 @@
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
-import WhatsAppFloat from '@/components/layout/WhatsAppFloat'
+import FloatingActions from '@/components/layout/FloatingActions'
 import PageLoader from '@/components/layout/PageLoader'
 
-export default function MarketingLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <PageLoader />
@@ -16,7 +12,7 @@ export default function MarketingLayout({
         {children}
       </main>
       <Footer />
-      <WhatsAppFloat />
+      <FloatingActions />
     </>
   )
 }

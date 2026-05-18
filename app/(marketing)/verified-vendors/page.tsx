@@ -14,8 +14,9 @@ async function getVerifiedVendors(): Promise<Vendor[]> {
   const { data, error } = await supabase
     .from('vendors')
     .select('*')
-    .eq('status', 'verified')
+    .or('status.eq.verified,is_verified.eq.true')
     .order('risk_score', { ascending: false })
+    .limit(100)
 
   if (error) {
     console.error('Vendors fetch error:', error)
@@ -208,7 +209,7 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
           href={`/listings?vendor=${vendor.vendor_id}`}
           className="w-full flex items-center justify-center gap-2 border border-primary-100 text-primary text-sm font-700 py-2.5 rounded-xl hover:bg-primary-light transition-all"
         >
-          View Listings <ArrowRight size={13} />
+          View Their Listings <ArrowRight size={13} />
         </Link>
       </div>
     </div>

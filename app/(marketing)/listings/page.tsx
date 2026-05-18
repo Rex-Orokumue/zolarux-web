@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { formatPrice, buildWhatsAppUrl } from '@/lib/utils'
 import { LISTING_CATEGORIES } from '@/lib/constants'
-import { Shield, ShoppingBag, ArrowRight, MessageCircle } from 'lucide-react'
+import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2 } from 'lucide-react'
 import type { Product } from '@/types/product'
 
 export const metadata: Metadata = {
@@ -14,10 +14,12 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 12
 
 interface ListingsPageProps {
-  searchParams: Promise<{ category?: string; page?: string }>
+  searchParams: Promise<{ category?: string; page?: string; vendor?: string }>
 }
 
-async function getProducts(category: string, page: number): Promise<{ products: Product[]; total: number }> {
+const GADGET_CATEGORIES = ['phones', 'laptop', 'accessories', 'electronics', 'gadget', 'gaming', 'tablet', 'computer']
+
+async function getProducts(category: string, page: number, vendor?: string): Promise<{ products: Product[]; total: number }> {
   const supabase = await createClient()
   const from = (page - 1) * PAGE_SIZE
   const to = from + PAGE_SIZE - 1
@@ -34,6 +36,10 @@ async function getProducts(category: string, page: number): Promise<{ products: 
     query = query.ilike('category', `%${category}%`)
   }
 
+  if (vendor) {
+    query = query.eq('vendor_id', vendor)
+  }
+
   const { data, error, count } = await query
 
   if (error) {
@@ -41,14 +47,22 @@ async function getProducts(category: string, page: number): Promise<{ products: 
     return { products: [], total: 0 }
   }
 
-  return { products: (data as Product[]) || [], total: count || 0 }
+  // Sort gadget-related categories to the top
+  const products = (data as Product[]) || []
+  const sorted = [
+    ...products.filter(p => GADGET_CATEGORIES.some(g => p.category?.toLowerCase().includes(g))),
+    ...products.filter(p => !GADGET_CATEGORIES.some(g => p.category?.toLowerCase().includes(g))),
+  ]
+
+  return { products: sorted, total: count || 0 }
 }
 
 export default async function ListingsPage({ searchParams }: ListingsPageProps) {
   const params = await searchParams
   const activeCategory = params.category || 'All'
   const currentPage = parseInt(params.page || '1', 10)
-  const { products, total } = await getProducts(activeCategory, currentPage)
+  const vendorFilter = params.vendor || ''
+  const { products, total } = await getProducts(activeCategory, currentPage, vendorFilter)
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
   return (
@@ -70,6 +84,20 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
           </p>
         </div>
       </section>
+
+      {/* Vendor filter banner */}
+      {vendorFilter && (
+        <div className="bg-primary-light border-b border-primary-100 py-3">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
+            <p className="text-primary text-sm font-600">
+              Showing listings from one verified vendor
+            </p>
+            <Link href="/listings" className="text-primary text-xs font-700 hover:underline">
+              View all listings →
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Category Filter */}
       <div className="bg-white border-b border-gray-100 sticky top-16 z-40">
@@ -145,6 +173,29 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
               )}
             </>
           )}
+        </div>
+      </section>
+
+      {/* Scan Link Promo */}
+      <section className="py-10 bg-gray-950 border-t border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-accent/20 rounded-xl flex items-center justify-center shrink-0">
+                <Link2 size={18} className="text-accent" />
+              </div>
+              <div>
+                <p className="font-display font-700 text-white">Saw a gadget elsewhere?</p>
+                <p className="text-gray-400 text-sm">Paste the link and we will check if it is safe before you pay.</p>
+              </div>
+            </div>
+            <Link
+              href="/scan-link"
+              className="shrink-0 inline-flex items-center gap-2 bg-accent text-white font-700 px-5 py-3 rounded-xl hover:bg-accent-dark transition-all text-sm"
+            >
+              <Link2 size={15} /> Scan a Link
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -109,7 +109,7 @@ export default function TermsPage() {
             <div className="space-y-2">
               <Check><strong>Prompt Inspection:</strong> You must inspect goods within 24 hours of delivery. Failure to report issues within this window implies satisfaction.</Check>
               <Check><strong>Return Condition:</strong> If returning an item, it must be unused, in original packaging, and in the same condition received.</Check>
-              <Check><strong>Payment Fee:</strong> The buyer acknowledges the protection fee (₦1,500–₦5,000 depending on order value) is non-refundable in successful transactions — it covers the escrow service cost.</Check>
+              <Check><strong>Protection Fee:</strong> The buyer acknowledges the protection fee (₦1,500–₦5,000) is non-refundable regardless of transaction outcome. Even in failed or disputed transactions, the fee covers the cost of verification, escrow management, and dispute investigation already performed.</Check>
               <Check><strong>Honest Disputes:</strong> Filing a fraudulent dispute is a violation of these Terms and may result in account suspension.</Check>
             </div>
           </Section>
