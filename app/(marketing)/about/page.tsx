@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { Shield, Target, Eye, Heart } from 'lucide-react'
+import Link from 'next/link'
+import { Shield, Target, Eye, Heart, Play, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'About Us',
@@ -127,6 +128,24 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* About video */}
+      <section className="py-16 bg-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8">
+            <h2 className="font-display text-2xl font-800 text-gray-900 mb-2">Meet Zolarux</h2>
+            <p className="text-gray-500 text-sm">A short video about who we are and why we built this.</p>
+          </div>
+          <div className="relative rounded-3xl overflow-hidden bg-gray-900 shadow-card-hover" style={{ paddingBottom: '56.25%' }}>
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-primary">
+                <Play size={24} className="text-white ml-1" fill="white" />
+              </div>
+              <p className="text-gray-400 text-sm">About us video — coming soon</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Team */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -145,6 +164,28 @@ export default function AboutPage() {
                 <p className="text-gray-500 text-sm leading-relaxed">{member.bio}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-16 bg-primary">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="font-display text-3xl font-800 text-white mb-4">
+            Ready to Experience Trusted Commerce?
+          </h2>
+          <p className="text-white/70 mb-8">
+            Whether you want to buy safely or sell with full buyer trust — Zolarux is where you start.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/listings"
+              className="inline-flex items-center gap-2 bg-white text-primary font-display font-700 px-7 py-4 rounded-xl hover:bg-gray-50 transition-all">
+              Browse Verified Listings <ArrowRight size={18} />
+            </Link>
+            <Link href="/register/vendor"
+              className="inline-flex items-center gap-2 bg-accent text-white font-display font-700 px-7 py-4 rounded-xl hover:bg-accent-dark transition-all">
+              Become a Vendor <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
       </section>

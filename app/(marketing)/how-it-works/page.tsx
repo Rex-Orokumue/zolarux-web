@@ -3,7 +3,7 @@ import Link from 'next/link'
 import {
   Search, Lock, ClipboardCheck, Truck, ThumbsUp,
   Shield, AlertTriangle, ArrowRight, MessageCircle,
-  CheckCircle, XCircle, Scale
+  CheckCircle, XCircle, Scale, Play
 } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -259,6 +259,24 @@ export default function HowItWorksPage() {
                 <li className="flex items-center gap-2"><CheckCircle size={13} /> Buyer's account flagged</li>
                 <li className="flex items-center gap-2"><CheckCircle size={13} /> Fraudulent claims result in ban</li>
               </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Video */}
+      <section className="py-16 bg-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8">
+            <h2 className="font-display text-2xl font-800 text-gray-900 mb-2">Watch How Zolarux Works</h2>
+            <p className="text-gray-500 text-sm">A complete walkthrough of the escrow process from payment to delivery.</p>
+          </div>
+          <div className="relative rounded-3xl overflow-hidden bg-gray-900 shadow-card-hover" style={{ paddingBottom: '56.25%' }}>
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-primary">
+                <Play size={24} className="text-white ml-1" fill="white" />
+              </div>
+              <p className="text-gray-400 text-sm">How it works video — coming soon</p>
             </div>
           </div>
         </div>
