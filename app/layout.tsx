@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import PageLoader from '@/components/layout/PageLoader'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://zolarux.com.ng'
 
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PageLoader />
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
