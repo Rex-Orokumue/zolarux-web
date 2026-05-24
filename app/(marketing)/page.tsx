@@ -53,7 +53,7 @@ const TESTIMONIALS = [
 ]
 
 // Placeholder YouTube video ID — replace with real video when ready
-const INTRO_VIDEO_ID = 'dQw4w9WgXcQ'
+const INTRO_VIDEO_ID = 'https://youtube.com/shorts/cQsvfSBWerI?si=HprZ_ippP1xubmZW'
 
 export default function HomePage() {
   return (
@@ -312,15 +312,13 @@ export default function HomePage() {
               <p className="text-gray-400 text-sm">Video coming soon</p>
               <p className="text-gray-500 text-xs">Replace with YouTube embed when ready</p>
             </div>
-            {/* Uncomment and replace VIDEO_ID when ready:
             <iframe
               className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/VIDEO_ID"
+              src="https://www.youtube.com/embed/cQsvfSBWerI"
               title="What is Zolarux?"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
-            */}
           </div>
         </div>
       </section>
