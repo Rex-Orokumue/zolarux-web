@@ -30,12 +30,13 @@ export default function Navbar() {
 
   const fetchCartCount = async (userId: string) => {
     const supabase = createClient()
-    const { count, error } = await supabase
+    const { data, error } = await supabase
       .from('cart_items')
-      .select('*', { count: 'exact', head: true })
+      .select('quantity')
       .eq('buyer_id', userId)
-    if (!error && count !== null) {
-      setCartCount(count)
+    if (!error && data) {
+      const totalQty = data.reduce((sum, item) => sum + (item.quantity || 0), 0)
+      setCartCount(totalQty)
     }
   }
 
@@ -52,6 +53,9 @@ export default function Navbar() {
     }
 
     const fetchCount = () => fetchCartCount(user.id)
+    
+    // Call immediately on mount/change
+    fetchCount()
 
     // Listen to local cart updates (adding/removing items)
     window.addEventListener('cart-updated', fetchCount)

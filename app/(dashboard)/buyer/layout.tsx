@@ -22,12 +22,13 @@ export default function BuyerLayout({ children }: { children: React.ReactNode })
 
   const fetchCartCount = async (uid: string) => {
     const supabase = createClient()
-    const { count, error } = await supabase
+    const { data, error } = await supabase
       .from('cart_items')
-      .select('*', { count: 'exact', head: true })
+      .select('quantity')
       .eq('buyer_id', uid)
-    if (!error && count !== null) {
-      setCartCount(count)
+    if (!error && data) {
+      const totalQty = data.reduce((sum, item) => sum + (item.quantity || 0), 0)
+      setCartCount(totalQty)
     }
   }
 
@@ -63,6 +64,9 @@ export default function BuyerLayout({ children }: { children: React.ReactNode })
     }
 
     const fetchCount = () => fetchCartCount(userId)
+    
+    // Call immediately on mount/user change
+    fetchCount()
 
     // Listen to local cart updates
     window.addEventListener('cart-updated', fetchCount)
