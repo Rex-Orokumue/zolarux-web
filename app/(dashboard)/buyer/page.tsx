@@ -1,9 +1,13 @@
-import { createClient, getUser } from '@/lib/supabase/server'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
   Package, ShoppingBag, Shield, ArrowRight,
-  CheckCircle, AlertTriangle, Clock, Heart, ShoppingCart
+  CheckCircle, AlertTriangle, Clock, Heart, ShoppingCart, RefreshCw,
+  Smartphone, Link2, Scan, Flag
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 import { formatPrice, formatDate } from '@/lib/utils'
 import type { Order } from '@/types/order'
 
@@ -18,62 +22,128 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof
   'dispute closed':               { label: 'Resolved',           color: 'text-gray-600 bg-gray-100',    icon: CheckCircle },
 }
 
-export default async function BuyerDashboardPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await getUser()
+export default function BuyerDashboardPage() {
+  const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [orders, setOrders] = useState<Order[]>([])
+  const [cartCount, setCartCount] = useState(0)
+  const [wishlistCount, setWishlistCount] = useState(0)
+  const [totalSpent, setTotalSpent] = useState(0)
+  const [firstName, setFirstName] = useState('there')
 
-  const phone = user?.phone ?? ''
-  const email = user?.email ?? ''
+  const fetchDashboardData = async (userId: string, email: string, silent = false) => {
+    if (!silent) setLoading(true)
+    else setRefreshing(true)
 
-  // Fetch recent orders
-  const { data: ordersData } = await supabase
-    .from('orders')
-    .select('*')
-    .eq('buyer_email', email)
-    .order('created_at', { ascending: false })
-    .limit(5)
-  const orders = (ordersData as Order[]) || []
+    const supabase = createClient()
 
-  // Fetch cart count
-  const { count: cartCount } = await supabase
-    .from('cart_items')
-    .select('*', { count: 'exact', head: true })
-    .eq('buyer_id', user?.id ?? '')
+    try {
+      // 1. Fetch recent orders
+      const { data: ordersData } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('buyer_email', email)
+        .order('created_at', { ascending: false })
+        .limit(5)
+      const fetchedOrders = (ordersData as Order[]) || []
+      setOrders(fetchedOrders)
 
-  // Fetch wishlist count
-  const { count: wishlistCount } = await supabase
-    .from('wishlist_items')
-    .select('*', { count: 'exact', head: true })
-    .eq('buyer_id', user?.id ?? '')
+      // 2. Fetch cart items total quantity
+      const { data: cartData } = await supabase
+        .from('cart_items')
+        .select('quantity')
+        .eq('buyer_id', userId)
+      if (cartData) {
+        const totalQty = cartData.reduce((sum, item) => sum + (item.quantity || 0), 0)
+        setCartCount(totalQty)
+      } else {
+        setCartCount(0)
+      }
+
+      // 3. Fetch wishlist count
+      const { count: fetchedWishlist } = await supabase
+        .from('wishlist_items')
+        .select('*', { count: 'exact', head: true })
+        .eq('buyer_id', userId)
+      setWishlistCount(fetchedWishlist ?? 0)
+
+      // Calculate total spent
+      const completedOrders = fetchedOrders.filter(o => o.status === 'completed')
+      setTotalSpent(completedOrders.reduce((sum, o) => sum + o.amount, 0))
+
+      // 4. Fetch buyer profile
+      const { data: profile } = await supabase
+        .from('buyers')
+        .select('full_name')
+        .eq('id', userId)
+        .single()
+      if (profile?.full_name) {
+        setFirstName(profile.full_name.split(' ')[0])
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
+    }
+  }
+
+  useEffect(() => {
+    const supabase = createClient()
+    const loadSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        setUser(session.user)
+        fetchDashboardData(session.user.id, session.user.email || '')
+      }
+    }
+    loadSession()
+  }, [])
+
+  const handleRefresh = () => {
+    if (user) {
+      fetchDashboardData(user.id, user.email || '', true)
+    }
+  }
 
   const activeOrders = orders.filter(o => !['completed', 'cancelled', 'dispute closed'].includes(o.status))
-  const completedOrders = orders.filter(o => o.status === 'completed')
-  const totalSpent = completedOrders.reduce((sum, o) => sum + o.amount, 0)
 
-  const { data: profile } = await supabase
-    .from('buyers')
-    .select('full_name')
-    .eq('id', user?.id ?? '')
-    .single()
-
-  const firstName = profile?.full_name?.split(' ')[0] || 'there'
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20">
+        <RefreshCw size={24} className="animate-spin text-primary" />
+        <p className="text-gray-400 text-sm mt-3">Loading dashboard data...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6 pb-20 md:pb-6">
-      {/* Welcome */}
-      <div className="bg-primary rounded-2xl p-6 text-white">
-        <p className="text-white/70 text-sm mb-1">Welcome back</p>
-        <h1 className="font-display text-2xl font-800">Hi, {firstName}! 👋</h1>
-        <p className="text-white/60 text-sm mt-1">{email}</p>
+      {/* Welcome Card with Silent Refresh Button */}
+      <div className="bg-primary rounded-2xl p-6 text-white flex items-center justify-between">
+        <div>
+          <p className="text-white/70 text-sm mb-1">Welcome back</p>
+          <h1 className="font-display text-2xl font-800">Hi, {firstName}! 👋</h1>
+          <p className="text-white/60 text-sm mt-1">{user?.email}</p>
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 flex items-center justify-center transition-all disabled:opacity-50"
+          title="Refresh Data"
+        >
+          <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
+        </button>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Active Orders',   value: activeOrders.length,                                    icon: Package,      color: 'text-blue-600 bg-blue-50',     href: '/buyer/orders' },
-          { label: 'Completed',       value: completedOrders.length,                                 icon: CheckCircle,  color: 'text-green-600 bg-green-50',   href: '/buyer/orders' },
-          { label: 'Cart Items',      value: cartCount ?? 0,                                         icon: ShoppingCart, color: 'text-primary bg-primary-light', href: '/buyer/cart' },
-          { label: 'Wishlist',        value: wishlistCount ?? 0,                                     icon: Heart,        color: 'text-pink-500 bg-pink-50',     href: '/buyer/wishlist' },
+          { label: 'Completed',       value: orders.filter(o => o.status === 'completed').length,    icon: CheckCircle,  color: 'text-green-600 bg-green-50',   href: '/buyer/orders' },
+          { label: 'Cart Items',      value: cartCount,                                              icon: ShoppingCart, color: 'text-primary bg-primary-light', href: '/buyer/cart' },
+          { label: 'Wishlist',        value: wishlistCount,                                          icon: Heart,        color: 'text-pink-500 bg-pink-50',     href: '/buyer/wishlist' },
         ].map(({ label, value, icon: Icon, color, href }) => (
           <Link key={label} href={href} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-card text-center hover:shadow-card-hover hover:-translate-y-0.5 transition-all">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2 ${color}`}>
@@ -151,25 +221,29 @@ export default async function BuyerDashboardPage() {
         )}
       </div>
 
-      {/* Quick actions */}
+      {/* Quick actions with safety tools */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
         <h2 className="font-display font-700 text-gray-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Browse Listings',  href: '/listings',        icon: ShoppingBag,  color: 'bg-primary-light text-primary' },
-            { label: 'My Cart',          href: '/buyer/cart',      icon: ShoppingCart, color: 'bg-amber-50 text-amber-600' },
-            { label: 'My Wishlist',      href: '/buyer/wishlist',  icon: Heart,        color: 'bg-pink-50 text-pink-500' },
-            { label: 'Check a Vendor',   href: '/check-vendor',    icon: Shield,       color: 'bg-green-50 text-green-600' },
+            { label: 'Browse Listings',    href: '/listings',        icon: ShoppingBag,  color: 'bg-primary-light text-primary' },
+            { label: 'My Cart',            href: '/buyer/cart',      icon: ShoppingCart, color: 'bg-amber-50 text-amber-600' },
+            { label: 'My Wishlist',        href: '/buyer/wishlist',  icon: Heart,        color: 'bg-pink-50 text-pink-500' },
+            { label: 'Check a Vendor',     href: '/check-vendor',    icon: Shield,       color: 'bg-green-50 text-green-600' },
+            { label: 'Check Stolen Status',href: '/check-device',    icon: Smartphone,   color: 'bg-red-50 text-red-600' },
+            { label: 'Verify Originality', href: '/check-original',  icon: Scan,         color: 'bg-blue-50 text-blue-600' },
+            { label: 'Scan Product Link',  href: '/scan-link',       icon: Link2,        color: 'bg-orange-50 text-orange-600' },
+            { label: 'Report Stolen Phone',href: '/report-item',     icon: Flag,         color: 'bg-purple-50 text-purple-600' },
           ].map(({ label, href, icon: Icon, color }) => (
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-2.5 p-3.5 bg-surface rounded-xl border border-gray-100 hover:border-primary hover:bg-primary-light transition-all group"
+              className="flex items-center gap-2.5 p-3.5 bg-surface rounded-xl border border-gray-100 hover:border-primary hover:bg-primary-light hover:shadow-card transition-all group"
             >
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
                 <Icon size={15} />
               </div>
-              <span className="font-600 text-gray-700 text-sm group-hover:text-primary transition-colors">{label}</span>
+              <span className="font-600 text-gray-700 text-xs sm:text-sm group-hover:text-primary transition-colors">{label}</span>
             </Link>
           ))}
         </div>

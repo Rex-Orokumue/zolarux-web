@@ -1,6 +1,11 @@
-import { createClient, getUser } from '@/lib/supabase/server'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Home, ShoppingBag, Package, User, Shield } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { cn } from '@/lib/utils'
 
 const NAV = [
   { label: 'Dashboard',  href: '/vendor',          icon: Home },
@@ -9,21 +14,42 @@ const NAV = [
   { label: 'Profile',    href: '/vendor/profile',  icon: User },
 ]
 
-export default async function VendorLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
-  const { data: { user } } = await getUser()
+export default function VendorLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const [isVerified, setIsVerified] = useState(false)
 
-  let vendorStatus = ''
-  if (user) {
-    const { data: vendor } = await supabase
-      .from('vendors')
-      .select('status')
-      .eq('auth_user_id', user.id)
-      .single()
-    vendorStatus = vendor?.status || ''
-  }
+  useEffect(() => {
+    const supabase = createClient()
 
-  const isVerified = vendorStatus === 'Verified' || vendorStatus === 'verified'
+    const checkVendorStatus = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        const { data: vendor } = await supabase
+          .from('vendors')
+          .select('status, is_verified')
+          .eq('auth_user_id', session.user.id)
+          .single()
+        
+        const status = vendor?.status || ''
+        const verified = vendor?.is_verified || status === 'Verified' || status === 'verified'
+        setIsVerified(verified)
+      }
+    }
+
+    checkVendorStatus()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        checkVendorStatus()
+      } else {
+        setIsVerified(false)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const isActive = (href: string) => href === '/vendor' ? pathname === href : pathname === href || pathname.startsWith(href + '/')
 
   return (
     <>
@@ -40,7 +66,12 @@ export default async function VendorLayout({ children }: { children: React.React
               <Link
                 key={href}
                 href={href}
-                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-600 text-gray-600 hover:bg-white hover:text-primary hover:shadow-card transition-all"
+                className={cn(
+                  "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-600 transition-all",
+                  isActive(href)
+                    ? "text-primary bg-white shadow-card font-700"
+                    : "text-gray-600 hover:bg-white hover:text-primary hover:shadow-card"
+                )}
               >
                 <Icon size={15} />
                 {label}
@@ -56,7 +87,10 @@ export default async function VendorLayout({ children }: { children: React.React
           <Link
             key={href}
             href={href}
-            className="flex-1 flex flex-col items-center gap-1 py-3 text-gray-400 hover:text-primary transition-colors"
+            className={cn(
+              "flex-1 flex flex-col items-center gap-1 py-3 transition-colors",
+              isActive(href) ? "text-primary font-700" : "text-gray-400 hover:text-primary"
+            )}
           >
             <Icon size={18} />
             <span className="text-xs font-600">{label}</span>

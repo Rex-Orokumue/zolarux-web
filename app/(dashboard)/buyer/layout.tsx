@@ -95,7 +95,7 @@ export default function BuyerLayout({ children }: { children: React.ReactNode })
     }
   }, [userId])
 
-  const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
+  const isActive = (href: string) => href === '/buyer' ? pathname === href : pathname === href || pathname.startsWith(href + '/')
 
   return (
     <>
