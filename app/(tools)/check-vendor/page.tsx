@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Shield, Search, CheckCircle, XCircle, AlertTriangle, Clock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import type { Vendor, FlaggedEntity } from '@/types/vendor'
+import type { Vendor, FlaggedEntity, VendorStatus } from '@/types/vendor'
 import { VENDOR_STATUS_MAP } from '@/lib/constants'
 
 type SearchResult =
@@ -26,28 +26,33 @@ export default function CheckVendorPage() {
     try {
       const supabase = createClient()
 
-      // 1. Check vendors table
-      const { data: vendorData } = await supabase
+      // Normalize inputs: qClean keeps hyphens (for vendor ID), phoneQ strips them (for phone number)
+      const qClean = q.trim()
+      let phoneQ = qClean.replace(/[\s-]/g, '')
+      if (phoneQ.startsWith('+234')) phoneQ = '0' + phoneQ.slice(4)
+
+      // 1. Check vendors table — use .limit(1) instead of .single() to avoid errors on 0/2+ rows
+      const { data: vendorRows } = await supabase
         .from('vendors')
         .select('*')
-        .or(`vendor_id.ilike.%${q}%,phone_number.ilike.%${q}%,business_name.ilike.%${q}%`)
-        .single()
+        .or(`vendor_id.ilike.%${qClean}%,phone_number.ilike.%${phoneQ}%,business_name.ilike.%${qClean}%`)
+        .limit(1)
 
-      if (vendorData) {
-        setResult({ type: 'verified', vendor: vendorData as Vendor })
+      if (vendorRows && vendorRows.length > 0) {
+        setResult({ type: 'verified', vendor: vendorRows[0] as Vendor })
         setLoading(false)
         return
       }
 
       // 2. Check flagged entities
-      const { data: flaggedData } = await supabase
+      const { data: flaggedRows } = await supabase
         .from('flagged_entities')
         .select('*')
-        .or(`phone_number.ilike.%${q}%`)
-        .single()
+        .or(`phone_number.ilike.%${phoneQ}%`)
+        .limit(1)
 
-      if (flaggedData) {
-        setResult({ type: 'flagged', entity: flaggedData as FlaggedEntity })
+      if (flaggedRows && flaggedRows.length > 0) {
+        setResult({ type: 'flagged', entity: flaggedRows[0] as FlaggedEntity })
         setLoading(false)
         return
       }
@@ -143,7 +148,10 @@ export default function CheckVendorPage() {
 }
 
 function VendorResult({ vendor }: { vendor: Vendor }) {
-  const statusConfig = VENDOR_STATUS_MAP[vendor.status] || VENDOR_STATUS_MAP.pending
+  const statusKey = (vendor.is_verified || vendor.status?.toLowerCase() === 'verified')
+    ? 'verified'
+    : (vendor.status?.toLowerCase() as VendorStatus) || 'pending'
+  const statusConfig = VENDOR_STATUS_MAP[statusKey] || VENDOR_STATUS_MAP.pending
 
   return (
     <div className={`rounded-2xl border ${statusConfig.border} ${statusConfig.bg} overflow-hidden`}>
@@ -164,9 +172,9 @@ function VendorResult({ vendor }: { vendor: Vendor }) {
         </div>
         <div>
           <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Category</p>
-          <p className="text-gray-700 text-sm">{vendor.category}</p>
+          <p className="text-gray-700 text-sm">{vendor.business_category}</p>
         </div>
-        {vendor.risk_score && (
+        {vendor.risk_score != null && (
           <div>
             <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Trust Score</p>
             <div className="flex items-center gap-2">

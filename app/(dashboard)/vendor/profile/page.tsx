@@ -19,11 +19,15 @@ export default async function VendorProfilePage() {
 
   const vendorEmail = vendor.email || user.email || '—'
 
+  const statusKey = (vendor.is_verified || vendor.status?.toLowerCase() === 'verified')
+    ? 'verified'
+    : (vendor.status?.toLowerCase() as string) || 'pending'
+
   const statusConfig = {
     verified:  { label: 'Verified',  color: 'text-green-700',  bg: 'bg-green-50 border-green-200',  icon: CheckCircle },
     pending:   { label: 'Pending',   color: 'text-amber-700',  bg: 'bg-amber-50 border-amber-200',  icon: AlertTriangle },
     suspended: { label: 'Suspended', color: 'text-red-700',    bg: 'bg-red-50 border-red-200',      icon: AlertTriangle },
-  }[vendor.status as string] || { label: vendor.status, color: 'text-gray-600', bg: 'bg-gray-50 border-gray-200', icon: AlertTriangle }
+  }[statusKey] || { label: vendor.status, color: 'text-gray-600', bg: 'bg-gray-50 border-gray-200', icon: AlertTriangle }
 
   const StatusIcon = statusConfig.icon
 
@@ -51,7 +55,7 @@ export default async function VendorProfilePage() {
       <div className="bg-white rounded-2xl border border-gray-100 shadow-card divide-y divide-gray-50">
         {[
           { label: 'Vendor ID',      value: vendor.vendor_id,      mono: true },
-          { label: 'Category',       value: vendor.category },
+          { label: 'Category',       value: vendor.business_category },
           { label: 'Phone',          value: vendor.phone_number },
           { label: 'Email',          value: vendorEmail },
           { label: 'Address',        value: vendor.address || '—' },
@@ -66,7 +70,7 @@ export default async function VendorProfilePage() {
       </div>
 
       {/* Trust score bar */}
-      {vendor.risk_score && (
+      {vendor.risk_score != null && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-5">
           <div className="flex items-center justify-between mb-2">
             <p className="font-display font-700 text-gray-900 text-sm">Trust Score</p>

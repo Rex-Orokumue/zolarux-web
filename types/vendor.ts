@@ -6,12 +6,21 @@ export interface Vendor {
   business_name: string
   phone_number: string
   email?: string
-  category: string
+  business_category: string
+  address?: string
   status: VendorStatus
+  is_verified: boolean
   risk_score: number
-  business_address?: string
-  social_links?: string[]
+  trade_count: number
+  enforcement_count: number
+  verification_score?: number
+  verification_tier?: string
+  verification_notes?: string
+  verified_at?: string
+  activated_at?: string
+  auth_user_id?: string
   created_at?: string
+  updated_at?: string
 }
 
 export interface FlaggedEntity {

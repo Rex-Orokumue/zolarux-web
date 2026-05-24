@@ -303,15 +303,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Video placeholder — replace src with real YouTube embed URL */}
+          {/* YouTube Video Embed */}
           <div className="relative rounded-3xl overflow-hidden bg-gray-900 shadow-card-hover" style={{ paddingBottom: '56.25%' }}>
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-              <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-primary cursor-pointer hover:scale-110 transition-transform">
-                <Play size={30} className="text-white ml-1" fill="white" />
-              </div>
-              <p className="text-gray-400 text-sm">Video coming soon</p>
-              <p className="text-gray-500 text-xs">Replace with YouTube embed when ready</p>
-            </div>
             <iframe
               className="absolute inset-0 w-full h-full"
               src="https://www.youtube.com/embed/cQsvfSBWerI"

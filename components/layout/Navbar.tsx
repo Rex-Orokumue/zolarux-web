@@ -120,7 +120,7 @@ export default function Navbar() {
               className="w-8 h-8 object-contain group-hover:scale-110 transition-transform"
               priority
             />
-            <span className="font-display font-700 text-gray-900 text-lg tracking-tight">
+            <span className="font-display font-black text-gray-900 text-xl tracking-tight">
               Zolarux
             </span>
           </Link>

@@ -73,7 +73,7 @@ export default async function VendorDashboardPage() {
               </div>
             </div>
           </div>
-          {vendor.status === 'verified' ? (
+          {(vendor.is_verified || vendor.status?.toLowerCase() === 'verified') ? (
             <div className="flex items-center gap-1.5 bg-green-500/20 border border-green-500/30 rounded-full px-3 py-1.5 shrink-0">
               <Shield size={12} className="text-green-400" />
               <span className="text-green-400 text-xs font-700">Verified</span>

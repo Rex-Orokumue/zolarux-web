@@ -183,14 +183,14 @@ function VendorCard({ vendor }: { vendor: Vendor }) {
       <div className="p-5">
         <div className="flex items-center gap-2 mb-3">
           <span className="bg-primary-light text-primary text-xs font-700 px-2.5 py-1 rounded-full">
-            {vendor.category}
+            {vendor.business_category}
           </span>
           <span className="bg-green-50 text-green-700 text-xs font-700 px-2.5 py-1 rounded-full">
             Verified
           </span>
         </div>
 
-        {vendor.risk_score && (
+        {vendor.risk_score != null && (
           <div className="mb-4">
             <div className="flex justify-between text-xs mb-1">
               <span className="text-gray-500">Trust Score</span>

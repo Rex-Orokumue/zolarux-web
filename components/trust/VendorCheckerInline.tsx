@@ -26,26 +26,32 @@ export default function VendorCheckerInline({ compact = false }: Props) {
     try {
       const supabase = createClient()
 
-      const { data: vendor } = await supabase
+      // Normalize inputs: qClean keeps hyphens (for vendor ID), phoneQ strips them (for phone number)
+      const qClean = q.trim()
+      let phoneQ = qClean.replace(/[\s-]/g, '')
+      if (phoneQ.startsWith('+234')) phoneQ = '0' + phoneQ.slice(4)
+
+      const { data: vendorRows } = await supabase
         .from('vendors')
         .select('business_name, status, is_verified')
-        .or(`vendor_id.ilike.%${q}%,phone_number.ilike.%${q}%,business_name.ilike.%${q}%`)
-        .single()
+        .or(`vendor_id.ilike.%${qClean}%,phone_number.ilike.%${phoneQ}%,business_name.ilike.%${qClean}%`)
+        .limit(1)
 
-      if (vendor) {
+      if (vendorRows && vendorRows.length > 0) {
+        const vendor = vendorRows[0]
         setBusinessName(vendor.business_name || '')
         setResult(vendor.status === 'verified' || vendor.is_verified ? 'verified' : 'not_found')
         setLoading(false)
         return
       }
 
-      const { data: flagged } = await supabase
+      const { data: flaggedRows } = await supabase
         .from('flagged_entities')
         .select('id')
-        .ilike('phone_number', `%${q}%`)
-        .single()
+        .ilike('phone_number', `%${phoneQ}%`)
+        .limit(1)
 
-      setResult(flagged ? 'flagged' : 'not_found')
+      setResult(flaggedRows && flaggedRows.length > 0 ? 'flagged' : 'not_found')
     } catch {
       setResult('error')
     } finally {
