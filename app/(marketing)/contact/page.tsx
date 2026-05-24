@@ -22,8 +22,8 @@ const CONTACT_OPTIONS = [
     icon: Mail,
     title: 'Email',
     desc: 'For formal inquiries, partnership requests, and complaints.',
-    value: 'hello@zolarux.com.ng',
-    href: 'mailto:hello@zolarux.com.ng',
+    value: 'zolaruxlimited@gmail.com',
+    href: 'mailto:zolaruxlimited@gmail.com',
     cta: 'Send Email',
     color: 'bg-primary',
     available: 'Response within 24 hours',
@@ -121,7 +121,7 @@ export default function ContactPage() {
                 </div>
                 <h3 className="font-display font-700 text-gray-900 mb-1">Location</h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  Lagos, Nigeria<br />
+                  Warri, Delta State, Nigeria<br />
                   <span className="text-xs text-gray-400">Operations are nationwide</span>
                 </p>
               </div>
