@@ -57,6 +57,7 @@ export default function CartPage() {
     await supabase.from('cart_items').delete().eq('id', id)
     setItems(prev => prev.filter(i => i.id !== id))
     setRemoving(null)
+    window.dispatchEvent(new Event('cart-updated'))
   }
 
   const updateQuantity = async (id: string, delta: number) => {
@@ -68,6 +69,7 @@ export default function CartPage() {
     const supabase = createClient()
     await supabase.from('cart_items').update({ quantity: newQty }).eq('id', id)
     setItems(prev => prev.map(i => i.id === id ? { ...i, quantity: newQty } : i))
+    window.dispatchEvent(new Event('cart-updated'))
   }
 
   const fixedItems = items.filter(i => i.pricing_type === 'fixed')
@@ -162,6 +164,7 @@ export default function CartPage() {
             const supabase = createClient()
             await supabase.from('cart_items').delete().eq('buyer_id', userId)
             setItems([])
+            window.dispatchEvent(new Event('cart-updated'))
             router.push('/buyer/orders?success=true')
           })
           .catch((err) => {

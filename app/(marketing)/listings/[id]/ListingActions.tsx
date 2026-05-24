@@ -61,6 +61,7 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
         })
       }
       setCartAdded(true)
+      window.dispatchEvent(new Event('cart-updated'))
       setTimeout(() => setCartAdded(false), 3000)
     } catch (e) {
       console.error(e)

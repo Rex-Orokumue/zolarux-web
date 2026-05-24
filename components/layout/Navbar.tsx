@@ -26,12 +26,59 @@ export default function Navbar() {
   const [user, setUser] = useState<any>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
   const [authChecked, setAuthChecked] = useState(false)
+  const [cartCount, setCartCount] = useState<number>(0)
+
+  const fetchCartCount = async (userId: string) => {
+    const supabase = createClient()
+    const { count, error } = await supabase
+      .from('cart_items')
+      .select('*', { count: 'exact', head: true })
+      .eq('buyer_id', userId)
+    if (!error && count !== null) {
+      setCartCount(count)
+    }
+  }
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  useEffect(() => {
+    if (!user) {
+      setCartCount(0)
+      return
+    }
+
+    const fetchCount = () => fetchCartCount(user.id)
+
+    // Listen to local cart updates (adding/removing items)
+    window.addEventListener('cart-updated', fetchCount)
+
+    // Supabase realtime subscription for changes to cart_items table
+    const supabase = createClient()
+    const channel = supabase
+      .channel(`navbar-cart-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'cart_items',
+          filter: `buyer_id=eq.${user.id}`
+        },
+        () => {
+          fetchCount()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      window.removeEventListener('cart-updated', fetchCount)
+      supabase.removeChannel(channel)
+    }
+  }, [user?.id])
 
   useEffect(() => {
     setMobileOpen(false)
@@ -194,9 +241,14 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-3">
             <Link
               href="/buyer/cart"
-              className="relative text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all"
+              className="relative text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-1.5"
             >
-              Cart
+              <span>Cart</span>
+              {cartCount > 0 && (
+                <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center animate-scale-up">
+                  {cartCount}
+                </span>
+              )}
             </Link>
             {user ? (
               <>
@@ -245,6 +297,11 @@ export default function Navbar() {
               aria-label="Cart"
             >
               <ShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span className="absolute top-1 right-1 bg-accent text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-scale-up">
+                  {cartCount}
+                </span>
+              )}
             </Link>
             <Link
               href={getAccountHref()}
@@ -328,9 +385,14 @@ export default function Navbar() {
               )}
               <Link
                 href="/buyer/cart"
-                className="block w-full text-center px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
               >
-                🛒 My Cart
+                <span>🛒 My Cart</span>
+                {cartCount > 0 && (
+                  <span className="bg-accent text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
               <Link
                 href="/downloads"
