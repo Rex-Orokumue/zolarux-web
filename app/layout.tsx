@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import PageLoader from '@/components/layout/PageLoader'
+import { Analytics } from '@vercel/analytics/next'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://zolarux.com.ng'
 
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased bg-white text-gray-900">
         <PageLoader />
         {children}
+        <Analytics />
       </body>
     </html>
   )
