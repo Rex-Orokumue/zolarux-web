@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 5 activation attempts per 5 minutes per IP (sends OTP emails)
+  const { rateLimit, getClientIp } = await import('@/lib/rate-limit')
+  const ip = getClientIp(request.headers)
+  const { limited, resetIn } = rateLimit(`vendor-activate:${ip}`, 5, 300_000)
+  if (limited) {
+    return NextResponse.json(
+      { error: 'Too many attempts. Please wait a few minutes and try again.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(resetIn / 1000)) } }
+    )
+  }
+
   try {
     const { email } = await request.json()
 

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Shield, Mail, CheckCircle, ArrowRight, AlertTriangle, Lock, Eye, EyeOff } from 'lucide-react'
+import { Shield, Mail, CheckCircle, ArrowRight, AlertTriangle, Lock, Eye, EyeOff, RefreshCw } from 'lucide-react'
 
 type Step = 'email' | 'otp' | 'password' | 'success'
 
@@ -19,6 +19,19 @@ export default function VendorActivatePage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [vendorName, setVendorName] = useState('')
+  const [resending, setResending] = useState(false)
+
+  const handleResendOTP = async () => {
+    setResending(true)
+    try {
+      await fetch('/api/vendor-activate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      })
+    } catch {}
+    setTimeout(() => setResending(false), 3000)
+  }
 
   const handleSendOTP = async () => {
     setError('')
@@ -304,6 +317,19 @@ export default function VendorActivatePage() {
               >
                 Change email
               </button>
+
+              <button
+                onClick={handleResendOTP}
+                disabled={resending}
+                className="w-full border border-gray-200 text-gray-600 font-600 py-2.5 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-xs"
+              >
+                <RefreshCw size={12} className={resending ? 'animate-spin' : ''} />
+                {resending ? 'Code resent!' : "Didn't get the code? Resend"}
+              </button>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-2.5">
+                <p className="text-amber-700 text-xs">💡 Check your <strong>spam/junk folder</strong>. The email comes from <strong>noreply@zolarux.com.ng</strong></p>
+              </div>
             </div>
           )}
 

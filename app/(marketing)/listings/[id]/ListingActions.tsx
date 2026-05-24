@@ -128,16 +128,22 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
               paystack_reference: response.reference,
             }),
           })
-            .then(res => res.json())
-            .then(orderData => {
-              if (orderData.success) {
-                router.push(`/buyer/orders/success?ref=${orderData.order.order_ref}`)
+            .then(async res => {
+            const text = await res.text()
+            try {
+              const data = JSON.parse(text)
+              if (!data.success) {
+                throw new Error(data.error || 'Failed to create order')
               }
-            })
+              router.push(`/buyer/orders/success?ref=${data.order.order_ref}`)
+            } catch (e: any) {
+              throw new Error(e?.message || 'Invalid server response')
+            }
+          })
         }
       })
-      .catch(() => {
-        setError('Payment received but order creation failed. Contact support with reference: ' + response.reference)
+      .catch((err) => {
+        setError(err?.message || 'Payment received but order creation failed. Contact support with reference: ' + response.reference)
       })
       .finally(() => {
         setLoading(null)

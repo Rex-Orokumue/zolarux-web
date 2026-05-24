@@ -63,13 +63,55 @@ function ruleBasedAnalysis(url: string): {
   return { riskScore: Math.max(0, Math.min(100, riskScore)), flags, positives, detectedCategory }
 }
 
+// ── SSRF protection: block internal/private IPs ──────────────────────────────
+function isPrivateUrl(urlStr: string): boolean {
+  try {
+    const parsed = new URL(urlStr)
+    const hostname = parsed.hostname.toLowerCase()
+    // Block localhost, private IPs, link-local, metadata endpoints
+    if (
+      hostname === 'localhost' ||
+      hostname === '0.0.0.0' ||
+      hostname.startsWith('127.') ||
+      hostname.startsWith('10.') ||
+      hostname.startsWith('192.168.') ||
+      hostname.startsWith('172.') ||
+      hostname === '169.254.169.254' || // Cloud metadata
+      hostname.endsWith('.local') ||
+      hostname.endsWith('.internal') ||
+      parsed.protocol === 'file:' ||
+      parsed.protocol === 'ftp:'
+    ) {
+      return true
+    }
+    return false
+  } catch {
+    return true
+  }
+}
+
+// ── URL validation ───────────────────────────────────────────────────────────
+function isValidScanUrl(url: string): boolean {
+  if (url.length > 2048) return false
+  try {
+    const parsed = new URL(url)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 // ── Option A: Fetch page content for public URLs ──────────────────────────────
 async function fetchPageContent(url: string): Promise<string | null> {
+  // SSRF protection
+  if (isPrivateUrl(url)) return null
+
   try {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 8000)
     const res = await fetch(url, {
       signal: controller.signal,
+      redirect: 'follow',
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; Zolarux SafeCheck/1.0)',
         'Accept': 'text/html',
@@ -77,6 +119,10 @@ async function fetchPageContent(url: string): Promise<string | null> {
     })
     clearTimeout(timeout)
     if (!res.ok) return null
+
+    // After redirect, verify final URL is not private
+    if (res.url && isPrivateUrl(res.url)) return null
+
     const html = await res.text()
     // Strip tags, collapse whitespace, limit to 3000 chars
     const text = html
@@ -213,10 +259,37 @@ async function findSimilarProducts(productName: string, category: string) {
 
 // ── Main handler ──────────────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
+  // Rate limit: 10 scans per minute per IP (most expensive route — external fetch + AI)
+  const { rateLimit, getClientIp } = await import('@/lib/rate-limit')
+  const ip = getClientIp(request.headers)
+  const { limited, resetIn } = rateLimit(`scan-link:${ip}`, 10, 60_000)
+  if (limited) {
+    return NextResponse.json(
+      { error: 'Too many scans. Please wait a moment and try again.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(resetIn / 1000)) } }
+    )
+  }
+
   try {
     const { url } = await request.json()
     if (!url || typeof url !== 'string') {
       return NextResponse.json({ error: 'URL is required' }, { status: 400 })
+    }
+
+    // Validate URL format and reject dangerous protocols
+    if (!isValidScanUrl(url)) {
+      return NextResponse.json(
+        { error: 'Invalid URL. Please enter a valid http:// or https:// URL.' },
+        { status: 400 }
+      )
+    }
+
+    // SSRF protection: block private/internal URLs before any analysis
+    if (isPrivateUrl(url)) {
+      return NextResponse.json(
+        { error: 'This URL points to a private or internal network and cannot be scanned. Please enter a public URL.' },
+        { status: 400 }
+      )
     }
 
     const lower = url.toLowerCase()

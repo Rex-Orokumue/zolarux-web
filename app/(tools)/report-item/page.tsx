@@ -87,12 +87,33 @@ export default function ReportItemPage() {
 
   const handleSubmit = async () => {
     setError('')
-    if (!form.device_name || !form.reporter_phone || !form.reporter_name) {
+
+    // Required fields
+    if (!form.device_name.trim() || !form.reporter_phone.trim() || !form.reporter_name.trim()) {
       setError('Please fill in your name, phone number, and device name.')
       return
     }
-    if (!form.imei && !form.serial_number) {
+    if (!form.imei.trim() && !form.serial_number.trim()) {
       setError('Please provide at least one identifier — IMEI or Serial Number.')
+      return
+    }
+
+    // IMEI validation: must be exactly 15 digits
+    if (form.imei.trim() && !/^\d{15}$/.test(form.imei.trim())) {
+      setError('IMEI must be exactly 15 digits. Dial *#06# on the phone to find it.')
+      return
+    }
+
+    // Serial number: alphanumeric, 5-30 chars
+    if (form.serial_number.trim() && !/^[a-zA-Z0-9]{5,30}$/.test(form.serial_number.trim())) {
+      setError('Serial number should be 5–30 alphanumeric characters.')
+      return
+    }
+
+    // Phone validation: Nigerian format
+    const cleanPhone = form.reporter_phone.trim().replace(/[\s-]/g, '')
+    if (!/^(\+?234|0)[0-9]{10}$/.test(cleanPhone)) {
+      setError('Enter a valid Nigerian phone number (e.g. 08012345678).')
       return
     }
 
@@ -224,13 +245,13 @@ export default function ReportItemPage() {
                   <div>
                     <label className="block text-sm font-700 text-gray-700 mb-1.5">Full Name *</label>
                     <input type="text" value={form.reporter_name} onChange={update('reporter_name')}
-                      placeholder="Your full name"
+                      placeholder="Your full name" required maxLength={100}
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                   </div>
                   <div>
                     <label className="block text-sm font-700 text-gray-700 mb-1.5">Phone Number *</label>
                     <input type="tel" value={form.reporter_phone} onChange={update('reporter_phone')}
-                      placeholder="08012345678"
+                      placeholder="08012345678" required maxLength={15}
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                   </div>
                 </div>
@@ -243,20 +264,20 @@ export default function ReportItemPage() {
                   <div>
                     <label className="block text-sm font-700 text-gray-700 mb-1.5">Device Name *</label>
                     <input type="text" value={form.device_name} onChange={update('device_name')}
-                      placeholder="e.g. iPhone 14 Pro Max 256GB Space Black"
+                      placeholder="e.g. iPhone 14 Pro Max 256GB Space Black" required maxLength={200}
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-700 text-gray-700 mb-1.5">IMEI Number</label>
                       <input type="text" value={form.imei} onChange={update('imei')}
-                        placeholder="15-digit IMEI (*#06#)"
+                        placeholder="15-digit IMEI (*#06#)" maxLength={15} inputMode="numeric" pattern="\d{15}"
                         className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                     </div>
                     <div>
                       <label className="block text-sm font-700 text-gray-700 mb-1.5">Serial Number</label>
                       <input type="text" value={form.serial_number} onChange={update('serial_number')}
-                        placeholder="Found in Settings → About"
+                        placeholder="Found in Settings → About" maxLength={30}
                         className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                     </div>
                   </div>
@@ -273,7 +294,7 @@ export default function ReportItemPage() {
                     <div>
                       <label className="block text-sm font-700 text-gray-700 mb-1.5">Location Stolen</label>
                       <input type="text" value={form.location_stolen} onChange={update('location_stolen')}
-                        placeholder="e.g. Ikeja, Lagos"
+                        placeholder="e.g. Ikeja, Lagos" maxLength={200}
                         className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                     </div>
                   </div>
@@ -281,7 +302,7 @@ export default function ReportItemPage() {
                     <label className="block text-sm font-700 text-gray-700 mb-1.5">Additional Information</label>
                     <textarea value={form.additional_info} onChange={update('additional_info')}
                       placeholder="Any other details (case colour, scratches, accessories, etc.)"
-                      rows={3}
+                      rows={3} maxLength={1000}
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none" />
                   </div>
                 </div>
@@ -302,8 +323,8 @@ export default function ReportItemPage() {
 
               <button
                 onClick={handleSubmit}
-                disabled={loading}
-                className="w-full bg-red-600 text-white font-display font-700 py-4 rounded-xl hover:bg-red-700 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                disabled={loading || !form.reporter_name.trim() || !form.reporter_phone.trim() || !form.device_name.trim() || (!form.imei.trim() && !form.serial_number.trim())}
+                className="w-full bg-red-600 text-white font-display font-700 py-4 rounded-xl hover:bg-red-700 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading
                   ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Submitting...</>

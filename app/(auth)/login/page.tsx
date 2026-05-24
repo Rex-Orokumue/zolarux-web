@@ -6,7 +6,7 @@ import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Mail, Lock, ArrowRight, Shield, Store, ShoppingBag, AlertTriangle, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, ArrowRight, Shield, Store, ShoppingBag, AlertTriangle, Eye, EyeOff, CheckCircle } from 'lucide-react'
 
 type Role = 'buyer' | 'vendor'
 
@@ -152,6 +152,13 @@ function LoginContent() {
               </div>
             )}
 
+            {searchParams.get('registered') === 'true' && (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-3 flex items-start gap-2">
+                <CheckCircle size={14} className="text-green-500 shrink-0 mt-0.5" />
+                <p className="text-green-700 text-sm">Account created! Check your email for a verification link, then sign in below.</p>
+              </div>
+            )}
+
             {/* Email */}
             <div>
               <label className="block text-sm font-700 text-gray-700 mb-1.5">
@@ -196,7 +203,7 @@ function LoginContent() {
 
             <div className="text-right">
               <Link href="/reset-password" className="text-xs text-primary font-600 hover:underline">
-                Forgot password? / First time with password?
+                Forgot your password?
               </Link>
             </div>
             {error && (

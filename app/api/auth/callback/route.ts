@@ -8,11 +8,16 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type')
   const next = searchParams.get('next') ?? '/buyer'
 
+  // Prevent open redirect attacks — only allow relative paths
+  const safeNext = (next.startsWith('/') && !next.startsWith('//'))
+    ? next
+    : '/buyer'
+
   const supabase = await createClient()
 
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) return NextResponse.redirect(`${origin}${next}`)
+    if (!error) return NextResponse.redirect(`${origin}${safeNext}`)
   }
 
   if (token_hash && type) {
@@ -20,7 +25,7 @@ export async function GET(request: NextRequest) {
       token_hash,
       type: type as any,
     })
-    if (!error) return NextResponse.redirect(`${origin}${next}`)
+    if (!error) return NextResponse.redirect(`${origin}${safeNext}`)
   }
 
   return NextResponse.redirect(`${origin}/login?error=auth_failed`)

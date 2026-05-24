@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -6,9 +7,13 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Minimal header */}
       <header className="bg-white border-b border-gray-100 px-4 h-14 flex items-center">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-white font-display font-800 text-xs">Z</span>
-          </div>
+          <Image
+            src="/zolarux_logo.png"
+            alt="Zolarux logo"
+            width={28}
+            height={28}
+            className="w-7 h-7 object-contain"
+          />
           <span className="font-display font-700 text-gray-900">Zolarux</span>
         </Link>
       </header>

@@ -102,25 +102,37 @@ export default function VendorRegisterPage() {
     setForm(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }))
   }
 
+  // Nigerian phone: 080x, 090x, 070x, 081x, +234... — 11 digits local or +234 + 10 digits
+  const isValidNigerianPhone = (phone: string) => {
+    const clean = phone.trim().replace(/[\s-]/g, '')
+    return /^(\+?234|0)[789][01]\d{8}$/.test(clean)
+  }
+
   const validateStep1 = () => {
-    if (!form.business_name) return 'Business name is required'
+    if (!form.business_name.trim()) return 'Business name is required'
     if (!form.category) return 'Select a category'
-    if (!form.phone_number) return 'Phone number is required'
-    if (!form.whatsapp_number) return 'WhatsApp number is required'
+    if (!form.phone_number.trim()) return 'Phone number is required'
+    if (!isValidNigerianPhone(form.phone_number)) return 'Enter a valid Nigerian phone number (e.g. 08012345678)'
+    if (!form.whatsapp_number.trim()) return 'WhatsApp number is required'
+    if (!isValidNigerianPhone(form.whatsapp_number)) return 'Enter a valid Nigerian WhatsApp number'
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return 'Enter a valid email address'
     return null
   }
 
   const validateStep2 = () => {
-    if (!form.owner_full_name) return 'Owner full name is required'
-    if (!form.nin_number) return 'NIN number is required'
-    if (!form.supplier_name) return 'Supplier name is required'
-    if (!form.business_description) return 'Business description is required'
+    if (!form.owner_full_name.trim()) return 'Owner full name is required'
+    if (!form.nin_number.trim()) return 'NIN number is required'
+    if (!/^\d{11}$/.test(form.nin_number.trim())) return 'NIN must be exactly 11 digits'
+    if (!form.supplier_name.trim()) return 'Supplier name is required'
+    if (!form.business_description.trim()) return 'Business description is required'
+    if (form.business_description.trim().length < 20) return 'Business description must be at least 20 characters'
     return null
   }
 
   const validateStep3 = () => {
-    if (!form.guarantor_name) return 'Guarantor name is required'
-    if (!form.guarantor_phone) return 'Guarantor phone is required'
+    if (!form.guarantor_name.trim()) return 'Guarantor name is required'
+    if (!form.guarantor_phone.trim()) return 'Guarantor phone is required'
+    if (!isValidNigerianPhone(form.guarantor_phone)) return 'Enter a valid Nigerian phone number for guarantor'
     if (!form.agrees_to_terms || !form.agrees_to_sop || !form.agrees_to_escrow) {
       return 'You must agree to all terms to proceed'
     }
@@ -258,11 +270,11 @@ export default function VendorRegisterPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Business Phone" required>
                   <input type="tel" value={form.phone_number} onChange={update('phone_number')}
-                    placeholder="08012345678" className={inputClass} />
+                    placeholder="08012345678" maxLength={15} className={inputClass} />
                 </Field>
                 <Field label="WhatsApp Number" required>
                   <input type="tel" value={form.whatsapp_number} onChange={update('whatsapp_number')}
-                    placeholder="08012345678" className={inputClass} />
+                    placeholder="08012345678" maxLength={15} className={inputClass} />
                 </Field>
               </div>
 
@@ -307,7 +319,7 @@ export default function VendorRegisterPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="NIN Number" required>
                   <input type="text" value={form.nin_number} onChange={update('nin_number')}
-                    placeholder="11-digit NIN" className={inputClass} />
+                    placeholder="11-digit NIN" maxLength={11} inputMode="numeric" className={inputClass} />
                 </Field>
                 <Field label="Additional ID Type">
                   <select value={form.id_type} onChange={update('id_type')} className={selectClass}>
@@ -370,7 +382,7 @@ export default function VendorRegisterPage() {
                 </Field>
                 <Field label="Guarantor Phone" required>
                   <input type="tel" value={form.guarantor_phone} onChange={update('guarantor_phone')}
-                    placeholder="Guarantor's phone number" className={inputClass} />
+                    placeholder="08012345678" maxLength={15} className={inputClass} />
                 </Field>
               </div>
 

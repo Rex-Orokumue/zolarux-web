@@ -4,6 +4,17 @@ import { createClient } from '@/lib/supabase/server'
 import { generateOrderRef, calculateProtectionFee } from '@/lib/utils'
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 20 orders per minute per IP
+  const { rateLimit, getClientIp } = await import('@/lib/rate-limit')
+  const ip = getClientIp(request.headers)
+  const { limited, resetIn } = rateLimit(`orders-create:${ip}`, 20, 60_000)
+  if (limited) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a moment.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(resetIn / 1000)) } }
+    )
+  }
+
   try {
     const body = await request.json()
     const {
@@ -21,7 +32,34 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!product_name || !vendor_id || !amount || !delivery_address) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+      const missing = [
+        !product_name && 'product_name',
+        !vendor_id && 'vendor_id',
+        !amount && 'amount',
+        !delivery_address && 'delivery_address',
+      ].filter(Boolean)
+      console.error('Order validation failed — missing fields:', missing, 'Body:', JSON.stringify({ product_name, vendor_id, amount, delivery_address: delivery_address?.slice?.(0, 20) }))
+      return NextResponse.json({ error: `Missing required fields: ${missing.join(', ')}` }, { status: 400 })
+    }
+
+    // Validate amount is a positive number within a reasonable range
+    const numAmount = Number(amount)
+    if (!Number.isFinite(numAmount) || numAmount <= 0 || numAmount > 50_000_000) {
+      console.error('Order validation failed — invalid amount:', amount)
+      return NextResponse.json({ error: 'Invalid order amount' }, { status: 400 })
+    }
+
+    // Validate delivery address (minimum 3 chars — e.g. "Aja" is valid)
+    const cleanAddress = String(delivery_address).trim().slice(0, 500)
+    if (cleanAddress.length < 3) {
+      console.error('Order validation failed — address too short:', cleanAddress)
+      return NextResponse.json({ error: 'Delivery address is too short' }, { status: 400 })
+    }
+
+    // Validate paystack reference format — allow alphanumeric, dashes, underscores, dots, tildes
+    if (paystack_reference && !/^[a-zA-Z0-9_.~-]{5,200}$/.test(String(paystack_reference))) {
+      console.error('Order validation failed — bad paystack ref:', paystack_reference)
+      return NextResponse.json({ error: 'Invalid payment reference format' }, { status: 400 })
     }
 
     // Try to get authenticated user — but don't block if session missing

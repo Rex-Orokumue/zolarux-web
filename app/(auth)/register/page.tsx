@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Shield, ArrowRight, Mail, User, Lock, Eye, EyeOff, CheckCircle } from 'lucide-react'
+import { Shield, ArrowRight, Mail, User, Lock, Eye, EyeOff, CheckCircle, RefreshCw } from 'lucide-react'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -15,6 +15,8 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [registered, setRegistered] = useState(false)
+  const [resending, setResending] = useState(false)
 
   const handleRegister = async () => {
     setError('')
@@ -67,9 +69,8 @@ export default function RegisterPage() {
       if (data.session) {
         router.push('/buyer')
       } else {
-        // Email confirmation required — show success
-        setError('')
-        router.push('/login?registered=true')
+        // Email confirmation required — show success inline
+        setRegistered(true)
       }
     } catch (e) {
       setError('Something went wrong. Please try again.')
@@ -77,6 +78,64 @@ export default function RegisterPage() {
       setLoading(false)
     }
   }
+
+  const handleResend = async () => {
+    setResending(true)
+    try {
+      const supabase = createClient()
+      await supabase.auth.resend({
+        type: 'signup',
+        email: email.trim().toLowerCase(),
+      })
+    } catch {}
+    setTimeout(() => setResending(false), 3000)
+  }
+
+  if (registered) {
+    return (
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-3xl shadow-card border border-gray-100 overflow-hidden">
+          <div className="bg-green-600 p-6 text-center">
+            <div className="w-14 h-14 bg-white/15 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Mail size={26} className="text-white" />
+            </div>
+            <h1 className="font-display text-2xl font-800 text-white">Check Your Email</h1>
+            <p className="text-white/80 text-sm mt-2">We've sent a verification link to</p>
+            <p className="text-white font-700 mt-1">{email}</p>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+              <div className="flex items-start gap-2">
+                <CheckCircle size={16} className="text-green-600 shrink-0 mt-0.5" />
+                <div className="text-sm text-green-800 space-y-1">
+                  <p className="font-700">Almost done!</p>
+                  <p>Click the link in the email to verify your account, then you can sign in.</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+              <p className="text-amber-700 text-xs">💡 Don't see it? Check your <strong>spam/junk folder</strong>. The email comes from <strong>noreply@zolarux.com.ng</strong></p>
+            </div>
+            <button
+              onClick={handleResend}
+              disabled={resending}
+              className="w-full border border-gray-200 text-gray-600 font-700 py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-sm"
+            >
+              <RefreshCw size={14} className={resending ? 'animate-spin' : ''} />
+              {resending ? 'Email resent!' : 'Resend verification email'}
+            </button>
+            <Link
+              href="/login"
+              className="w-full bg-primary text-white font-display font-700 py-3.5 rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 text-sm"
+            >
+              Go to Sign In <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
 
   return (
     <div className="w-full max-w-md">

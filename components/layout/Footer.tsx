@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Shield, MessageCircle } from 'lucide-react'
 
 const FOOTER_LINKS = {
@@ -42,9 +43,13 @@ export default function Footer() {
           {/* Brand column */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-display font-800 text-sm">Z</span>
-              </div>
+              <Image
+                src="/zolarux_logo.png"
+                alt="Zolarux logo"
+                width={32}
+                height={32}
+                className="w-8 h-8 object-contain"
+              />
               <span className="font-display font-700 text-white text-lg">Zolarux</span>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-xs">

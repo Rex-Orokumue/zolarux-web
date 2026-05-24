@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 30 verifications per minute per IP
+  const { rateLimit, getClientIp } = await import('@/lib/rate-limit')
+  const ip = getClientIp(request.headers)
+  const { limited, resetIn } = rateLimit(`paystack-verify:${ip}`, 30, 60_000)
+  if (limited) {
+    return NextResponse.json(
+      { error: 'Too many requests. Please wait a moment.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(resetIn / 1000)) } }
+    )
+  }
+
   try {
     const { reference } = await request.json()
 

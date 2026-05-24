@@ -43,16 +43,28 @@ export default function ContactPage() {
   const [form, setForm] = useState({ name: '', phone: '', subject: '', message: '' })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm(prev => ({ ...prev, [field]: e.target.value }))
+    if (error) setError('') // Clear error on input change
   }
 
   const handleSubmit = async () => {
-    if (!form.name || !form.phone || !form.message) return
+    if (!form.name.trim() || !form.phone.trim() || !form.message.trim()) {
+      setError('Please fill in your name, phone number, and message.')
+      return
+    }
+    // Nigerian phone validation
+    const cleanPhone = form.phone.trim().replace(/[\s-]/g, '')
+    if (!/^(\+?234|0)[789][01]\d{8}$/.test(cleanPhone)) {
+      setError('Enter a valid Nigerian phone number (e.g. 08012345678).')
+      return
+    }
+    setError('')
     setLoading(true)
     // Send via WhatsApp as fallback since no email server yet
-    const msg = `New contact form submission:\n\nName: ${form.name}\nPhone: ${form.phone}\nSubject: ${form.subject}\nMessage: ${form.message}`
+    const msg = `New contact form submission:\n\nName: ${form.name.trim()}\nPhone: ${form.phone.trim()}\nSubject: ${form.subject}\nMessage: ${form.message.trim()}`
     window.open(`https://wa.me/2347063107314?text=${encodeURIComponent(msg)}`, '_blank')
     await new Promise(r => setTimeout(r, 1000))
     setSubmitted(true)
@@ -162,6 +174,8 @@ export default function ContactPage() {
                           value={form.name}
                           onChange={update('name')}
                           placeholder="Your full name"
+                          required
+                          maxLength={100}
                           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                         />
                       </div>
@@ -172,6 +186,8 @@ export default function ContactPage() {
                           value={form.phone}
                           onChange={update('phone')}
                           placeholder="08012345678"
+                          required
+                          maxLength={15}
                           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                         />
                       </div>
@@ -202,9 +218,17 @@ export default function ContactPage() {
                         onChange={update('message')}
                         placeholder="Tell us how we can help you..."
                         rows={4}
+                        required
+                        maxLength={2000}
                         className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
                       />
                     </div>
+
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+                        <p className="text-red-600 text-sm">{error}</p>
+                      </div>
+                    )}
 
                     <div className="bg-primary-light rounded-xl p-3 flex items-start gap-2">
                       <Shield size={13} className="text-primary shrink-0 mt-0.5" />

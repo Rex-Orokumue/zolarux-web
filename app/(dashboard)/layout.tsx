@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient, getUser } from '@/lib/supabase/server'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Shield, ShoppingBag, Package, User, LogOut, Home, ShoppingCart, Heart } from 'lucide-react'
 
 const BUYER_NAV = [
@@ -35,9 +36,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <header className="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-display font-800 text-xs">Z</span>
-            </div>
+            <Image
+              src="/zolarux_logo.png"
+              alt="Zolarux logo"
+              width={28}
+              height={28}
+              className="w-7 h-7 object-contain"
+            />
             <span className="font-display font-700 text-gray-900 text-sm">Zolarux</span>
           </Link>
 

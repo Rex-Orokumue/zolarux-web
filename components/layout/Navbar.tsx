@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X, ChevronDown, Shield, Smartphone, Scan, Flag, Link2, ShoppingCart, UserCircle, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -111,9 +112,14 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-primary transition-shadow">
-              <span className="text-white font-display font-800 text-sm">Z</span>
-            </div>
+            <Image
+              src="/zolarux_logo.png"
+              alt="Zolarux logo"
+              width={32}
+              height={32}
+              className="w-8 h-8 object-contain group-hover:scale-110 transition-transform"
+              priority
+            />
             <span className="font-display font-700 text-gray-900 text-lg tracking-tight">
               Zolarux
             </span>

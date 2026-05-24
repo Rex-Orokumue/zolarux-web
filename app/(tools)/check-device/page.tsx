@@ -69,24 +69,40 @@ export default function CheckDevicePage() {
   const [record, setRecord] = useState<StolenRecord | null>(null)
 
   const handleCheck = async () => {
-    const q = query.trim()
-    if (!q) return
+    // Sanitize: trim, strip non-alphanumeric (IMEI/serial are alphanumeric only)
+    const q = query.trim().replace(/[^a-zA-Z0-9]/g, '')
+    if (!q || q.length < 5 || q.length > 20) return
     setLoading(true)
     setResultType(null)
     setRecord(null)
 
     try {
       const supabase = createClient()
-      const { data, error } = await supabase
+
+      // Use exact .eq() matches — IMEI/serial lookups should be precise
+      const { data: imeiData } = await supabase
         .from('stolen_registry')
         .select('*')
-        .or(`imei.ilike.%${q}%,serial_number.ilike.%${q}%`)
+        .eq('imei', q)
+        .limit(1)
+
+      if (imeiData && imeiData.length > 0) {
+        setResultType('stolen')
+        setRecord(imeiData[0] as StolenRecord)
+        return
+      }
+
+      // Try serial number match
+      const { data: serialData, error } = await supabase
+        .from('stolen_registry')
+        .select('*')
+        .eq('serial_number', q)
         .limit(1)
 
       if (error) { setResultType('error'); return }
-      if (data && data.length > 0) {
+      if (serialData && serialData.length > 0) {
         setResultType('stolen')
-        setRecord(data[0] as StolenRecord)
+        setRecord(serialData[0] as StolenRecord)
       } else {
         setResultType('clean')
       }
@@ -134,9 +150,10 @@ export default function CheckDevicePage() {
               <input
                 type="text"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => setQuery(e.target.value.replace(/[^a-zA-Z0-9]/g, ''))}
                 onKeyDown={(e) => e.key === 'Enter' && handleCheck()}
                 placeholder="e.g. 356938035643809"
+                maxLength={20}
                 className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
               />
               <button
