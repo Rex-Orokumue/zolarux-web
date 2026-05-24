@@ -5,7 +5,15 @@ const BASE_URL = 'https://zolarux.com.ng'
 const KEY = 'e3f724b193be4d85922d843d514366b5'
 const KEY_LOCATION = `${BASE_URL}/${KEY}.txt`
 
+export async function GET(request: Request) {
+  return handleRequest(request)
+}
+
 export async function POST(request: Request) {
+  return handleRequest(request)
+}
+
+async function handleRequest(request: Request) {
   // Optional security: check a secret token to prevent spam
   const { searchParams } = new URL(request.url)
   const token = searchParams.get('token')
