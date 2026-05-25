@@ -1,9 +1,12 @@
+// app/(marketing)/blog/[slug]/page.tsx
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { ArrowLeft, Calendar, User, Tag, ArrowRight, Shield } from 'lucide-react'
+import { ArrowLeft, Calendar, User, ArrowRight, Shield } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
+
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -14,12 +17,12 @@ interface BlogPost {
   slug: string
   title: string
   excerpt: string
-  content: string
+  body: string           // real column name (not 'content')
   category: string
-  author?: string
+  tags: string[]
+  author?: string | null
   published_at: string
-  cover_image?: string
-  is_published: boolean
+  cover_image?: string | null
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -30,46 +33,23 @@ const CATEGORY_COLORS: Record<string, string> = {
   'Education':    'bg-amber-50 text-amber-700',
 }
 
-const SAMPLE_POSTS: BlogPost[] = [
-  {
-    id: '1', slug: 'how-to-spot-fake-iphone-nigeria',
-    title: 'How to Spot a Fake iPhone Before You Pay',
-    excerpt: "Nigeria's phone market is flooded with clones. These six checks will help you verify any iPhone before sending a single naira.",
-    content: '', category: 'Guides', published_at: new Date().toISOString(), is_published: true,
-  },
-  {
-    id: '2', slug: '5-gadget-scams-nigerians-fall-for',
-    title: '5 Gadget Scams Nigerians Fall For Every Day',
-    excerpt: 'From fake IMEI numbers to "UK Used" refurbished phones, these are the most common scam tactics targeting Nigerian gadget buyers in 2026.',
-    content: '', category: 'Scam Alerts', published_at: new Date(Date.now() - 86400000 * 3).toISOString(), is_published: true,
-  },
-  {
-    id: '3', slug: 'what-is-escrow-and-why-it-matters',
-    title: 'What is Escrow and Why It Matters for Online Shopping',
-    excerpt: 'Most Nigerians have never heard of escrow payments. This simple guide explains what it is, how it works, and why it is the safest way to buy anything online.',
-    content: '', category: 'Education', published_at: new Date(Date.now() - 86400000 * 7).toISOString(), is_published: true,
-  },
-  {
-    id: '4', slug: 'zolarux-hits-2m-naira-transactions',
-    title: 'Zolarux Hits ₦2 Million in Protected Transactions',
-    excerpt: 'A milestone for trust infrastructure in Nigerian social commerce. Here is what we learned from protecting over 100 transactions across five years.',
-    content: '', category: 'News', published_at: new Date(Date.now() - 86400000 * 14).toISOString(), is_published: true,
-  },
-]
+function estimateReadTime(html: string): number {
+  const words = html.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length
+  return Math.max(1, Math.ceil(words / 200))
+}
 
 async function getPost(slug: string): Promise<BlogPost | null> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('blog_posts')
-    .select('*')
+    .select('id, slug, title, excerpt, body, category, tags, author, published_at, cover_image')
     .eq('slug', slug)
-    .eq('is_published', true)
+    .eq('published', true)       // real column name
+    .eq('site', 'zolarux')       // only Zolarux posts
     .single()
 
-  if (!error && data) return data as BlogPost
-
-  // Fall back to sample posts if not in DB yet
-  return SAMPLE_POSTS.find(p => p.slug === slug) || null
+  if (error || !data) return null
+  return data as BlogPost
 }
 
 async function getRelatedPosts(category: string, currentSlug: string): Promise<BlogPost[]> {
@@ -77,21 +57,44 @@ async function getRelatedPosts(category: string, currentSlug: string): Promise<B
   const { data } = await supabase
     .from('blog_posts')
     .select('id, slug, title, excerpt, category, published_at')
+    .eq('published', true)
+    .eq('site', 'zolarux')
     .eq('category', category)
-    .eq('is_published', true)
     .neq('slug', currentSlug)
+    .order('published_at', { ascending: false })
     .limit(3)
 
-  return (data as BlogPost[]) || []
+  return (data as BlogPost[]) ?? []
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const post = await getPost(slug)
   if (!post) return { title: 'Post Not Found' }
+
+  const image = post.cover_image || 'https://zolarux.com.ng/og-image.png'
+
   return {
-    title: post.title,
+    title: `${post.title} | Zolarux Blog`,
     description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      url: `https://zolarux.com.ng/blog/${slug}`,
+      type: 'article',
+      publishedTime: post.published_at,
+      authors: [post.author ?? 'Zolarux Team'],
+      images: [{ url: image, width: 1200, height: 627 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: [image],
+    },
+    alternates: {
+      canonical: `https://zolarux.com.ng/blog/${slug}`,
+    },
   }
 }
 
@@ -102,9 +105,11 @@ export default async function BlogPostPage({ params }: Props) {
 
   const related = await getRelatedPosts(post.category, slug)
   const categoryColor = CATEGORY_COLORS[post.category] || 'bg-gray-100 text-gray-600'
+  const readTime = estimateReadTime(post.body ?? '')
 
   return (
     <div className="bg-surface min-h-screen">
+
       {/* Hero */}
       <section className="bg-primary py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
@@ -136,6 +141,9 @@ export default async function BlogPostPage({ params }: Props) {
               <Calendar size={13} />
               <span>{formatDate(post.published_at)}</span>
             </div>
+            <div className="flex items-center gap-1.5">
+              <span>{readTime} min read</span>
+            </div>
           </div>
         </div>
       </section>
@@ -143,24 +151,50 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Content */}
       <section className="py-12">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
+
+          {/* Cover image (if exists, shown below hero) */}
+          {post.cover_image && (
+            <div className="mb-8 -mt-6 rounded-2xl overflow-hidden shadow-card">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={post.cover_image}
+                alt={post.title}
+                className="w-full max-h-[420px] object-cover"
+              />
+            </div>
+          )}
+
           <div className="bg-white rounded-3xl border border-gray-100 shadow-card p-8 sm:p-10">
+            {/* Excerpt pull-quote */}
             {post.excerpt && (
               <p className="text-lg text-gray-600 leading-relaxed mb-8 pb-8 border-b border-gray-100 font-500">
                 {post.excerpt}
               </p>
             )}
 
-            {post.content ? (
+            {/* Body — HTML from the CMS */}
+            {post.body ? (
               <div
-                className="prose prose-gray max-w-none prose-headings:font-display prose-headings:font-700 prose-a:text-primary prose-strong:text-gray-900"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                className="post-body"
+                dangerouslySetInnerHTML={{ __html: post.body }}
               />
             ) : (
               <div className="py-12 text-center">
-                <div className="w-12 h-12 bg-primary-light rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Tag size={20} className="text-primary" />
-                </div>
                 <p className="text-gray-400">Full article coming soon.</p>
+              </div>
+            )}
+
+            {/* Tags */}
+            {post.tags && post.tags.length > 0 && (
+              <div className="mt-8 pt-6 border-t border-gray-100 flex flex-wrap gap-2">
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-xs font-500 px-3 py-1 rounded-full bg-primary/8 text-primary border border-primary/15"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             )}
           </div>
@@ -170,8 +204,12 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="flex items-start gap-3">
               <Shield size={20} className="text-white shrink-0 mt-0.5" />
               <div>
-                <p className="font-display font-700 text-white">Stay safe — buy through Zolarux</p>
-                <p className="text-white/70 text-sm">Verified vendors. Escrow protection. Every transaction.</p>
+                <p className="font-display font-700 text-white">
+                  Stay safe — buy through Zolarux
+                </p>
+                <p className="text-white/70 text-sm">
+                  Verified vendors. Escrow protection. Every transaction.
+                </p>
               </div>
             </div>
             <Link
@@ -185,7 +223,9 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Related posts */}
           {related.length > 0 && (
             <div className="mt-10">
-              <h3 className="font-display text-xl font-800 text-gray-900 mb-5">Related Articles</h3>
+              <h3 className="font-display text-xl font-800 text-gray-900 mb-5">
+                Related Articles
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {related.map((rp) => (
                   <Link
@@ -193,7 +233,11 @@ export default async function BlogPostPage({ params }: Props) {
                     href={`/blog/${rp.slug}`}
                     className="group bg-white rounded-2xl border border-gray-100 shadow-card p-5 hover:shadow-card-hover hover:-translate-y-0.5 transition-all"
                   >
-                    <span className={`text-xs font-700 px-2 py-0.5 rounded-full ${CATEGORY_COLORS[rp.category] || 'bg-gray-100 text-gray-600'}`}>
+                    <span
+                      className={`text-xs font-700 px-2 py-0.5 rounded-full ${
+                        CATEGORY_COLORS[rp.category] || 'bg-gray-100 text-gray-600'
+                      }`}
+                    >
                       {rp.category}
                     </span>
                     <h4 className="font-display font-700 text-gray-900 text-sm mt-3 mb-2 group-hover:text-primary transition-colors leading-snug">

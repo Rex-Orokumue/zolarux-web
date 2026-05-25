@@ -139,3 +139,251 @@
     50%      { opacity: 1;   transform: scale(1.2); }
   }
 }
+
+/* ============================================================
+   Blog Post Body Styles  (.post-body)
+   Applied to the dangerouslySetInnerHTML blog content block
+   ============================================================ */
+@layer components {
+  /* Base prose */
+  .post-body {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.85;
+    color: #374151;
+  }
+
+  .post-body p {
+    margin-bottom: 1.4rem;
+  }
+
+  .post-body h2 {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #111827;
+    margin: 2.5rem 0 1rem;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .post-body h3 {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 2rem 0 0.75rem;
+    line-height: 1.3;
+  }
+
+  .post-body hr {
+    border: none;
+    border-top: 1px solid #E5E7EB;
+    margin: 2.5rem 0;
+  }
+
+  .post-body strong {
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .post-body a {
+    color: #4064D7;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+  .post-body a:hover {
+    color: #2E4FBF;
+  }
+
+  /* Blockquote */
+  .post-body blockquote {
+    border-left: 3px solid #4064D7;
+    margin: 2rem 0;
+    padding: 0.75rem 0 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    font-style: italic;
+    line-height: 1.65;
+    color: #4064D7;
+    background: #EEF2FF;
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* Aside / callout */
+  .post-body aside {
+    background: #FFF8E6;
+    border-left: 3px solid #FF6600;
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    margin: 2rem 0;
+    font-size: 0.95rem;
+    color: #92400E;
+    line-height: 1.7;
+  }
+
+  /* Standard lists */
+  .post-body ul,
+  .post-body ol {
+    margin: 1rem 0 1.5rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .post-body ul li {
+    list-style: disc;
+    padding-left: 0.25rem;
+  }
+  .post-body ol li {
+    list-style: decimal;
+    padding-left: 0.25rem;
+  }
+
+  /* Feature list — arrow cards */
+  .post-body .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 1.75rem 0 2rem;
+  }
+
+  .post-body .feature-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 18px;
+    background: #EEF2FF;
+    border-radius: 8px;
+    border-left: 3px solid #4064D7;
+    border-top: 1px solid #D4DCFA;
+    border-right: 1px solid #D4DCFA;
+    border-bottom: 1px solid #D4DCFA;
+  }
+
+  .post-body .feature-item .arrow {
+    color: #4064D7;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+
+  .post-body .feature-item p {
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #374151;
+  }
+
+  .post-body .feature-item strong {
+    color: #111827;
+  }
+
+  /* Highlight box */
+  .post-body .highlight {
+    background: #EEF2FF;
+    border-top: 3px solid #4064D7;
+    border-radius: 0 0 8px 8px;
+    padding: 1.4rem 1.6rem;
+    margin: 2rem 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #374151;
+  }
+
+  .post-body .highlight p {
+    margin-bottom: 0;
+  }
+
+  /* Body CTA block */
+  .post-body .body-cta {
+    margin: 3rem 0 1rem;
+    padding: 2rem 2.25rem;
+    background: #4064D7;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .post-body .body-cta::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -10%;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.08), transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
+  }
+
+  .post-body .body-cta h3 {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 8px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .post-body .body-cta p {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 18px;
+    line-height: 1.65;
+  }
+
+  .post-body .body-cta a {
+    display: inline-block;
+    background: #ffffff;
+    color: #4064D7;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .post-body .body-cta a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    color: #4064D7;
+  }
+
+  /* Images inside post body */
+  .post-body img {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    margin: 1.5rem 0;
+  }
+
+  /* Code */
+  .post-body code {
+    font-size: 0.875em;
+    background: #EEF2FF;
+    color: #4064D7;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+
+  .post-body pre {
+    background: #111827;
+    color: #E5E7EB;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    margin: 1.5rem 0;
+  }
+
+  .post-body pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+}
