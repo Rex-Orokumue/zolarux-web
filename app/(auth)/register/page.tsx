@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Shield, ArrowRight, Mail, User, Lock, Eye, EyeOff, CheckCircle, RefreshCw, Gift, Tag } from 'lucide-react'
 import { generateReferralCode } from '@/lib/referral'
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -368,5 +368,17 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="w-full max-w-md flex justify-center items-center py-12">
+        <RefreshCw size={24} className="animate-spin text-primary" />
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   )
 }
