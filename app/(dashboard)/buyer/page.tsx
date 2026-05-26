@@ -11,6 +11,8 @@ import { createClient } from '@/lib/supabase/client'
 import { formatPrice, formatDate } from '@/lib/utils'
 import type { Order } from '@/types/order'
 import ReferralWidget from '@/components/dashboard/ReferralWidget'
+import ReviewableOrders from '@/components/reviews/ReviewableOrders'
+import BuyerReviewsList from '@/components/reviews/BuyerReviewsList'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof Clock }> = {
   'pending':                      { label: 'Pending',      color: 'text-amber-600 bg-amber-50',   icon: Clock },
@@ -203,6 +205,16 @@ export default function BuyerDashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Reviewable Orders */}
+      {user && (
+        <ReviewableOrders buyerId={user.id} />
+      )}
+
+      {/* My Reviews */}
+      {user && (
+        <BuyerReviewsList buyerId={user.id} />
+      )}
 
       {/* Referral Widget */}
       {user && (

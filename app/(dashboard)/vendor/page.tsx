@@ -15,6 +15,7 @@ import { createClient } from '@/lib/supabase/client'
 import { formatPrice, formatDate } from '@/lib/utils'
 import type { Order } from '@/types/order'
 import ReferralWidget from '@/components/dashboard/ReferralWidget'
+import VendorReviewsWidget from '@/components/reviews/VendorReviewsWidget'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -402,6 +403,11 @@ export default function VendorDashboardPage() {
       {/* Referral Widget */}
       {user && vendor && (
         <ReferralWidget userId={user.id} userType="vendor" />
+      )}
+
+      {/* Reviews & Ratings */}
+      {vendor && (
+        <VendorReviewsWidget vendorId={vendor.vendor_id} />
       )}
 
       {/* Recent Orders */}

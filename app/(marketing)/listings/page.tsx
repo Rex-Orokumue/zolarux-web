@@ -47,7 +47,6 @@ async function getProducts(category: string, page: number, vendor?: string): Pro
     return { products: [], total: 0 }
   }
 
-  // Sort gadget-related categories to the top
   const products = (data as Product[]) || []
   const sorted = [
     ...products.filter(p => GADGET_CATEGORIES.some(g => p.category?.toLowerCase().includes(g))),
@@ -57,6 +56,22 @@ async function getProducts(category: string, page: number, vendor?: string): Pro
   return { products: sorted, total: count || 0 }
 }
 
+// Fetch vendor rating for a given vendor_id
+async function getVendorRatings(vendorIds: string[]): Promise<Record<string, { avg_rating: number; review_count: number }>> {
+  if (vendorIds.length === 0) return {}
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('vendors')
+    .select('vendor_id, avg_rating, review_count')
+    .in('vendor_id', vendorIds)
+
+  const map: Record<string, { avg_rating: number; review_count: number }> = {}
+  ;(data || []).forEach((v: { vendor_id: string; avg_rating: number; review_count: number }) => {
+    map[v.vendor_id] = { avg_rating: v.avg_rating ?? 0, review_count: v.review_count ?? 0 }
+  })
+  return map
+}
+
 export default async function ListingsPage({ searchParams }: ListingsPageProps) {
   const params = await searchParams
   const activeCategory = params.category || 'All'
@@ -64,6 +79,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
   const vendorFilter = params.vendor || ''
   const { products, total } = await getProducts(activeCategory, currentPage, vendorFilter)
   const totalPages = Math.ceil(total / PAGE_SIZE)
+
+  // Fetch vendor ratings for all products on this page
+  const vendorIds = [...new Set(products.map(p => p.vendor_id).filter(Boolean))]
+  const vendorRatings = await getVendorRatings(vendorIds)
 
   return (
     <div>
@@ -143,7 +162,12 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    avgRating={vendorRatings[product.vendor_id]?.avg_rating ?? 0}
+                    reviewCount={vendorRatings[product.vendor_id]?.review_count ?? 0}
+                  />
                 ))}
               </div>
 
@@ -222,7 +246,15 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
   )
 }
 
-function ProductCard({ product }: { product: Product }) {
+function ProductCard({
+  product,
+  avgRating,
+  reviewCount,
+}: {
+  product: Product
+  avgRating: number
+  reviewCount: number
+}) {
   const imageUrl = product.main_image_url || product.image_url || (product.image_urls?.[0]) || null
   const whatsappMsg = `Hi, I'm interested in "${product.name}" on Zolarux. Can I get more details?`
 
@@ -259,7 +291,18 @@ function ProductCard({ product }: { product: Product }) {
             {product.name}
           </h3>
         </Link>
-        <p className="text-xs text-gray-400 mb-3">{product.category}</p>
+        <p className="text-xs text-gray-400 mb-2">{product.category}</p>
+
+        {/* Star rating — only if vendor has reviews */}
+        {avgRating > 0 && (
+          <div className="flex items-center gap-1 mb-2">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="#FFA600">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+            <span className="text-xs font-700 text-amber-600">{avgRating.toFixed(1)}</span>
+            <span className="text-xs text-gray-400">({reviewCount})</span>
+          </div>
+        )}
 
         <div className="flex items-center justify-between">
           <div>

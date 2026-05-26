@@ -1,16 +1,17 @@
-import type { Metadata } from 'next'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
-import { Shield, CheckCircle, Search, ArrowRight, AlertTriangle } from 'lucide-react'
+import { Shield, CheckCircle, Search, ArrowRight, AlertTriangle, X } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { StarBadge } from '@/components/reviews/StarRating'
+import VendorPublicReviews from '@/components/reviews/VendorPublicReviews'
 import type { Vendor } from '@/types/vendor'
 
-export const metadata: Metadata = {
-  title: 'Verified Vendors',
-  description: 'Browse all Zolarux-verified gadget vendors in Nigeria. Every vendor has passed our identity, business, and supplier verification process.',
-}
+// ── Data fetch ────────────────────────────────────────────────────────────────
 
 async function getVerifiedVendors(): Promise<Vendor[]> {
-  const supabase = await createClient()
+  const supabase = createClient()
   const { data, error } = await supabase
     .from('vendors')
     .select('*')
@@ -25,8 +26,155 @@ async function getVerifiedVendors(): Promise<Vendor[]> {
   return (data as Vendor[]) || []
 }
 
-export default async function VerifiedVendorsPage() {
-  const vendors = await getVerifiedVendors()
+// ── Reviews Drawer ────────────────────────────────────────────────────────────
+
+function VendorReviewsDrawer({
+  vendor,
+  onClose,
+}: {
+  vendor: Vendor
+  onClose: () => void
+}) {
+  // Lock body scroll while open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* Panel */}
+      <div className="fixed inset-y-0 right-0 w-full max-w-lg bg-white z-50 shadow-2xl flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+          <div>
+            <h2 className="font-display font-800 text-gray-900">{vendor.business_name}</h2>
+            <p className="text-xs text-gray-400 mt-0.5">Customer Reviews</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+          >
+            <X size={15} className="text-gray-600" />
+          </button>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto px-6 py-5">
+          <VendorPublicReviews vendorId={vendor.vendor_id} />
+        </div>
+      </div>
+    </>
+  )
+}
+
+// ── Vendor Card ───────────────────────────────────────────────────────────────
+
+function VendorCard({ vendor }: { vendor: Vendor }) {
+  const [showReviews, setShowReviews] = useState(false)
+
+  return (
+    <>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
+        {/* Header */}
+        <div className="bg-primary px-5 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+              <span className="font-display font-800 text-white">
+                {vendor.business_name?.[0]?.toUpperCase() || 'V'}
+              </span>
+            </div>
+            <div>
+              <p className="font-display font-700 text-white text-sm leading-tight">
+                {vendor.business_name}
+              </p>
+              <p className="text-white/60 text-xs font-mono">{vendor.vendor_id}</p>
+            </div>
+          </div>
+          <div className="bg-green-500 rounded-full p-1">
+            <CheckCircle size={14} className="text-white" />
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="p-5">
+          {/* Badges */}
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
+            <span className="bg-primary-light text-primary text-xs font-700 px-2.5 py-1 rounded-full">
+              {vendor.business_category}
+            </span>
+            <span className="bg-green-50 text-green-700 text-xs font-700 px-2.5 py-1 rounded-full">
+              Verified
+            </span>
+            {(vendor.avg_rating ?? 0) > 0 && (
+              <StarBadge rating={vendor.avg_rating ?? 0} count={vendor.review_count} />
+            )}
+          </div>
+
+          {/* Trust score */}
+          {vendor.risk_score != null && (
+            <div className="mb-4">
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-gray-500">Trust Score</span>
+                <span className="font-700 text-green-600">{vendor.risk_score}/100</span>
+              </div>
+              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-green-500 rounded-full transition-all"
+                  style={{ width: `${vendor.risk_score}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex flex-col gap-2">
+            <Link
+              href={`/listings?vendor=${vendor.vendor_id}`}
+              className="w-full flex items-center justify-center gap-2 border border-primary-100 text-primary text-sm font-700 py-2.5 rounded-xl hover:bg-primary-light transition-all"
+            >
+              View Their Listings <ArrowRight size={13} />
+            </Link>
+
+            {(vendor.review_count ?? 0) > 0 && (
+              <button
+                onClick={() => setShowReviews(true)}
+                className="w-full flex items-center justify-center gap-2 bg-amber-50 border border-amber-100 text-amber-700 text-sm font-700 py-2.5 rounded-xl hover:bg-amber-100 transition-all"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFA600">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                Read {vendor.review_count} Review{vendor.review_count !== 1 ? 's' : ''}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {showReviews && (
+        <VendorReviewsDrawer vendor={vendor} onClose={() => setShowReviews(false)} />
+      )}
+    </>
+  )
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
+export default function VerifiedVendorsPage() {
+  const [vendors, setVendors] = useState<Vendor[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getVerifiedVendors()
+      .then(setVendors)
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <div>
@@ -49,7 +197,7 @@ export default async function VerifiedVendorsPage() {
         </div>
       </section>
 
-      {/* Verification standard explainer */}
+      {/* Verification standard */}
       <div className="bg-green-50 border-b border-green-100 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-wrap items-center gap-6">
@@ -72,8 +220,13 @@ export default async function VerifiedVendorsPage() {
       {/* Vendor grid */}
       <section className="py-12 bg-surface min-h-[50vh]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-
-          {vendors.length === 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-card animate-pulse h-64" />
+              ))}
+            </div>
+          ) : vendors.length === 0 ? (
             <div className="text-center py-24">
               <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield size={24} className="text-primary" />
@@ -116,7 +269,7 @@ export default async function VerifiedVendorsPage() {
         </div>
       </section>
 
-      {/* Not listed warning */}
+      {/* Warning */}
       <section className="py-10 bg-white border-t border-gray-100">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex items-start gap-3">
@@ -152,66 +305,6 @@ export default async function VerifiedVendorsPage() {
           </Link>
         </div>
       </section>
-    </div>
-  )
-}
-
-function VendorCard({ vendor }: { vendor: Vendor }) {
-  return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
-      {/* Header */}
-      <div className="bg-primary px-5 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-            <span className="font-display font-800 text-white">
-              {vendor.business_name?.[0]?.toUpperCase() || 'V'}
-            </span>
-          </div>
-          <div>
-            <p className="font-display font-700 text-white text-sm leading-tight">
-              {vendor.business_name}
-            </p>
-            <p className="text-white/60 text-xs font-mono">{vendor.vendor_id}</p>
-          </div>
-        </div>
-        <div className="bg-green-500 rounded-full p-1">
-          <CheckCircle size={14} className="text-white" />
-        </div>
-      </div>
-
-      {/* Body */}
-      <div className="p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="bg-primary-light text-primary text-xs font-700 px-2.5 py-1 rounded-full">
-            {vendor.business_category}
-          </span>
-          <span className="bg-green-50 text-green-700 text-xs font-700 px-2.5 py-1 rounded-full">
-            Verified
-          </span>
-        </div>
-
-        {vendor.risk_score != null && (
-          <div className="mb-4">
-            <div className="flex justify-between text-xs mb-1">
-              <span className="text-gray-500">Trust Score</span>
-              <span className="font-700 text-green-600">{vendor.risk_score}/100</span>
-            </div>
-            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-green-500 rounded-full transition-all"
-                style={{ width: `${vendor.risk_score}%` }}
-              />
-            </div>
-          </div>
-        )}
-
-        <Link
-          href={`/listings?vendor=${vendor.vendor_id}`}
-          className="w-full flex items-center justify-center gap-2 border border-primary-100 text-primary text-sm font-700 py-2.5 rounded-xl hover:bg-primary-light transition-all"
-        >
-          View Their Listings <ArrowRight size={13} />
-        </Link>
-      </div>
     </div>
   )
 }

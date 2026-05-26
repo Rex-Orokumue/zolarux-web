@@ -6,6 +6,7 @@ import { formatPrice, calculateProtectionFee } from '@/lib/utils'
 import { Shield, ArrowLeft, CheckCircle, Lock, MessageCircle, Info } from 'lucide-react'
 import type { Product } from '@/types/product'
 import ListingActions from './ListingActions'
+import ListingReviews from '@/components/reviews/ListingReviews'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -38,13 +39,11 @@ export default async function ListingDetailPage({ params }: Props) {
   const product = await getProduct(id)
   if (!product) notFound()
 
-  const supabase = await createClient()
   const { data: { user } } = await getUser()
 
   const imageUrl = product.main_image_url || product.image_url || product.image_urls?.[0] || null
   const allImages = [imageUrl, ...(product.image_urls || [])].filter(Boolean) as string[]
   const protectionFee = product.pricing_type === 'fixed' ? calculateProtectionFee(product.price) : 2000
-  const whatsappMsg = `Hi, I want to buy "${product.name}" on Zolarux. Can you help me start the escrow process?`
 
   return (
     <div className="py-10 bg-surface min-h-screen">
@@ -134,7 +133,7 @@ export default async function ListingDetailPage({ params }: Props) {
               </div>
             </div>
 
-            {/* Action buttons — client component */}
+            {/* Action buttons */}
             <ListingActions
               product={product}
               protectionFee={protectionFee}
@@ -162,6 +161,17 @@ export default async function ListingDetailPage({ params }: Props) {
             </Link>
           </div>
         </div>
+
+        {/* Reviews section */}
+        {product.vendor_id && (
+          <div className="mt-16 border-t border-gray-100 pt-12">
+            <ListingReviews
+              vendorId={product.vendor_id}
+              listingId={product.id}
+              listingTitle={product.name}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
