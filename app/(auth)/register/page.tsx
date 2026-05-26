@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -23,6 +23,10 @@ function RegisterForm() {
   const [error, setError]                     = useState('')
   const [registered, setRegistered]           = useState(false)
   const [resending, setResending]             = useState(false)
+  const [otpCode, setOtpCode]                 = useState(['', '', '', '', '', ''])
+  const [verifying, setVerifying]             = useState(false)
+  const [otpError, setOtpError]               = useState('')
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([])
 
   // Pre-fill referral code from URL: /register?ref=ZLXABC12
   useEffect(() => {
@@ -142,6 +146,27 @@ function RegisterForm() {
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    setError('')
+    setLoading(true)
+    try {
+      const supabase = createClient()
+      const { error: oAuthErr } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/api/auth/callback?next=/buyer${referralCode.trim() ? `&ref=${referralCode.trim().toUpperCase()}` : ''}`,
+        },
+      })
+      if (oAuthErr) {
+        setError(oAuthErr.message)
+        setLoading(false)
+      }
+    } catch (e) {
+      setError('Failed to initiate Google sign up.')
+      setLoading(false)
+    }
+  }
+
   const handleResend = async () => {
     setResending(true)
     try {
@@ -151,7 +176,65 @@ function RegisterForm() {
     setTimeout(() => setResending(false), 3000)
   }
 
-  // ─── Email verify screen ───────────────────────────────────────────────────
+  // ─── OTP helpers ──────────────────────────────────────────────────────────
+  const handleOtpChange = (idx: number, value: string) => {
+    if (!/^\d*$/.test(value)) return // digits only
+    const next = [...otpCode]
+    next[idx] = value.slice(-1)
+    setOtpCode(next)
+    setOtpError('')
+    // auto-advance
+    if (value && idx < 5) otpRefs.current[idx + 1]?.focus()
+    // auto-submit when all 6 filled
+    if (next.every((d) => d !== '')) handleVerifyOtp(next.join(''))
+  }
+
+  const handleOtpKeyDown = (idx: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !otpCode[idx] && idx > 0) {
+      otpRefs.current[idx - 1]?.focus()
+    }
+  }
+
+  const handleOtpPaste = (e: React.ClipboardEvent) => {
+    e.preventDefault()
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    if (!pasted) return
+    const next = [...otpCode]
+    for (let i = 0; i < 6; i++) next[i] = pasted[i] || ''
+    setOtpCode(next)
+    setOtpError('')
+    const focusIdx = Math.min(pasted.length, 5)
+    otpRefs.current[focusIdx]?.focus()
+    if (next.every((d) => d !== '')) handleVerifyOtp(next.join(''))
+  }
+
+  const handleVerifyOtp = async (token: string) => {
+    setVerifying(true)
+    setOtpError('')
+    try {
+      const supabase = createClient()
+      const { error: verifyErr } = await supabase.auth.verifyOtp({
+        email: email.trim().toLowerCase(),
+        token,
+        type: 'signup',
+      })
+      if (verifyErr) {
+        setOtpError(verifyErr.message.includes('expired')
+          ? 'Code expired. Click "Resend" to get a new one.'
+          : 'Invalid code. Check your email and try again.')
+        setOtpCode(['', '', '', '', '', ''])
+        otpRefs.current[0]?.focus()
+      } else {
+        router.push('/buyer')
+      }
+    } catch {
+      setOtpError('Something went wrong. Please try again.')
+    } finally {
+      setVerifying(false)
+    }
+  }
+
+  // ─── Email verify / OTP screen ────────────────────────────────────────────
 
   if (registered) {
     return (
@@ -161,40 +244,75 @@ function RegisterForm() {
             <div className="w-14 h-14 bg-white/15 rounded-full flex items-center justify-center mx-auto mb-3">
               <Mail size={26} className="text-white" />
             </div>
-            <h1 className="font-display text-2xl font-800 text-white">Check Your Email</h1>
-            <p className="text-white/80 text-sm mt-2">We've sent a verification link to</p>
+            <h1 className="font-display text-2xl font-800 text-white">Verify Your Email</h1>
+            <p className="text-white/80 text-sm mt-2">We sent a 6-digit code to</p>
             <p className="text-white font-700 mt-1">{email}</p>
           </div>
-          <div className="p-6 space-y-4">
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-              <div className="flex items-start gap-2">
-                <CheckCircle size={16} className="text-green-600 shrink-0 mt-0.5" />
-                <div className="text-sm text-green-800 space-y-1">
-                  <p className="font-700">Almost done!</p>
-                  <p>Click the link in the email to verify your account, then you can sign in.</p>
-                </div>
-              </div>
+          <div className="p-6 space-y-5">
+            {/* OTP inputs */}
+            <div className="flex justify-center gap-2.5" onPaste={handleOtpPaste}>
+              {otpCode.map((digit, idx) => (
+                <input
+                  key={idx}
+                  ref={(el) => { otpRefs.current[idx] = el }}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(idx, e.target.value)}
+                  onKeyDown={(e) => handleOtpKeyDown(idx, e)}
+                  className={`w-12 h-14 text-center text-xl font-800 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                    otpError
+                      ? 'border-red-300 focus:ring-red-200 focus:border-red-400'
+                      : digit
+                      ? 'border-primary focus:ring-primary/30 bg-primary/5'
+                      : 'border-gray-200 focus:ring-primary/30 focus:border-primary'
+                  }`}
+                  autoFocus={idx === 0}
+                />
+              ))}
             </div>
+
+            {verifying && (
+              <div className="flex items-center justify-center gap-2 text-primary text-sm">
+                <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                Verifying...
+              </div>
+            )}
+
+            {otpError && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-red-600 text-sm text-center">
+                {otpError}
+              </div>
+            )}
+
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
               <p className="text-amber-700 text-xs">
                 💡 Don't see it? Check your <strong>spam/junk folder</strong>. The email comes from{' '}
                 <strong>noreply@zolarux.com.ng</strong>
               </p>
             </div>
+
             <button
               onClick={handleResend}
               disabled={resending}
               className="w-full border border-gray-200 text-gray-600 font-700 py-3 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-sm"
             >
               <RefreshCw size={14} className={resending ? 'animate-spin' : ''} />
-              {resending ? 'Email resent!' : 'Resend verification email'}
+              {resending ? 'Code resent!' : 'Resend verification code'}
             </button>
-            <Link
-              href="/login"
-              className="w-full bg-primary text-white font-display font-700 py-3.5 rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 text-sm"
+
+            <button
+              onClick={() => handleVerifyOtp(otpCode.join(''))}
+              disabled={verifying || otpCode.some((d) => !d)}
+              className="w-full bg-primary text-white font-display font-700 py-3.5 rounded-xl hover:bg-primary-dark transition-all flex items-center justify-center gap-2 disabled:opacity-60 text-sm"
             >
-              Go to Sign In <ArrowRight size={16} />
-            </Link>
+              {verifying ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>Verify & Continue <ArrowRight size={16} /></>
+              )}
+            </button>
           </div>
         </div>
       </div>
@@ -351,6 +469,30 @@ function RegisterForm() {
             ) : (
               <>Create Account <ArrowRight size={16} /></>
             )}
+          </button>
+
+          {/* Divider */}
+          <div className="relative flex py-2 items-center">
+            <div className="flex-grow border-t border-gray-200"></div>
+            <span className="flex-shrink mx-4 text-gray-400 text-xs uppercase font-600">Or continue with</span>
+            <div className="flex-grow border-t border-gray-200"></div>
+          </div>
+
+          {/* Google Button */}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className="w-full border border-gray-200 text-gray-700 bg-white font-600 py-3.5 rounded-xl hover:bg-gray-50 active:scale-95 transition-all flex items-center justify-center gap-2.5"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+              <g transform="matrix(1, 0, 0, 1, 0, 0)">
+                <path d="M21.35,11.1H12v2.7h5.38c-0.24,1.28 -0.96,2.37 -2.04,3.1v2.6h3.29c1.92,-1.78 3.02,-4.4 3.02,-7.4C21.65,11.9 21.55,11.5 21.35,11.1z" fill="#4285F4" />
+                <path d="M12,20.5c2.43,0 4.47,-0.8 5.96,-2.2l-3.29,-2.6c-0.9,0.6 -2.07,0.98 -3.37,0.98 -2.36,0 -4.36,-1.6 -5.07,-3.7H2.84v2.7C4.33,18.7 7.94,20.5 12,20.5z" fill="#34A853" />
+                <path d="M6.93,12.98c-0.18,-0.5 -0.28,-1.1 -0.28,-1.7c0,-0.6 0.1,-1.2 0.28,-1.7V6.88H2.84c-0.62,1.2 -0.98,2.6 -0.98,4.1s0.36,2.9 0.98,4.1L6.93,12.98z" fill="#FBBC05" />
+                <path d="M12,6.82c1.32,0 2.5,0.45 3.44,1.35l2.58,-2.6C16.46,4.02 14.42,3.2 12,3.2c-4.06,0 -7.67,1.8 -9.16,4.78l4.09,3.2c0.71,-2.1 2.71,-3.7 5.07,-3.7z" fill="#EA4335" />
+              </g>
+            </svg>
+            Google
           </button>
 
           <div className="mt-6 pt-5 border-t border-gray-100 text-center space-y-2">
