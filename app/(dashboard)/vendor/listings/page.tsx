@@ -1,7 +1,7 @@
 import { createClient, getUser } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Plus, ShoppingBag, Edit, Eye, ArrowRight } from 'lucide-react'
+import { Plus, ShoppingBag, Edit, Eye, ArrowRight, Play } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
 import type { Product } from '@/types/product'
 
@@ -70,12 +70,22 @@ export default async function VendorListingsPage() {
         <div className="space-y-3">
           {products.map((product) => {
             const imageUrl = product.main_image_url || product.image_url || product.image_urls?.[0]
+            const videoUrl = !imageUrl ? product.video_urls?.[0] : null
             return (
               <div key={product.id} className="bg-white rounded-2xl border border-gray-100 shadow-card flex items-center gap-4 p-4">
                 {/* Image */}
-                <div className="w-14 h-14 rounded-xl bg-surface overflow-hidden shrink-0">
+                <div className="relative w-14 h-14 rounded-xl bg-surface overflow-hidden shrink-0">
                   {imageUrl ? (
                     <img src={imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                  ) : videoUrl ? (
+                    <>
+                      <video src={videoUrl} muted playsInline preload="metadata" className="w-full h-full object-cover pointer-events-none" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded-full bg-black/45 flex items-center justify-center">
+                          <Play size={11} className="text-white translate-x-0.5" fill="currentColor" />
+                        </div>
+                      </div>
+                    </>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <ShoppingBag size={18} className="text-gray-300" />

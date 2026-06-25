@@ -314,6 +314,7 @@ export default function NewListingPage() {
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-600">₦</span>
                   <input type="number" value={form.price} onChange={update('price')}
+                    onWheel={(e) => e.currentTarget.blur()}
                     placeholder="0.00" className={`${inputClass} pl-8`} min="0" />
                 </div>
               </div>

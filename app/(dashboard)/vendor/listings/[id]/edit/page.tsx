@@ -328,6 +328,7 @@ export default function EditListingPage() {
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-600">₦</span>
                   <input type="number" value={price} onChange={e => setPrice(e.target.value)}
+                    onWheel={(e) => e.currentTarget.blur()}
                     className={`${inputClass} pl-8`} min="0" />
                 </div>
               </div>
