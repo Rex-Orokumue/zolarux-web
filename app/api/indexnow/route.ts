@@ -14,12 +14,19 @@ export async function POST(request: Request) {
 }
 
 async function handleRequest(request: Request) {
-  // Optional security: check a secret token to prevent spam
-  const { searchParams } = new URL(request.url)
-  const token = searchParams.get('token')
-  const cronSecret = process.env.CRON_SECRET || 'zolarux-indexnow-secret-2026'
-  
-  if (token !== cronSecret) {
+  // Verify the cron secret from the Authorization header.
+  // Vercel sends: Authorization: Bearer <CRON_SECRET>
+  // Set CRON_SECRET in your Vercel project environment variables.
+  const cronSecret = process.env.CRON_SECRET
+  if (!cronSecret) {
+    console.error('CRON_SECRET env var is not set')
+    return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 })
+  }
+
+  const authHeader = request.headers.get('authorization')
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
+
+  if (!token || token !== cronSecret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

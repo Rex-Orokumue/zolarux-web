@@ -89,6 +89,13 @@ const selectClass = `${inputClass} bg-white`
 export default function VendorRegisterPage() {
   const [step, setStep] = useState<Step>(1)
   const [form, setForm] = useState<VendorForm>(INITIAL_FORM)
+  const [categories, setCategories] = useState<string[]>([])
+
+  const toggleCategory = (cat: string) => {
+    setCategories(prev =>
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    )
+  }
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [reference, setReference] = useState('')
@@ -110,7 +117,7 @@ export default function VendorRegisterPage() {
 
   const validateStep1 = () => {
     if (!form.business_name.trim()) return 'Business name is required'
-    if (!form.category) return 'Select a category'
+    if (categories.length === 0) return 'Select at least one category'
     if (!form.phone_number.trim()) return 'Phone number is required'
     if (!isValidNigerianPhone(form.phone_number)) return 'Enter a valid Nigerian phone number (e.g. 08012345678)'
     if (!form.whatsapp_number.trim()) return 'WhatsApp number is required'
@@ -156,7 +163,7 @@ export default function VendorRegisterPage() {
       const res = await fetch('/api/vendor-apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, category: categories.join(', ') }),
       })
 
       const data = await res.json()
@@ -168,7 +175,7 @@ export default function VendorRegisterPage() {
       const ref = data.reference
 
       // Send WhatsApp backup
-      const summary = `New Vendor Application:\n\nRef: ${ref}\nBusiness: ${form.business_name}\nCategory: ${form.category}\nPhone: ${form.phone_number}\nWhatsApp: ${form.whatsapp_number}\nOwner: ${form.owner_full_name}\nNIN: ${form.nin_number}\nSupplier: ${form.supplier_name}`
+      const summary = `New Vendor Application:\n\nRef: ${ref}\nBusiness: ${form.business_name}\nCategory: ${categories.join(', ')}\nPhone: ${form.phone_number}\nWhatsApp: ${form.whatsapp_number}\nOwner: ${form.owner_full_name}\nNIN: ${form.nin_number}\nSupplier: ${form.supplier_name}`
       window.open(`https://wa.me/2347063107314?text=${encodeURIComponent(summary)}`, '_blank')
 
       setReference(ref)
@@ -213,12 +220,23 @@ export default function VendorRegisterPage() {
               </div>
             ))}
           </div>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 bg-primary text-white font-700 px-6 py-3 rounded-xl hover:bg-primary-dark transition-all"
-          >
-            Back to Home <ArrowRight size={16} />
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/vendor/activate"
+              className="inline-flex items-center gap-2 bg-primary text-white font-700 px-6 py-3 rounded-xl hover:bg-primary-dark transition-all"
+            >
+              Activate Account <ArrowRight size={16} />
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 border border-gray-200 text-gray-600 font-700 px-6 py-3 rounded-xl hover:bg-gray-50 transition-all"
+            >
+              Back to Home
+            </Link>
+          </div>
+          <p className="text-xs text-gray-400 mt-3">
+            Note: activation only works once our team has approved your application.
+          </p>
         </div>
       </div>
     )
@@ -260,11 +278,27 @@ export default function VendorRegisterPage() {
                   placeholder="e.g. TechZone Gadgets" className={inputClass} />
               </Field>
 
-              <Field label="Product Category" required>
-                <select value={form.category} onChange={update('category')} className={selectClass}>
-                  <option value="">Select a category</option>
-                  {VENDOR_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
+              <Field label="Product Categories" required>
+                <p className="text-xs text-gray-400 mb-2 -mt-1">Select all the categories you sell in.</p>
+                <div className="flex flex-wrap gap-2">
+                  {VENDOR_CATEGORIES.map(c => {
+                    const selected = categories.includes(c)
+                    return (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => toggleCategory(c)}
+                        className={`px-3.5 py-2 rounded-full text-sm font-600 border transition-all ${
+                          selected
+                            ? 'bg-primary border-primary text-white'
+                            : 'bg-white border-gray-200 text-gray-600 hover:border-primary hover:text-primary'
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    )
+                  })}
+                </div>
               </Field>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

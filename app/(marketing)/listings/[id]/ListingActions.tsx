@@ -107,6 +107,9 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
 
   const handlePaymentSuccess = (response: any) => {
     // Called from Paystack callback — must not be async itself
+    // Note: we go straight to orders/create which re-verifies server-side.
+    // The extra /api/paystack/verify call is kept for UI feedback but the
+    // order creation no longer depends on its result.
     fetch('/api/paystack/verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -123,7 +126,8 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
               product_name: product.name,
               vendor_id: product.vendor_id,
               vendor_name: product.vendor_name,
-              amount: product.price,
+              // amount is intentionally omitted — the server re-verifies with
+              // Paystack and uses the verified amount as the source of truth
               delivery_address: deliveryAddress,
               buyer_name: buyerName,
               paystack_reference: response.reference,
@@ -187,7 +191,7 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
       }
 
       const handler = (window as any).PaystackPop.setup({
-        key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_live_9dabe1a01f1dc84d295b7294c46f42984204cbcf',
+        key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
         email: userEmail,
         amount: totalAmount * 100, // Convert to kobo
         currency: 'NGN',

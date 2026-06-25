@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { formatPrice, buildWhatsAppUrl } from '@/lib/utils'
 import { LISTING_CATEGORIES } from '@/lib/constants'
-import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2 } from 'lucide-react'
+import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2, Play } from 'lucide-react'
 import type { Product } from '@/types/product'
 
 export const metadata: Metadata = {
@@ -99,7 +99,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             Verified Listings
           </h1>
           <p className="text-white/70 text-lg">
-            {total > 0 ? `${total} verified product${total !== 1 ? 's' : ''} available` : 'Browse our verified gadget catalogue'}
+            Browse our verified gadget catalogue
           </p>
         </div>
       </section>
@@ -160,7 +160,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
                 {products.map((product) => (
                   <ProductCard
                     key={product.id}
@@ -256,6 +256,7 @@ function ProductCard({
   reviewCount: number
 }) {
   const imageUrl = product.main_image_url || product.image_url || (product.image_urls?.[0]) || null
+  const videoUrl = !imageUrl ? (product.video_urls?.[0] || null) : null
   const whatsappMsg = `Hi, I'm interested in "${product.name}" on Zolarux. Can I get more details?`
 
   return (
@@ -268,6 +269,22 @@ function ProductCard({
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
+        ) : videoUrl ? (
+          <>
+            {/* Show the video's first frame without playing it */}
+            <video
+              src={videoUrl}
+              muted
+              playsInline
+              preload="metadata"
+              className="w-full h-full object-cover pointer-events-none"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-black/45 backdrop-blur-sm flex items-center justify-center">
+                <Play size={20} className="text-white translate-x-0.5" fill="currentColor" />
+              </div>
+            </div>
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <ShoppingBag size={32} className="text-gray-300" />

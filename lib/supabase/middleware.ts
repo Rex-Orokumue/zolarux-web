@@ -25,9 +25,14 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
+  const pathname = request.nextUrl.pathname
+
+  // Public vendor routes that must stay reachable without an authenticated session
+  const isPublicVendorRoute = pathname.startsWith('/vendor/activate')
+
   const isDashboardRoute =
-    request.nextUrl.pathname.startsWith('/buyer') ||
-    request.nextUrl.pathname.startsWith('/vendor')
+    !isPublicVendorRoute &&
+    (pathname.startsWith('/buyer') || pathname.startsWith('/vendor'))
 
   try {
     const { data: { user } } = await supabase.auth.getUser()

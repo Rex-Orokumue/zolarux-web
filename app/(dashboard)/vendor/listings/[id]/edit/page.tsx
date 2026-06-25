@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { ArrowLeft, Upload, X, Plus, Loader2, CheckCircle, Trash2, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Upload, X, Plus, Loader2, CheckCircle, Trash2, AlertTriangle, Video as VideoIcon } from 'lucide-react'
 import Link from 'next/link'
 import { VENDOR_CATEGORIES } from '@/lib/constants'
 import { formatPrice } from '@/lib/utils'
@@ -18,6 +18,7 @@ export default function EditListingPage() {
   const params = useParams()
   const productId = params.id as string
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const videoInputRef = useRef<HTMLInputElement>(null)
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -40,6 +41,11 @@ export default function EditListingPage() {
   const [existingImages, setExistingImages] = useState<string[]>([])
   const [newImages, setNewImages] = useState<File[]>([])
   const [newPreviews, setNewPreviews] = useState<string[]>([])
+  const [existingVideos, setExistingVideos] = useState<string[]>([])
+  const [newVideos, setNewVideos] = useState<File[]>([])
+  const [newVideoPreviews, setNewVideoPreviews] = useState<string[]>([])
+
+  const MAX_VIDEO_BYTES = 100 * 1024 * 1024 // 100MB
 
   useEffect(() => {
     loadProduct()
@@ -77,6 +83,7 @@ export default function EditListingPage() {
     setIsFeatured(product.is_featured || false)
     setIsActive(product.is_active !== false)
     setExistingImages(product.image_urls || (product.image_url ? [product.image_url] : []))
+    setExistingVideos(product.video_urls || [])
     setLoading(false)
   }
 
@@ -103,6 +110,48 @@ export default function EditListingPage() {
   const removeNewImage = (index: number) => {
     setNewImages(prev => prev.filter((_, i) => i !== index))
     setNewPreviews(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleNewVideos = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError('')
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+    const tooBig = files.find(f => f.size > MAX_VIDEO_BYTES)
+    if (tooBig) { setError('Each video must be 100MB or smaller'); return }
+    const total = existingVideos.length + newVideos.length + files.length
+    if (total > 2) { setError('Maximum 2 videos allowed total'); return }
+    setNewVideos(prev => [...prev, ...files])
+    setNewVideoPreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))])
+  }
+
+  const removeExistingVideo = (index: number) => {
+    setExistingVideos(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const removeNewVideo = (index: number) => {
+    setNewVideos(prev => prev.filter((_, i) => i !== index))
+    setNewVideoPreviews(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const uploadNewVideos = async (): Promise<string[]> => {
+    if (newVideos.length === 0) return []
+    const supabase = createClient()
+    const urls: string[] = []
+    for (let i = 0; i < newVideos.length; i++) {
+      const file = newVideos[i]
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'mp4'
+      const fileName = `${userId}/videos/${Date.now()}_edit_${i}.${ext}`
+      const { error } = await supabase.storage.from('product-videos').upload(fileName, file, {
+        cacheControl: '3600', upsert: false, contentType: file.type || 'video/mp4',
+      })
+      if (error) {
+        console.error(`Upload error for video ${i + 1}:`, error)
+        throw new Error(`Failed to upload video ${i + 1}: ${error.message}`)
+      }
+      const { data } = supabase.storage.from('product-videos').getPublicUrl(fileName)
+      urls.push(data.publicUrl)
+    }
+    return urls
   }
 
   const uploadNewImages = async (): Promise<string[]> => {
@@ -138,12 +187,14 @@ export default function EditListingPage() {
     if (totalImages === 0) { setError('At least one image is required'); return }
 
     setSaving(true)
-    if (newImages.length > 0) setUploading(true)
+    if (newImages.length > 0 || newVideos.length > 0) setUploading(true)
 
     try {
       const newUrls = await uploadNewImages()
+      const newVideoUrls = await uploadNewVideos()
       setUploading(false)
       const allImages = [...existingImages, ...newUrls]
+      const allVideos = [...existingVideos, ...newVideoUrls]
 
       const supabase = createClient()
       const { error: updateError } = await supabase
@@ -159,6 +210,7 @@ export default function EditListingPage() {
           image_url: allImages[0],
           main_image_url: allImages[0],
           image_urls: allImages,
+          video_urls: allVideos,
           updated_at: new Date().toISOString(),
         })
         .eq('id', productId)
@@ -345,6 +397,56 @@ export default function EditListingPage() {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Videos */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
+            <h3 className="font-display font-700 text-gray-900 mb-1">Product Videos</h3>
+            <p className="text-gray-400 text-xs mb-4">Optional. Up to 2 videos. MP4/MOV/WEBM/3GP/MKV — max 100MB each.</p>
+
+            {existingVideos.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs font-700 text-gray-500 uppercase tracking-wider mb-2">Current Videos</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {existingVideos.map((url, i) => (
+                    <div key={i} className="relative">
+                      <video src={url} controls className="w-full rounded-xl border border-gray-100 bg-black" />
+                      <button onClick={() => removeExistingVideo(i)}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-sm hover:bg-red-600 transition-colors">
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {newVideoPreviews.length > 0 && (
+              <div className="mb-4">
+                <p className="text-xs font-700 text-gray-500 uppercase tracking-wider mb-2">New Videos (not yet saved)</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {newVideoPreviews.map((preview, i) => (
+                    <div key={i} className="relative">
+                      <video src={preview} controls className="w-full rounded-xl border border-blue-200 ring-2 ring-blue-200 bg-black" />
+                      <button onClick={() => removeNewVideo(i)}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-sm hover:bg-red-600 transition-colors">
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {(existingVideos.length + newVideos.length) < 2 && (
+              <button type="button" onClick={() => videoInputRef.current?.click()}
+                className="w-full border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-primary hover:bg-primary-light transition-all">
+                <VideoIcon size={20} className="text-gray-400 mx-auto mb-1" />
+                <p className="text-sm font-700 text-gray-600">Add a video</p>
+                <p className="text-gray-400 text-xs mt-0.5">{2 - existingVideos.length - newVideos.length} slot(s) remaining</p>
+              </button>
+            )}
+            <input ref={videoInputRef} type="file" accept="video/mp4,video/webm,video/quicktime,video/*" multiple className="hidden" onChange={handleNewVideos} />
           </div>
         </div>
 

@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Shield, Upload, X, Plus, Loader2, CheckCircle, Image as ImageIcon, ArrowLeft } from 'lucide-react'
+import { Shield, Upload, X, Plus, Loader2, CheckCircle, Image as ImageIcon, ArrowLeft, Video as VideoIcon } from 'lucide-react'
 import Link from 'next/link'
 import { VENDOR_CATEGORIES } from '@/lib/constants'
 
@@ -33,9 +33,12 @@ const selectClass = `${inputClass} bg-white`
 export default function NewListingPage() {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const videoInputRef = useRef<HTMLInputElement>(null)
   const [form, setForm] = useState<FormData>(INITIAL_FORM)
   const [images, setImages] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [videos, setVideos] = useState<File[]>([])
+  const [videoPreviews, setVideoPreviews] = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [saving, setSaving] = useState(false)
@@ -73,6 +76,59 @@ export default function NewListingPage() {
   const removeImage = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index))
     setImagePreviews(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const MAX_VIDEO_BYTES = 100 * 1024 * 1024 // 100MB
+
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError('')
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    const tooBig = files.find(f => f.size > MAX_VIDEO_BYTES)
+    if (tooBig) { setError('Each video must be 50MB or smaller'); return }
+
+    // Max 2 videos
+    const combined = [...videos, ...files].slice(0, 2)
+    setVideos(combined)
+    setVideoPreviews(combined.map(f => URL.createObjectURL(f)))
+  }
+
+  const removeVideo = (index: number) => {
+    setVideos(prev => prev.filter((_, i) => i !== index))
+    setVideoPreviews(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const uploadVideos = async (vendorId: string): Promise<string[]> => {
+    const supabase = createClient()
+    const urls: string[] = []
+
+    for (let i = 0; i < videos.length; i++) {
+      const file = videos[i]
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'mp4'
+      const fileName = `${vendorId}/videos/${Date.now()}_${i}.${ext}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('product-videos')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: true,
+          contentType: file.type || 'video/mp4',
+        })
+
+      if (uploadError) {
+        console.error(`Upload error for video ${i + 1}:`, uploadError)
+        throw new Error(`Video ${i + 1} upload failed: ${uploadError.message}`)
+      }
+
+      const { data } = supabase.storage
+        .from('product-videos')
+        .getPublicUrl(fileName)
+
+      urls.push(data.publicUrl)
+    }
+
+    return urls
   }
 
   const uploadImages = async (vendorId: string): Promise<string[]> => {
@@ -135,11 +191,14 @@ export default function NewListingPage() {
 
       // Upload images to Supabase Storage
       const imageUrls = await uploadImages(user.id)
-      setUploading(false)
 
       if (imageUrls.length === 0) {
         throw new Error('Image upload failed. Please try again.')
       }
+
+      // Upload videos (optional)
+      const videoUrls = videos.length > 0 ? await uploadVideos(user.id) : []
+      setUploading(false)
 
       // Insert product
       const { error: insertError } = await supabase
@@ -155,7 +214,7 @@ export default function NewListingPage() {
           image_url: imageUrls[0],
           main_image_url: imageUrls[0],
           image_urls: imageUrls,
-          video_urls: [],
+          video_urls: videoUrls,
           is_active: true,
           is_featured: form.is_featured,
           created_at: new Date().toISOString(),
@@ -320,6 +379,54 @@ export default function NewListingPage() {
                     <Plus size={20} className="text-gray-400" />
                   </button>
                 )}
+              </div>
+            )}
+
+          </div>
+
+          {/* Video upload */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
+            <h3 className="font-display font-700 text-gray-900 mb-1">Product Videos</h3>
+            <p className="text-gray-400 text-xs mb-4">Optional. Upload up to 2 videos showcasing the product. MP4/MOV/WEBM/3GP/MKV — max 100MB each.</p>
+
+            <button
+              type="button"
+              onClick={() => videoInputRef.current?.click()}
+              disabled={videos.length >= 2}
+              className="w-full border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:border-primary hover:bg-primary-light transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <VideoIcon size={24} className="text-gray-400 mx-auto mb-2" />
+              <p className="font-700 text-gray-600 text-sm">Click to upload videos</p>
+              <p className="text-gray-400 text-xs mt-1">MP4, MOV, WEBM, 3GP, MKV — max 100MB each</p>
+            </button>
+
+            <input
+              ref={videoInputRef}
+              type="file"
+              accept="video/mp4,video/webm,video/quicktime,video/*"
+              multiple
+              className="hidden"
+              onChange={handleVideoSelect}
+            />
+
+            {videoPreviews.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                {videoPreviews.map((preview, i) => (
+                  <div key={i} className="relative">
+                    <video
+                      src={preview}
+                      controls
+                      className="w-full rounded-xl border border-gray-100 bg-black"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeVideo(i)}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-sm hover:bg-red-600 transition-colors"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
 

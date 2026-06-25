@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/indexnow?token=zolarux-indexnow-secret-2026",
+      "path": "/api/indexnow",
       "schedule": "0 6 * * *"
     }
   ]

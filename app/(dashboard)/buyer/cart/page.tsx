@@ -123,7 +123,6 @@ export default function CartPage() {
             }, {} as Record<string, { vendor_name: string; items: CartItem[] }>)
 
             const orderPromises = Object.entries(vendorGroups).map(([vendorId, group]) => {
-              const orderAmount = group.items.reduce((sum, i) => sum + (i.price * i.quantity), 0)
               const productNames = group.items.map(i => `${i.product_name} x${i.quantity}`).join(', ')
               return fetch('/api/orders/create', {
                 method: 'POST',
@@ -133,7 +132,8 @@ export default function CartPage() {
                   product_name: productNames,
                   vendor_id: vendorId,
                   vendor_name: group.vendor_name,
-                  amount: orderAmount,
+                  // amount is intentionally omitted — the server re-verifies with
+                  // Paystack and uses the verified amount as the source of truth
                   delivery_address: deliveryAddress,
                   buyer_name: buyerName,
                   buyer_email: userEmail,
@@ -177,7 +177,7 @@ export default function CartPage() {
       }
 
       const handler = (window as any).PaystackPop.setup({
-        key: 'pk_test_d645f64a3f39a5e0e997616562ae17f6567be254',
+        key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
         email: userEmail,
         amount: total * 100,
         currency: 'NGN',

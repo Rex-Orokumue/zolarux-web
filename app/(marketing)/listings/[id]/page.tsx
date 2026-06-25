@@ -58,6 +58,8 @@ export default async function ListingDetailPage({ params }: Props) {
             <div className="aspect-square bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-card">
               {imageUrl ? (
                 <img src={imageUrl} alt={product.name} className="w-full h-full object-cover" />
+              ) : product.video_urls?.[0] ? (
+                <video src={product.video_urls[0]} controls playsInline className="w-full h-full object-cover bg-black" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-300 text-sm">No image</div>
               )}
@@ -71,6 +73,24 @@ export default async function ListingDetailPage({ params }: Props) {
                 ))}
               </div>
             )}
+
+            {(() => {
+              // If there's no image, the first video is already shown as the main media above
+              const videosBelow = imageUrl ? (product.video_urls || []) : (product.video_urls || []).slice(1)
+              return videosBelow.length > 0 && (
+              <div className="space-y-3 pt-2">
+                {videosBelow.map((url, i) => (
+                  <video
+                    key={i}
+                    src={url}
+                    controls
+                    playsInline
+                    className="w-full rounded-2xl border border-gray-100 bg-black shadow-card"
+                  />
+                ))}
+              </div>
+              )
+            })()}
           </div>
 
           {/* Details */}
