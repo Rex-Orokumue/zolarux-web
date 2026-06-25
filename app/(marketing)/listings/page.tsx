@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { formatPrice, buildWhatsAppUrl } from '@/lib/utils'
 import { LISTING_CATEGORIES } from '@/lib/constants'
-import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2, Play } from 'lucide-react'
+import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2, Play, Star } from 'lucide-react'
 import type { Product } from '@/types/product'
 
 export const metadata: Metadata = {
@@ -56,6 +56,32 @@ async function getProducts(category: string, page: number, vendor?: string): Pro
   return { products: sorted, total: count || 0 }
 }
 
+// Featured products — shown in a prominent band at the top of page 1
+async function getFeaturedProducts(category: string, vendor?: string): Promise<Product[]> {
+  const supabase = await createClient()
+  let query = supabase
+    .from('products')
+    .select('*')
+    .eq('is_active', true)
+    .eq('is_featured', true)
+    .order('created_at', { ascending: false })
+    .limit(8)
+
+  if (category && category !== 'All') {
+    query = query.ilike('category', `%${category}%`)
+  }
+  if (vendor) {
+    query = query.eq('vendor_id', vendor)
+  }
+
+  const { data, error } = await query
+  if (error) {
+    console.error('Featured products fetch error:', error)
+    return []
+  }
+  return (data as Product[]) || []
+}
+
 // Fetch vendor rating for a given vendor_id
 async function getVendorRatings(vendorIds: string[]): Promise<Record<string, { avg_rating: number; review_count: number }>> {
   if (vendorIds.length === 0) return {}
@@ -80,8 +106,11 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
   const { products, total } = await getProducts(activeCategory, currentPage, vendorFilter)
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
-  // Fetch vendor ratings for all products on this page
-  const vendorIds = [...new Set(products.map(p => p.vendor_id).filter(Boolean))]
+  // Featured products only on the first page
+  const featured = currentPage === 1 ? await getFeaturedProducts(activeCategory, vendorFilter) : []
+
+  // Fetch vendor ratings for all products shown on this page (grid + featured)
+  const vendorIds = [...new Set([...products, ...featured].map(p => p.vendor_id).filter(Boolean))]
   const vendorRatings = await getVendorRatings(vendorIds)
 
   return (
@@ -139,9 +168,36 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
         </div>
       </div>
 
+      {/* Featured band */}
+      {featured.length > 0 && (
+        <section className="py-10 bg-gradient-to-b from-accent/5 to-surface border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-7 h-7 bg-accent/15 rounded-lg flex items-center justify-center">
+                <Star size={15} className="text-accent" fill="currentColor" />
+              </div>
+              <h2 className="font-display text-xl font-800 text-gray-900">Featured Listings</h2>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
+              {featured.map((product) => (
+                <ProductCard
+                  key={`featured-${product.id}`}
+                  product={product}
+                  avgRating={vendorRatings[product.vendor_id]?.avg_rating ?? 0}
+                  reviewCount={vendorRatings[product.vendor_id]?.review_count ?? 0}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Products Grid */}
       <section className="py-12 bg-surface min-h-[50vh]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          {featured.length > 0 && products.length > 0 && (
+            <h2 className="font-display text-xl font-800 text-gray-900 mb-5">All Listings</h2>
+          )}
           {products.length === 0 ? (
             <div className="text-center py-24">
               <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">

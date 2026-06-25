@@ -184,7 +184,8 @@ export default function EditListingPage() {
     if (!category) { setError('Select a category'); return }
     if (pricingType === 'fixed' && !price) { setError('Enter a price'); return }
     const totalImages = existingImages.length + newImages.length
-    if (totalImages === 0) { setError('At least one image is required'); return }
+    const totalVideos = existingVideos.length + newVideos.length
+    if (totalImages === 0 && totalVideos === 0) { setError('Add at least one image or video'); return }
 
     setSaving(true)
     if (newImages.length > 0 || newVideos.length > 0) setUploading(true)
@@ -207,8 +208,8 @@ export default function EditListingPage() {
           category,
           is_featured: isFeatured,
           is_active: isActive,
-          image_url: allImages[0],
-          main_image_url: allImages[0],
+          image_url: allImages[0] || null,
+          main_image_url: allImages[0] || null,
           image_urls: allImages,
           video_urls: allVideos,
           updated_at: new Date().toISOString(),

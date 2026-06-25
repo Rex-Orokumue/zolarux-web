@@ -170,7 +170,7 @@ export default function NewListingPage() {
     if (!form.name.trim()) { setError('Product name is required'); return }
     if (!form.category) { setError('Select a category'); return }
     if (form.pricing_type === 'fixed' && !form.price) { setError('Enter a price'); return }
-    if (images.length === 0) { setError('Add at least one product image'); return }
+    if (images.length === 0 && videos.length === 0) { setError('Add at least one product image or video'); return }
 
     setSaving(true)
     setUploading(true)
@@ -189,10 +189,10 @@ export default function NewListingPage() {
 
       if (!vendor) { setError('Vendor account not found'); setSaving(false); return }
 
-      // Upload images to Supabase Storage
-      const imageUrls = await uploadImages(user.id)
+      // Upload images to Supabase Storage (optional if a video is provided)
+      const imageUrls = images.length > 0 ? await uploadImages(user.id) : []
 
-      if (imageUrls.length === 0) {
+      if (images.length > 0 && imageUrls.length === 0) {
         throw new Error('Image upload failed. Please try again.')
       }
 
@@ -211,8 +211,8 @@ export default function NewListingPage() {
           category: form.category,
           vendor_id: vendor.vendor_id,
           vendor_name: vendor.business_name,
-          image_url: imageUrls[0],
-          main_image_url: imageUrls[0],
+          image_url: imageUrls[0] || null,
+          main_image_url: imageUrls[0] || null,
           image_urls: imageUrls,
           video_urls: videoUrls,
           is_active: true,
@@ -322,8 +322,8 @@ export default function NewListingPage() {
 
           {/* Image upload */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-card p-6">
-            <h3 className="font-display font-700 text-gray-900 mb-1">Product Images *</h3>
-            <p className="text-gray-400 text-xs mb-4">Upload up to 5 images. First image is the main display image. Max 5MB each.</p>
+            <h3 className="font-display font-700 text-gray-900 mb-1">Product Images</h3>
+            <p className="text-gray-400 text-xs mb-4">Upload up to 5 images. First image is the main display image. Max 5MB each. Optional if you add a video below.</p>
 
             {/* Upload area */}
             <button
