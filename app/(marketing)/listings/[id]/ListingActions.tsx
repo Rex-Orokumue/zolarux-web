@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { ShoppingCart, Heart, CreditCard, Loader2, CheckCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils'
@@ -17,6 +17,8 @@ interface Props {
 
 export default function ListingActions({ product, protectionFee, isLoggedIn, userEmail, userId }: Props) {
   const router = useRouter()
+  const pathname = usePathname()
+  const goToLogin = () => router.push(`/login?redirectTo=${encodeURIComponent(pathname)}`)
   const [loading, setLoading] = useState<'cart' | 'wishlist' | 'pay' | null>(null)
   const [cartAdded, setCartAdded] = useState(false)
   const [wishlistAdded, setWishlistAdded] = useState(false)
@@ -28,7 +30,7 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
   const totalAmount = product.price + protectionFee
 
   const handleAddToCart = async () => {
-    if (!isLoggedIn) { router.push('/login'); return }
+    if (!isLoggedIn) { goToLogin(); return }
     setLoading('cart')
     try {
       const supabase = createClient()
@@ -71,7 +73,7 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
   }
 
   const handleAddToWishlist = async () => {
-    if (!isLoggedIn) { router.push('/login'); return }
+    if (!isLoggedIn) { goToLogin(); return }
     setLoading('wishlist')
     try {
       const supabase = createClient()
@@ -156,7 +158,7 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
   }
 
   const handlePayNow = async () => {
-    if (!isLoggedIn) { router.push('/login'); return }
+    if (!isLoggedIn) { goToLogin(); return }
     setError('')
 
     if (!showCheckoutForm) {

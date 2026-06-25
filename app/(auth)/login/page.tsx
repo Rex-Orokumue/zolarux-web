@@ -101,10 +101,11 @@ function LoginContent() {
     setLoading(true)
     try {
       const supabase = createClient()
+      const next = redirectTo || (role === 'vendor' ? '/vendor' : '/buyer')
       const { error: oAuthErr } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/api/auth/callback?next=${role === 'vendor' ? '/vendor' : '/buyer'}`,
+          redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(next)}`,
         },
       })
       if (oAuthErr) {
