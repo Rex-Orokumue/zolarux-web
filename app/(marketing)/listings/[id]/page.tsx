@@ -6,6 +6,7 @@ import { formatPrice, calculateProtectionFee } from '@/lib/utils'
 import { Shield, ArrowLeft, CheckCircle, Lock, MessageCircle, Info } from 'lucide-react'
 import type { Product } from '@/types/product'
 import ListingActions from './ListingActions'
+import ShareButton from './ShareButton'
 import ListingReviews from '@/components/reviews/ListingReviews'
 
 interface Props {
@@ -28,9 +29,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const product = await getProduct(id)
   if (!product) return { title: 'Product Not Found' }
+
+  const ogImage = product.main_image_url || product.image_url || product.image_urls?.[0] || null
+  const description = product.description?.trim()
+    ? product.description.trim().slice(0, 200)
+    : `Buy ${product.name} safely on Zolarux — vendor verified, escrow protected.`
+  const url = `/listings/${product.id}`
+
   return {
     title: product.name,
-    description: `Buy ${product.name} safely on Zolarux. Vendor verified, escrow protected.`,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'website',
+      url,
+      title: `${product.name} · Zolarux`,
+      description,
+      siteName: 'Zolarux',
+      images: ogImage ? [{ url: ogImage, alt: product.name }] : undefined,
+    },
+    twitter: {
+      card: ogImage ? 'summary_large_image' : 'summary',
+      title: `${product.name} · Zolarux`,
+      description,
+      images: ogImage ? [ogImage] : undefined,
+    },
   }
 }
 
@@ -95,8 +118,11 @@ export default async function ListingDetailPage({ params }: Props) {
 
           {/* Details */}
           <div>
-            <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-xs font-700 px-3 py-1.5 rounded-full mb-4">
-              <Shield size={11} /> Verified Listing · Escrow Protected
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-xs font-700 px-3 py-1.5 rounded-full">
+                <Shield size={11} /> Verified Listing · Escrow Protected
+              </div>
+              <ShareButton title={product.name} url={`/listings/${product.id}`} />
             </div>
 
             <h1 className="font-display text-3xl font-800 text-gray-900 mb-2">{product.name}</h1>
