@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import {
   Shield, Lock, Search, Truck, ThumbsUp, AlertTriangle,
@@ -6,11 +7,11 @@ import {
   Play, Star, Users, BadgeCheck, Gift, CreditCard
 } from 'lucide-react'
 
-export const metadata: Metadata = {
-  alternates: { canonical: '/for-buyers' },
+export const metadata: Metadata = pageMeta({
   title: 'For Buyers',
   description: 'Buy gadgets safely on Zolarux. Vendor verified, escrow protected. Never lose money to fake phones or disappearing sellers again.',
-}
+  path: '/for-buyers',
+})
 
 const FEARS = [
   { fear: 'Paying and the vendor disappears', solution: 'Your money sits in Zolarux escrow — the vendor never touches it until you confirm delivery.' },

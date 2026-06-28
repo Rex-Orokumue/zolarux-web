@@ -7,16 +7,16 @@ import { LISTING_CATEGORIES } from '@/lib/constants'
 import { buildCategoryOrFilter } from '@/lib/category-filter'
 import SupplyNotice, { PriceNote } from '@/components/listings/SupplyNotice'
 import JsonLd from '@/components/seo/JsonLd'
-import { SITE_URL } from '@/lib/seo'
+import { SITE_URL, pageMeta } from '@/lib/seo'
 import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2, Play, Star } from 'lucide-react'
 import PageHero from '@/components/layout/PageHero'
 import type { Product } from '@/types/product'
 
-export const metadata: Metadata = {
-  alternates: { canonical: '/listings' },
+export const metadata: Metadata = pageMeta({
   title: 'Verified Listings',
   description: 'Browse verified gadget listings on Zolarux. Every product is from a verified vendor. Every transaction is escrow-protected.',
-}
+  path: '/listings',
+})
 
 const PAGE_SIZE = 12
 

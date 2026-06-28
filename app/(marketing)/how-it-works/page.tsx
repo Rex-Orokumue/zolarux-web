@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import {
   Search, Lock, ClipboardCheck, Truck, ThumbsUp,
@@ -8,11 +9,11 @@ import {
 import PageHero from '@/components/layout/PageHero'
 import Image from 'next/image'
 
-export const metadata: Metadata = {
-  alternates: { canonical: '/how-it-works' },
+export const metadata: Metadata = pageMeta({
   title: 'How It Works',
   description: 'Learn how Zolarux escrow protects every gadget transaction. Vendor verification, escrow payment, product inspection, fulfillment monitoring, and buyer confirmation.',
-}
+  path: '/how-it-works',
+})
 
 const STEPS = [
   {

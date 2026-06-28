@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import { CheckCircle, XCircle, Mail, Phone, Shield } from 'lucide-react'
 
-export const metadata: Metadata = {
-  alternates: { canonical: '/terms' },
+export const metadata: Metadata = pageMeta({
   title: 'Terms of Service',
   description: 'Read the terms governing the use of Zolarux. Understand our escrow rules, vendor obligations, buyer protection policies, and dispute resolution process.',
-}
+  path: '/terms',
+})
 
 function Section({ number, title, children }: { number: string; title: string; children: React.ReactNode }) {
   return (

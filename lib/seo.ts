@@ -1,5 +1,32 @@
+import type { Metadata } from 'next'
+
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://zolarux.com.ng'
 const abs = (path: string) => (path.startsWith('http') ? path : `${SITE_URL}${path}`)
+
+/**
+ * Build page metadata with matching <title>, canonical, and Open Graph /
+ * Twitter fields. og:title does NOT fall back to title in Next.js and child
+ * pages inherit the root's openGraph unless they set their own — so every page
+ * must define its own og:title/description or share previews look identical.
+ */
+export function pageMeta({
+  title,
+  description,
+  path,
+}: {
+  title: string
+  description: string
+  path: string
+}): Metadata {
+  const ogTitle = `${title} | Zolarux`
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: { title: ogTitle, description, url: path },
+    twitter: { title: ogTitle, description },
+  }
+}
 
 export function orgSchema() {
   return {

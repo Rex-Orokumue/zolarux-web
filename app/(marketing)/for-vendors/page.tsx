@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -7,11 +8,11 @@ import {
   BookOpen, Trophy, Coins, Play, AlertTriangle, XCircle
 } from 'lucide-react'
 
-export const metadata: Metadata = {
-  alternates: { canonical: '/for-vendors' },
+export const metadata: Metadata = pageMeta({
   title: 'For Vendors',
   description: 'Become a Zolarux Verified Vendor. Sell gadgets with full buyer trust. Escrow payments mean you always get paid for legitimate orders.',
-}
+  path: '/for-vendors',
+})
 
 const PROBLEMS = [
   { problem: 'Buyers ghost you after asking for bank details', solution: 'Zolarux collects payment on your behalf. Buyers pay us — reducing friction and distrust entirely.' },

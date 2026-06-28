@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { Shield, Target, Eye, Heart, Play, ArrowRight } from 'lucide-react'
 import PageHero from '@/components/layout/PageHero'
 
-export const metadata: Metadata = {
-  alternates: { canonical: '/about' },
+export const metadata: Metadata = pageMeta({
   title: 'About Us',
   description: "Learn about Zolarux — Nigeria's trust infrastructure for gadget commerce.",
-}
+  path: '/about',
+})
 
 const TEAM = [
   {

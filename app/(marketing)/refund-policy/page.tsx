@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { CheckCircle, XCircle, Shield, MessageCircle, Mail, ArrowRight } from 'lucide-react'
 
-export const metadata: Metadata = {
-  alternates: { canonical: '/refund-policy' },
+export const metadata: Metadata = pageMeta({
   title: 'Refund & Return Policy',
   description: 'Zolarux 100% Money-Back Guarantee. We hold funds in escrow until you inspect the item. Learn how our dispute resolution and return process works.',
-}
+  path: '/refund-policy',
+})
 
 const REFUND_PROCESS = [
   { step: '1', title: 'Report Issue', desc: 'Report the issue to Zolarux via WhatsApp or email within 48 hours of delivery.' },
