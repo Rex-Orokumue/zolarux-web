@@ -5,14 +5,15 @@ Status: Approved (pending spec review)
 
 ## Overview
 
-Four related improvements to the Zolarux storefront:
+Five related improvements to the Zolarux storefront:
 
 1. **Smarter category filter** — broad filters (Accessories, Electronics…) match sub-type products (earpods, power bank, electric iron) via keyword groups.
 2. **Site-wide dark mode** — toggle + system default, no flash on load.
 3. **Price/availability disclaimer** — communicate that listings are a live showcase and final price/stock are confirmed at purchase.
 4. **Hero & imagery refresh** — photo-backdrop heroes on every page plus added imagery on key pages.
+5. **SEO & AEO sitewide** — structured data (JSON-LD), complete per-page metadata/canonicals, richer share cards, and answer-engine-friendly content.
 
-These are independent and can be implemented/reviewed in phases. Recommended order: (1) filter → (3) disclaimer → (4) hero/imagery → (2) dark mode (largest, touches the most files; doing it last lets it absorb the markup added by the others).
+These are independent and can be implemented/reviewed in phases. Recommended order: (1) filter → (3) disclaimer → (5) SEO/AEO → (4) hero/imagery → (2) dark mode (largest, touches the most files; doing it last lets it absorb the markup added by the others).
 
 ---
 
@@ -127,6 +128,46 @@ All imagery: Black/Nigerian-audience subjects where people appear; must look cor
 
 ---
 
+## Feature 5 — SEO & AEO sitewide
+
+### Audit baseline (current state)
+- **Good:** `app/robots.ts`; dynamic `app/sitemap.ts` (static pages + blog posts + up to 500 active products); root `metadata` with OpenGraph/Twitter + `metadataBase`; product-detail OG tags.
+- **Issues found:**
+  1. **No JSON-LD structured data anywhere** in the app (only in `package*.json` text). Largest AEO gap.
+  2. **8 public pages export no metadata** because they are `'use client'`: `check-device`, `check-original`, `check-vendor`, `report-item`, `scan-link` (all flagged priority 0.9 in the sitemap), plus `contact`, `faq`, `verified-vendors`.
+  3. Root **Twitter card is `summary`** (small) and the OG image is the 512×512 logo — no dedicated 1200×630 share image.
+  4. **Per-page canonicals missing** — only the home page sets `alternates.canonical`.
+  5. **Listings use raw `<img>`** (`ProductCard`), not `next/image` — affects LCP/Core Web Vitals (a ranking signal).
+
+### Fixes
+
+**5a. Structured data (JSON-LD).** Add a small `components/seo/JsonLd.tsx` helper (renders a `<script type="application/ld+json">`) and emit:
+- **Organization** + **WebSite** (with `potentialAction` SearchAction pointing at `/listings?...`) — in root `app/layout.tsx`, sitewide.
+- **Product** schema on `app/(marketing)/listings/[id]/page.tsx`: `name`, `image`, `description`, `brand`/`seller` (vendor), `offers` with `price`, `priceCurrency: NGN`, and `availability`. For `pricing_type === 'quote'`, omit price and use `https://schema.org/InStock`/`PreOrder` as appropriate (no fabricated price).
+- **BreadcrumbList** on listing detail and other deep pages.
+- **FAQPage** on `/faq` (built from the existing Q&A content) — high AEO value.
+- **BlogPosting/Article** on `app/(marketing)/blog/[slug]/page.tsx` (`headline`, `datePublished`, `author`, `image`).
+- **ItemList** on `/listings` (the product grid).
+
+> Note: structured-data values must match on-page content (no claims not visible to users), to satisfy Google's structured-data policies.
+
+**5b. Complete page metadata.** For each of the 8 client pages, add a sibling **`layout.tsx`** (server component) exporting `metadata` (unique `title`, `description`, `alternates.canonical`, and OG). This is the App-Router-correct way to attach metadata to a client page without converting it. (A shared `app/(tools)/layout.tsx` already exists but is global — per-route layouts are needed for per-page titles.) Verify the exact mechanism against `node_modules/next/dist/docs/`.
+
+**5c. Canonicals everywhere.** Add `alternates.canonical` to every page's metadata (static via `metadata`, dynamic via `generateMetadata`). Relative paths resolve against `metadataBase`.
+
+**5d. Richer share cards.** Switch root Twitter card to `summary_large_image`; add a dedicated 1200×630 OG image (e.g. `public/og-default.png`) and reference it in root + per-page OG where a more specific image (product/blog) isn't available.
+
+**5e. Core Web Vitals / crawlability.**
+- Replace raw `<img>` in `ProductCard` (and other content images) with `next/image` where it doesn't break the existing video-thumbnail logic; ensure descriptive `alt` text everywhere (decorative images get `alt=""`).
+- Enforce a single `<h1>` per page and logical heading order (audit the marketing/tools pages).
+
+**5f. AEO content niceties.**
+- Add an `app/llms.txt` (or `public/llms.txt`) summarizing what Zolarux is and linking key pages, for answer-engine ingestion.
+- Phrase key headings as natural questions where it fits (esp. how-it-works, faq) so they map cleanly to answer-engine queries.
+
+### Out of scope
+Off-page SEO (backlinks), analytics dashboards, paid search, and rewriting existing blog copy.
+
 ## Components & files (summary)
 
 New:
@@ -134,14 +175,21 @@ New:
 - `components/layout/ThemeToggle.tsx`
 - `components/layout/PageHero.tsx`
 - `components/listings/SupplyNotice.tsx`
+- `components/seo/JsonLd.tsx`
+- `layout.tsx` for each of the 8 client pages (tools + contact/faq/verified-vendors) exporting metadata
+- `public/og-default.png` (1200×630 share image)
+- `app/llms.txt` (or `public/llms.txt`)
 
 Changed (high level):
 - `lib/constants.ts` — `CATEGORY_KEYWORDS`
 - `app/globals.css` — dark variant + base vars + `.post-body` dark + body dark
-- `app/layout.tsx` — no-flash script, `suppressHydrationWarning`, body dark classes
+- `app/layout.tsx` — no-flash script, `suppressHydrationWarning`, body dark classes, Organization+WebSite JSON-LD, `summary_large_image`, default OG image
 - `components/layout/Navbar.tsx` — theme toggle (desktop + mobile) + dark styles
-- `app/(marketing)/listings/page.tsx` — keyword filter, supply notice, inline note, PageHero
-- `app/(marketing)/listings/[id]/page.tsx` — inline note, dark styles
+- `app/(marketing)/listings/page.tsx` — keyword filter, supply notice, inline note, PageHero, ItemList JSON-LD, `next/image` in `ProductCard`
+- `app/(marketing)/listings/[id]/page.tsx` — inline note, dark styles, Product + BreadcrumbList JSON-LD, canonical
+- `app/(marketing)/blog/[slug]/page.tsx` — BlogPosting JSON-LD
+- `app/(marketing)/faq/page.tsx` (+ its new layout) — FAQPage JSON-LD
+- All public pages — add `alternates.canonical` to metadata
 - Heroes across `app/**` pages — adopt `PageHero`
 - Imagery on home, how-it-works, for-vendors, product detail
 - All ~61 files using light-only colors — dark variants per mapping table
@@ -151,6 +199,7 @@ Changed (high level):
 - Dark mode: toggle flips theme and persists across reloads; first paint matches stored/OS preference (no flash); key pages legible in both themes (no white-on-white / black-on-black); blog `.post-body` readable in dark.
 - Disclaimer: banner shows, dismiss persists; inline note appears next to prices in both themes.
 - Hero/imagery: heroes render with photo + readable overlay text in both themes; images load with correct sizing.
+- SEO/AEO: every public page returns a unique title/description + canonical (view source / `curl`); JSON-LD validates (Google Rich Results Test) for Organization, Product, FAQPage, BlogPosting, BreadcrumbList; the 8 previously-bare pages now emit metadata; share preview shows `summary_large_image`; sitemap/robots still resolve.
 - `npm run build` and `npm run lint` pass.
 
 ## Open items / risks
