@@ -6,6 +6,7 @@ import {
   CheckCircle, XCircle, Scale, Play
 } from 'lucide-react'
 import PageHero from '@/components/layout/PageHero'
+import Image from 'next/image'
 
 export const metadata: Metadata = {
   alternates: { canonical: '/how-it-works' },
@@ -147,6 +148,33 @@ export default function HowItWorksPage() {
             Zolarux sits in the middle of every transaction. Money flows through us.
             Products are verified by us. Disputes are resolved by us.
           </p>
+        </div>
+      </section>
+
+      {/* Image band — buy with confidence */}
+      <section className="py-16 bg-surface">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <h2 className="font-display text-3xl font-800 text-gray-900 mb-4">
+                Shop the way you already do — just safer
+              </h2>
+              <p className="text-gray-500 text-lg leading-relaxed">
+                You still chat with vendors and pick what you want. The only difference
+                is that your money sits safely with Zolarux until your gadget arrives and
+                you are happy with it.
+              </p>
+            </div>
+            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-card order-first lg:order-last">
+              <Image
+                src="https://images.unsplash.com/photo-1573164713712-03790a178651?w=1000&q=70&auto=format&fit=crop"
+                alt="A buyer shopping for gadgets online with confidence"
+                fill
+                sizes="(max-width:1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
