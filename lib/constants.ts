@@ -20,6 +20,23 @@ export const LISTING_CATEGORIES = [
 
 export type ListingCategory = typeof LISTING_CATEGORIES[number]
 
+// Keyword groups so a broad filter also matches sub-type products
+// (e.g. clicking "Accessories" surfaces earpods, power banks, selfie sticks).
+export const CATEGORY_KEYWORDS: Record<string, string[]> = {
+  Phones: ['phone', 'smartphone', 'iphone', 'android', 'tablet', 'ipad', 'galaxy'],
+  Laptops: ['laptop', 'computer', 'macbook', 'notebook', 'desktop', 'monitor'],
+  Accessories: ['accessor', 'earpod', 'airpod', 'earphone', 'headphone', 'headset',
+    'charger', 'cable', 'power bank', 'powerbank', 'selfie', 'tripod', 'case',
+    'cover', 'screen protector', 'adapter', 'smartwatch', 'watch band',
+    'memory card', 'flash drive', 'mouse', 'keyboard'],
+  Electronics: ['electronic', 'iron', 'kettle', 'blender', 'fan', 'microwave',
+    'appliance', 'speaker', 'soundbar', 'television', 'home theatre',
+    'home theater', 'generator', 'stabilizer', 'inverter', 'camera',
+    'projector', 'woofer'],
+  Gaming: ['game', 'gaming', 'console', 'playstation', 'ps4', 'ps5', 'xbox',
+    'nintendo', 'controller', 'joystick'],
+}
+
 // Vendor registration categories (gadgets-first)
 export const VENDOR_CATEGORIES = [
   'Phones & Tablets',

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { formatPrice, buildWhatsAppUrl } from '@/lib/utils'
 import { LISTING_CATEGORIES } from '@/lib/constants'
+import { buildCategoryOrFilter } from '@/lib/category-filter'
 import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2, Play, Star } from 'lucide-react'
 import type { Product } from '@/types/product'
 
@@ -32,8 +33,9 @@ async function getProducts(category: string, page: number, vendor?: string): Pro
     .order('created_at', { ascending: false })
     .range(from, to)
 
-  if (category && category !== 'All') {
-    query = query.ilike('category', `%${category}%`)
+  const orFilter = buildCategoryOrFilter(category)
+  if (orFilter) {
+    query = query.or(orFilter)
   }
 
   if (vendor) {
@@ -67,8 +69,9 @@ async function getFeaturedProducts(category: string, vendor?: string): Promise<P
     .order('created_at', { ascending: false })
     .limit(8)
 
-  if (category && category !== 'All') {
-    query = query.ilike('category', `%${category}%`)
+  const orFilter = buildCategoryOrFilter(category)
+  if (orFilter) {
+    query = query.or(orFilter)
   }
   if (vendor) {
     query = query.eq('vendor_id', vendor)
