@@ -5,8 +5,11 @@ import {
   Shield, AlertTriangle, ArrowRight, MessageCircle,
   CheckCircle, XCircle, Scale, Play
 } from 'lucide-react'
+import PageHero from '@/components/layout/PageHero'
+import Image from 'next/image'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/how-it-works' },
   title: 'How It Works',
   description: 'Learn how Zolarux escrow protects every gadget transaction. Vendor verification, escrow payment, product inspection, fulfillment monitoring, and buyer confirmation.',
 }
@@ -108,23 +111,12 @@ export default function HowItWorksPage() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-primary py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="max-w-3xl">
-            <span className="inline-block bg-white/15 text-white text-xs font-700 uppercase tracking-wider px-3 py-1.5 rounded-full mb-6">
-              The Operating Model
-            </span>
-            <h1 className="font-display text-4xl sm:text-5xl font-800 text-white mb-6">
-              How Zolarux Escrow Works
-            </h1>
-            <p className="text-white/75 text-lg leading-relaxed">
-              Every Zolarux transaction follows a strict five-step process designed to
-              eliminate every known vector of social commerce fraud in Nigeria.
-              Here is exactly what happens to your money and your gadget.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        imageUrl="https://images.unsplash.com/photo-1573167101669-476636b96cea?w=1600&q=70&auto=format&fit=crop"
+        eyebrow="The Operating Model"
+        title="How Zolarux Escrow Works"
+        subtitle="Every Zolarux transaction follows a strict five-step process designed to eliminate every known vector of social commerce fraud in Nigeria. Here is exactly what happens to your money and your gadget."
+      />
 
       {/* The model overview */}
       <section className="py-16 bg-gray-950">
@@ -156,6 +148,33 @@ export default function HowItWorksPage() {
             Zolarux sits in the middle of every transaction. Money flows through us.
             Products are verified by us. Disputes are resolved by us.
           </p>
+        </div>
+      </section>
+
+      {/* Image band — buy with confidence */}
+      <section className="py-16 bg-surface">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <h2 className="font-display text-3xl font-800 text-gray-900 mb-4">
+                Shop the way you already do — just safer
+              </h2>
+              <p className="text-gray-500 text-lg leading-relaxed">
+                You still chat with vendors and pick what you want. The only difference
+                is that your money sits safely with Zolarux until your gadget arrives and
+                you are happy with it.
+              </p>
+            </div>
+            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-card order-first lg:order-last">
+              <Image
+                src="https://images.unsplash.com/photo-1573164713712-03790a178651?w=1000&q=70&auto=format&fit=crop"
+                alt="A buyer shopping for gadgets online with confidence"
+                fill
+                sizes="(max-width:1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
         </div>
       </section>
 

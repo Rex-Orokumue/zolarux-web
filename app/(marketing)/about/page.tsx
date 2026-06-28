@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Shield, Target, Eye, Heart, Play, ArrowRight } from 'lucide-react'
+import PageHero from '@/components/layout/PageHero'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/about' },
   title: 'About Us',
   description: "Learn about Zolarux — Nigeria's trust infrastructure for gadget commerce.",
 }
@@ -39,23 +41,12 @@ export default function AboutPage() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-primary py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="max-w-3xl">
-            <span className="inline-block bg-white/15 text-white text-xs font-700 uppercase tracking-wider px-3 py-1.5 rounded-full mb-6">
-              Our Story
-            </span>
-            <h1 className="font-display text-4xl sm:text-5xl font-800 text-white mb-6">
-              We Exist Because Trust is Broken in Nigerian Commerce
-            </h1>
-            <p className="text-white/75 text-lg leading-relaxed">
-              Zolarux was not built from a business idea. It was built from real pain —
-              watching people lose money to fake gadgets, disappearing vendors, and
-              undelivered orders on WhatsApp and Instagram every single day.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        imageUrl="https://images.unsplash.com/photo-1655720357872-ce227e4164ba?w=1600&q=70&auto=format&fit=crop"
+        eyebrow="Our Story"
+        title="We Exist Because Trust is Broken in Nigerian Commerce"
+        subtitle="Zolarux was not built from a business idea. It was built from real pain — watching people lose money to fake gadgets, disappearing vendors, and undelivered orders on WhatsApp and Instagram every single day."
+      />
 
       {/* Story */}
       <section className="py-20 bg-white">

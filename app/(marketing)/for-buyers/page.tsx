@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/for-buyers' },
   title: 'For Buyers',
   description: 'Buy gadgets safely on Zolarux. Vendor verified, escrow protected. Never lose money to fake phones or disappearing sellers again.',
 }

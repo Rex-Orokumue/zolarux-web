@@ -8,6 +8,9 @@ import type { Product } from '@/types/product'
 import ListingActions from './ListingActions'
 import ShareButton from './ShareButton'
 import ListingReviews from '@/components/reviews/ListingReviews'
+import { PriceNote } from '@/components/listings/SupplyNotice'
+import JsonLd from '@/components/seo/JsonLd'
+import { productSchema, breadcrumbSchema } from '@/lib/seo'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -70,6 +73,22 @@ export default async function ListingDetailPage({ params }: Props) {
 
   return (
     <div className="py-10 bg-surface min-h-screen">
+      <JsonLd data={[
+        productSchema({
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          pricing_type: product.pricing_type,
+          image: imageUrl,
+          vendor_name: product.vendor_name,
+        }),
+        breadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Listings', path: '/listings' },
+          { name: product.name, path: `/listings/${product.id}` },
+        ]),
+      ]} />
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <Link href="/listings" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-8 transition-colors">
           <ArrowLeft size={15} /> Back to Listings
@@ -154,6 +173,9 @@ export default async function ListingDetailPage({ params }: Props) {
                   </div>
                 </>
               )}
+              <div className="mt-3 pt-3 border-t border-gray-50">
+                <PriceNote />
+              </div>
             </div>
 
             {product.description && (

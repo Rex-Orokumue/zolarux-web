@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Download, Smartphone, Shield, CheckCircle, AlertTriangle, Star, ArrowRight, Package, Search, Flag, Link2 } from 'lucide-react'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/downloads' },
   title: 'Download the App',
   description: 'Download the Zolarux Android app. Browse verified gadget listings, track escrow orders, verify vendors and check stolen devices — all in one place.',
 }

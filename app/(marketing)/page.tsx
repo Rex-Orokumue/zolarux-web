@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   Shield, CheckCircle, Lock, ArrowRight,
   Smartphone, Laptop, Headphones, Zap,
@@ -23,10 +24,10 @@ const STEPS = [
 ]
 
 const CATEGORIES = [
-  { label: 'Phones',      icon: Smartphone, href: '/listings?category=Phones' },
-  { label: 'Laptops',     icon: Laptop,     href: '/listings?category=Laptops' },
-  { label: 'Accessories', icon: Headphones, href: '/listings?category=Accessories' },
-  { label: 'Electronics', icon: Zap,        href: '/listings?category=Electronics' },
+  { label: 'Phones',      icon: Smartphone, href: '/listings?category=Phones',      img: 'https://images.unsplash.com/photo-1620783770629-122b7f187703?w=600&q=70&auto=format&fit=crop' },
+  { label: 'Laptops',     icon: Laptop,     href: '/listings?category=Laptops',     img: 'https://images.unsplash.com/photo-1595303526913-c7037797ebe7?w=600&q=70&auto=format&fit=crop' },
+  { label: 'Accessories', icon: Headphones, href: '/listings?category=Accessories', img: 'https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?w=600&q=70&auto=format&fit=crop' },
+  { label: 'Electronics', icon: Zap,        href: '/listings?category=Electronics', img: 'https://images.unsplash.com/photo-1615655406736-b37c4fabf923?w=600&q=70&auto=format&fit=crop' },
 ]
 
 const TOOLS = [
@@ -221,19 +222,31 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {CATEGORIES.map(({ label, icon: Icon, href }) => (
+            {CATEGORIES.map(({ label, icon: Icon, href, img }) => (
               <Link
                 key={label}
                 href={href}
-                className="group bg-white rounded-2xl p-6 text-center shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 border border-gray-100"
+                className="group bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 border border-gray-100"
               >
-                <div className="w-14 h-14 bg-primary-light rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary transition-colors duration-300">
-                  <Icon size={24} className="text-primary group-hover:text-white transition-colors duration-300" />
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={img}
+                    alt={`${label} on Zolarux`}
+                    fill
+                    sizes="(max-width:768px) 50vw, 25vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                  <div className="absolute top-3 left-3 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-xl flex items-center justify-center group-hover:bg-primary transition-colors duration-300">
+                    <Icon size={18} className="text-primary group-hover:text-white transition-colors duration-300" />
+                  </div>
                 </div>
-                <p className="font-display font-700 text-gray-900 group-hover:text-primary transition-colors">
-                  {label}
-                </p>
-                <p className="text-xs text-gray-400 mt-1">View listings →</p>
+                <div className="p-4 text-center">
+                  <p className="font-display font-700 text-gray-900 group-hover:text-primary transition-colors">
+                    {label}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">View listings →</p>
+                </div>
               </Link>
             ))}
           </div>

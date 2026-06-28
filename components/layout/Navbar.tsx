@@ -8,6 +8,7 @@ import { Menu, X, ChevronDown, Shield, Smartphone, Scan, Flag, Link2, ShoppingCa
 import { cn } from '@/lib/utils'
 import { NAV_LINKS } from '@/lib/constants'
 import { createClient } from '@/lib/supabase/client'
+import ThemeToggle from '@/components/layout/ThemeToggle'
 
 const SAFETY_TOOLS = [
   { label: 'Check Vendor',    href: '/check-vendor',   icon: Shield,     desc: 'Verify a vendor identity' },
@@ -243,6 +244,7 @@ export default function Navbar() {
 
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center gap-3">
+            <ThemeToggle />
             <Link
               href="/buyer/cart"
               className="relative text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-1.5"
@@ -295,6 +297,7 @@ export default function Navbar() {
 
           {/* Mobile icons + menu button */}
           <div className="lg:hidden flex items-center gap-1">
+            <ThemeToggle />
             <Link
               href="/buyer/cart"
               className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 transition-colors relative"

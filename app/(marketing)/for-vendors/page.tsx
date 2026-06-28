@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   Shield, TrendingUp, Users, CheckCircle, ArrowRight,
   Star, BadgeCheck, Banknote, Clock, MessageCircle,
@@ -7,6 +8,7 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/for-vendors' },
   title: 'For Vendors',
   description: 'Become a Zolarux Verified Vendor. Sell gadgets with full buyer trust. Escrow payments mean you always get paid for legitimate orders.',
 }
@@ -166,6 +168,36 @@ export default function ForVendorsPage() {
                 <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Image band — built for Nigerian sellers */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-card">
+              <Image
+                src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1000&q=70&auto=format&fit=crop"
+                alt="A verified vendor managing their gadget business on Zolarux"
+                fill
+                sizes="(max-width:1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+            <div>
+              <span className="inline-block bg-primary-light text-primary text-xs font-700 uppercase tracking-wider px-3 py-1.5 rounded-full mb-4">
+                Built for Nigerian sellers
+              </span>
+              <h2 className="font-display text-3xl font-800 text-gray-900 mb-4">
+                Sell with the trust of an entire platform behind you
+              </h2>
+              <p className="text-gray-500 text-lg leading-relaxed">
+                Buyers hesitate to pay strangers online. When you sell through Zolarux,
+                escrow and verification do the convincing for you — so more conversations
+                turn into completed sales.
+              </p>
+            </div>
           </div>
         </div>
       </section>

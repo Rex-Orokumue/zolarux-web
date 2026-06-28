@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Shield, CheckCircle, Search, ArrowRight, AlertTriangle, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import PageHero from '@/components/layout/PageHero'
 import { StarBadge } from '@/components/reviews/StarRating'
 import VendorPublicReviews from '@/components/reviews/VendorPublicReviews'
 import type { Vendor } from '@/types/vendor'
@@ -179,23 +180,12 @@ export default function VerifiedVendorsPage() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-primary py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="max-w-3xl">
-            <span className="inline-block bg-white/15 text-white text-xs font-700 uppercase tracking-wider px-3 py-1.5 rounded-full mb-6">
-              Vendor Registry
-            </span>
-            <h1 className="font-display text-4xl font-800 text-white mb-4">
-              Verified Vendors
-            </h1>
-            <p className="text-white/75 text-lg">
-              Every vendor listed here has passed Zolarux&apos;s full verification process —
-              identity check, business verification, supplier confirmation, and video call.
-              These are real, accountable sellers.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        imageUrl="https://images.unsplash.com/photo-1657449036184-4fb912035102?w=1600&q=70&auto=format&fit=crop"
+        eyebrow="Vendor Registry"
+        title="Verified Vendors"
+        subtitle="Every vendor listed here has passed Zolarux's full verification process — identity check, business verification, supplier confirmation, and video call. These are real, accountable sellers."
+      />
 
       {/* Verification standard */}
       <div className="bg-green-50 border-b border-green-100 py-4">
