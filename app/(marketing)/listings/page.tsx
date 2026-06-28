@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { formatPrice, buildWhatsAppUrl } from '@/lib/utils'
 import { LISTING_CATEGORIES } from '@/lib/constants'
 import { buildCategoryOrFilter } from '@/lib/category-filter'
+import SupplyNotice, { PriceNote } from '@/components/listings/SupplyNotice'
 import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2, Play, Star } from 'lucide-react'
 import type { Product } from '@/types/product'
 
@@ -170,6 +171,9 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
           </div>
         </div>
       </div>
+
+      {/* Supply / price-availability notice */}
+      <SupplyNotice />
 
       {/* Featured band */}
       {featured.length > 0 && (
@@ -387,6 +391,7 @@ function ProductCard({
             ) : (
               <span className="font-display font-800 text-gray-900">{formatPrice(product.price)}</span>
             )}
+            <div className="mt-1"><PriceNote /></div>
           </div>
           <Link
             href={`https://wa.me/2347063107314?text=${encodeURIComponent(whatsappMsg)}`}

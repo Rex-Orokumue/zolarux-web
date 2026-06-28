@@ -8,6 +8,7 @@ import type { Product } from '@/types/product'
 import ListingActions from './ListingActions'
 import ShareButton from './ShareButton'
 import ListingReviews from '@/components/reviews/ListingReviews'
+import { PriceNote } from '@/components/listings/SupplyNotice'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -154,6 +155,9 @@ export default async function ListingDetailPage({ params }: Props) {
                   </div>
                 </>
               )}
+              <div className="mt-3 pt-3 border-t border-gray-50">
+                <PriceNote />
+              </div>
             </div>
 
             {product.description && (
