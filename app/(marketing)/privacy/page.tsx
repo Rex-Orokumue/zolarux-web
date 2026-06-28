@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Shield, Mail, MessageCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/privacy' },
   title: 'Privacy Policy',
   description: 'How Zolarux collects, uses, and protects your personal and financial data. We are committed to transparency and security in social commerce.',
 }

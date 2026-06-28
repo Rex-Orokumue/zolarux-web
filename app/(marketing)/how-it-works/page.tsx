@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/how-it-works' },
   title: 'How It Works',
   description: 'Learn how Zolarux escrow protects every gadget transaction. Vendor verification, escrow payment, product inspection, fulfillment monitoring, and buyer confirmation.',
 }

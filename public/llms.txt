@@ -1,0 +1,20 @@
+# Zolarux
+
+Zolarux is Nigeria's trust infrastructure for gadget commerce. We verify vendors,
+hold payments in escrow, and inspect products before payout so people can buy
+phones, laptops, and electronics online without fear.
+
+## Key pages
+- Listings: /listings
+- How it works: /how-it-works
+- For vendors: /for-vendors
+- For buyers: /for-buyers
+- Check a device (stolen): /check-device
+- Check a vendor: /check-vendor
+- Verify a product is original: /check-original
+- Scan a link for safety: /scan-link
+- FAQ: /faq
+
+## Note on prices
+Listings are a live catalogue from independent verified partner vendors. Final
+price and availability are confirmed at the time of purchase.

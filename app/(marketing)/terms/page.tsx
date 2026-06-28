@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { CheckCircle, XCircle, Mail, Phone, Shield } from 'lucide-react'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/terms' },
   title: 'Terms of Service',
   description: 'Read the terms governing the use of Zolarux. Understand our escrow rules, vendor obligations, buyer protection policies, and dispute resolution process.',
 }

@@ -4,6 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ChevronDown, MessageCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import JsonLd from '@/components/seo/JsonLd'
+import { faqSchema } from '@/lib/seo'
 
 const FAQ_SECTIONS = [
   {
@@ -106,6 +108,7 @@ export default function FAQPage() {
 
   return (
     <div>
+      <JsonLd data={faqSchema(FAQ_SECTIONS.flatMap((s) => s.questions))} />
       {/* Hero */}
       <section className="bg-primary py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/for-vendors' },
   title: 'For Vendors',
   description: 'Become a Zolarux Verified Vendor. Sell gadgets with full buyer trust. Escrow payments mean you always get paid for legitimate orders.',
 }

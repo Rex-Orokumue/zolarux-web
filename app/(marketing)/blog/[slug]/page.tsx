@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { ArrowLeft, Calendar, User, ArrowRight, Shield } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
+import JsonLd from '@/components/seo/JsonLd'
+import { articleSchema } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
@@ -109,6 +111,13 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <div className="bg-surface min-h-screen">
+      <JsonLd data={articleSchema({
+        title: post.title,
+        slug: post.slug,
+        published_at: post.published_at,
+        image: post.cover_image ?? null,
+        author: post.author ?? undefined,
+      })} />
 
       {/* Hero */}
       <section className="bg-primary py-16">

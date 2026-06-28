@@ -1,14 +1,18 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { formatPrice, buildWhatsAppUrl } from '@/lib/utils'
 import { LISTING_CATEGORIES } from '@/lib/constants'
 import { buildCategoryOrFilter } from '@/lib/category-filter'
 import SupplyNotice, { PriceNote } from '@/components/listings/SupplyNotice'
+import JsonLd from '@/components/seo/JsonLd'
+import { SITE_URL } from '@/lib/seo'
 import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2, Play, Star } from 'lucide-react'
 import type { Product } from '@/types/product'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/listings' },
   title: 'Verified Listings',
   description: 'Browse verified gadget listings on Zolarux. Every product is from a verified vendor. Every transaction is escrow-protected.',
 }
@@ -119,6 +123,19 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
   return (
     <div>
+      {products.length > 0 && (
+        <JsonLd data={{
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          itemListElement: products.map((p, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            url: `${SITE_URL}/listings/${p.id}`,
+            name: p.name,
+          })),
+        }} />
+      )}
+
       {/* Header */}
       <section className="bg-primary py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -327,10 +344,12 @@ function ProductCard({
       {/* Image */}
       <Link href={`/listings/${product.id}`} className="block relative aspect-square bg-gray-50 overflow-hidden">
         {imageUrl ? (
-          <img
+          <Image
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            fill
+            sizes="(max-width:1024px) 50vw, 25vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : videoUrl ? (
           <>

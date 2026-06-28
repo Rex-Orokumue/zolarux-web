@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { CheckCircle, XCircle, Shield, MessageCircle, Mail, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/refund-policy' },
   title: 'Refund & Return Policy',
   description: 'Zolarux 100% Money-Back Guarantee. We hold funds in escrow until you inspect the item. Learn how our dispute resolution and return process works.',
 }
