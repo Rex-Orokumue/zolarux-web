@@ -9,6 +9,7 @@ import SupplyNotice, { PriceNote } from '@/components/listings/SupplyNotice'
 import JsonLd from '@/components/seo/JsonLd'
 import { SITE_URL } from '@/lib/seo'
 import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2, Play, Star } from 'lucide-react'
+import PageHero from '@/components/layout/PageHero'
 import type { Product } from '@/types/product'
 
 export const metadata: Metadata = {
@@ -137,22 +138,13 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       )}
 
       {/* Header */}
-      <section className="bg-primary py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-              <Shield size={16} className="text-white" />
-            </div>
-            <span className="text-white/70 text-sm font-600">Every listing is vendor-verified & escrow-protected</span>
-          </div>
-          <h1 className="font-display text-4xl font-800 text-white mb-3">
-            Verified Listings
-          </h1>
-          <p className="text-white/70 text-lg">
-            Browse our verified gadget catalogue
-          </p>
-        </div>
-      </section>
+      <PageHero
+        imageUrl="https://images.unsplash.com/photo-1576814547952-f8531781d7ef?w=1600&q=70&auto=format&fit=crop"
+        eyebrow="Every listing is vendor-verified & escrow-protected"
+        title="Verified Listings"
+        subtitle="Browse our verified gadget catalogue"
+        chips={['2,000+ checks done', 'Money-back escrow']}
+      />
 
       {/* Vendor filter banner */}
       {vendorFilter && (

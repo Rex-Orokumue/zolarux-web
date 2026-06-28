@@ -5,6 +5,7 @@ import {
   Shield, AlertTriangle, ArrowRight, MessageCircle,
   CheckCircle, XCircle, Scale, Play
 } from 'lucide-react'
+import PageHero from '@/components/layout/PageHero'
 
 export const metadata: Metadata = {
   alternates: { canonical: '/how-it-works' },
@@ -109,23 +110,12 @@ export default function HowItWorksPage() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-primary py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="max-w-3xl">
-            <span className="inline-block bg-white/15 text-white text-xs font-700 uppercase tracking-wider px-3 py-1.5 rounded-full mb-6">
-              The Operating Model
-            </span>
-            <h1 className="font-display text-4xl sm:text-5xl font-800 text-white mb-6">
-              How Zolarux Escrow Works
-            </h1>
-            <p className="text-white/75 text-lg leading-relaxed">
-              Every Zolarux transaction follows a strict five-step process designed to
-              eliminate every known vector of social commerce fraud in Nigeria.
-              Here is exactly what happens to your money and your gadget.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        imageUrl="https://images.unsplash.com/photo-1573167101669-476636b96cea?w=1600&q=70&auto=format&fit=crop"
+        eyebrow="The Operating Model"
+        title="How Zolarux Escrow Works"
+        subtitle="Every Zolarux transaction follows a strict five-step process designed to eliminate every known vector of social commerce fraud in Nigeria. Here is exactly what happens to your money and your gadget."
+      />
 
       {/* The model overview */}
       <section className="py-16 bg-gray-950">

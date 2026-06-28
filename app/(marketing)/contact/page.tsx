@@ -6,6 +6,7 @@ import {
   MessageCircle, Mail, MapPin, Clock,
   Send, CheckCircle, Shield, ArrowRight
 } from 'lucide-react'
+import PageHero from '@/components/layout/PageHero'
 
 const CONTACT_OPTIONS = [
   {
@@ -74,17 +75,11 @@ export default function ContactPage() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-primary py-16">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <h1 className="font-display text-4xl font-800 text-white mb-4">
-            Get in Touch
-          </h1>
-          <p className="text-white/70 text-lg">
-            Whether you want to buy something, sell something, raise a dispute,
-            or just have a question — we are here.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        imageUrl="https://images.unsplash.com/photo-1694175271713-a6e2cc378980?w=1600&q=70&auto=format&fit=crop"
+        title="Get in Touch"
+        subtitle="Whether you want to buy something, sell something, raise a dispute, or just have a question — we are here."
+      />
 
       <section className="py-14 bg-surface">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">

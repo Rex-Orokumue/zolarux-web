@@ -6,6 +6,7 @@ import { ChevronDown, MessageCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import JsonLd from '@/components/seo/JsonLd'
 import { faqSchema } from '@/lib/seo'
+import PageHero from '@/components/layout/PageHero'
 
 const FAQ_SECTIONS = [
   {
@@ -110,16 +111,11 @@ export default function FAQPage() {
     <div>
       <JsonLd data={faqSchema(FAQ_SECTIONS.flatMap((s) => s.questions))} />
       {/* Hero */}
-      <section className="bg-primary py-16">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <h1 className="font-display text-4xl font-800 text-white mb-4">
-            Frequently Asked Questions
-          </h1>
-          <p className="text-white/70 text-lg">
-            Everything you need to know about how Zolarux works.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        imageUrl="https://images.unsplash.com/photo-1549086802-bb458f399f05?w=1600&q=70&auto=format&fit=crop"
+        title="Frequently Asked Questions"
+        subtitle="Everything you need to know about how Zolarux works."
+      />
 
       {/* Section tabs */}
       <div className="bg-white border-b border-gray-100 sticky top-16 z-40">
