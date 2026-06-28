@@ -7,6 +7,8 @@ const KEY = 'zlx_supply_notice_dismissed'
 
 export default function SupplyNotice() {
   const [hidden, setHidden] = useState(true)
+  // Read dismiss state after mount (client-only; avoids SSR/hydration mismatch).
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setHidden(localStorage.getItem(KEY) === '1') }, [])
   if (hidden) return null
   return (

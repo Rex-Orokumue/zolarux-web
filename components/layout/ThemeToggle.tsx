@@ -6,6 +6,8 @@ import { getStoredTheme, resolveIsDark, setTheme } from '@/lib/theme'
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false)
+  // Read the persisted/system theme after mount (client-only; SSR renders light).
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setIsDark(resolveIsDark(getStoredTheme())) }, [])
   const toggle = () => {
     const next = isDark ? 'light' : 'dark'
