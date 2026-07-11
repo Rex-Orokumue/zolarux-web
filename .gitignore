@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Superpowers brainstorm scratch
 .superpowers/
+
+# Claude Code local state (worktrees, etc.)
+.claude/
