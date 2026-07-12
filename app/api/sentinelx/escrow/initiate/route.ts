@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const { buyer_id, seller_id, listing_id, listing_title, amount } = body
+  const { buyer_id, seller_id, listing_id, listing_title, amount, return_url } = body
 
   const missing = [
     !buyer_id && 'buyer_id',
@@ -69,6 +69,7 @@ export async function POST(request: NextRequest) {
         amount,
         reference: order_ref,
         metadata: { source: 'sentinelx', order_ref, listing_id, buyer_id, seller_id },
+        ...(return_url ? { callback_url: return_url } : {}),
       }),
     })
     const paystackData = await paystackRes.json()
