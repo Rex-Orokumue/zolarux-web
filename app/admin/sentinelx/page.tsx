@@ -53,7 +53,7 @@ export default async function SentinelXOrdersPage({
   ]
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-5">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-5 min-w-0">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl font-800 text-gray-900">SentinelX Escrow Orders</h1>
         <span className="text-sm text-gray-400">{count || 0} total</span>
@@ -62,13 +62,13 @@ export default async function SentinelXOrdersPage({
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {stats.map(({ label, value, color }) => (
-          <div key={label} className="bg-white rounded-2xl p-4 border border-gray-100 shadow-card text-center">
-            <p className={`font-display font-800 text-2xl ${color}`}>{value}</p>
+          <div key={label} className="min-w-0 bg-white rounded-2xl p-4 border border-gray-100 shadow-card text-center">
+            <p className={`font-display font-800 text-2xl truncate ${color}`}>{value}</p>
             <p className="text-gray-400 text-xs mt-1">{label}</p>
           </div>
         ))}
-        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-card text-center">
-          <p className="font-display font-800 text-2xl text-primary">{formatPrice(escrowValueKobo / 100)}</p>
+        <div className="min-w-0 bg-white rounded-2xl p-4 border border-gray-100 shadow-card text-center">
+          <p className="font-display font-800 text-2xl text-primary truncate">{formatPrice(escrowValueKobo / 100)}</p>
           <p className="text-gray-400 text-xs mt-1">Value in Escrow</p>
         </div>
       </div>

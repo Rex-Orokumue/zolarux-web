@@ -19,7 +19,7 @@ export function SentinelXFilters({
   search: string
 }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 min-w-0">
       <div className="flex gap-2 overflow-x-auto scrollbar-none min-w-0">
         {STATUS_PILLS.map((pill) => (
           <Link
@@ -36,14 +36,14 @@ export function SentinelXFilters({
         ))}
       </div>
 
-      <form method="GET" action="/admin/sentinelx" className="flex gap-2 sm:ml-auto">
+      <form method="GET" action="/admin/sentinelx" className="flex gap-2 sm:ml-auto min-w-0">
         {activeStatus && <input type="hidden" name="status" value={activeStatus} />}
         <input
           type="text"
           name="q"
           defaultValue={search}
           placeholder="Search order ref or listing…"
-          className="w-full sm:w-64 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="min-w-0 w-full sm:w-64 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
         <button
           type="submit"
