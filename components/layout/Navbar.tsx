@@ -18,6 +18,17 @@ const SAFETY_TOOLS = [
   { label: 'Scan a Link',     href: '/scan-link',      icon: Link2,      desc: 'Check if a link is safe' },
 ]
 
+async function checkIsAdmin(): Promise<boolean> {
+  try {
+    const res = await fetch('/api/admin/me')
+    if (!res.ok) return false
+    const data = await res.json()
+    return !!data.isAdmin
+  } catch {
+    return false
+  }
+}
+
 export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
@@ -26,6 +37,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
   const [cartCount, setCartCount] = useState<number>(0)
 
@@ -98,6 +110,7 @@ export default function Navbar() {
       const user = session?.user
       if (user) {
         setUser(user)
+        setIsAdmin(await checkIsAdmin())
 
         // Determine role: check metadata first, then fall back to checking vendors table
         const metadataRole = user.user_metadata?.role
@@ -115,6 +128,7 @@ export default function Navbar() {
       } else {
         setUser(null)
         setUserRole(null)
+        setIsAdmin(false)
       }
       setAuthChecked(true)
     }
@@ -125,9 +139,11 @@ export default function Navbar() {
       if (session?.user) {
         setUser(session.user)
         setUserRole(session.user.user_metadata?.role || userRole)
+        checkIsAdmin().then(setIsAdmin)
       } else {
         setUser(null)
         setUserRole(null)
+        setIsAdmin(false)
       }
     })
 
@@ -139,6 +155,7 @@ export default function Navbar() {
     await supabase.auth.signOut()
     setUser(null)
     setUserRole(null)
+    setIsAdmin(false)
     router.push('/')
   }
 
@@ -258,6 +275,14 @@ export default function Navbar() {
             </Link>
             {user ? (
               <>
+                {isAdmin && (
+                  <Link
+                    href="/admin/sentinelx"
+                    className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all"
+                  >
+                    <Shield size={14} /> Admin
+                  </Link>
+                )}
                 <Link
                   href={getAccountHref()}
                   className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all"
@@ -375,6 +400,14 @@ export default function Navbar() {
                   >
                     Dashboard
                   </Link>
+                  {isAdmin && (
+                    <Link
+                      href="/admin/sentinelx"
+                      className="block w-full text-center px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+                    >
+                      Admin
+                    </Link>
+                  )}
                   <button
                     onClick={handleSignOut}
                     className="block w-full text-center px-4 py-3 rounded-xl border border-red-200 text-sm font-medium text-red-600 hover:bg-red-50 transition-all"
