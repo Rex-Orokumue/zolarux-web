@@ -20,7 +20,7 @@ export function SentinelXFilters({
 }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-      <div className="flex gap-2 overflow-x-auto scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto scrollbar-none min-w-0">
         {STATUS_PILLS.map((pill) => (
           <Link
             key={pill.label}
