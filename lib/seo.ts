@@ -36,7 +36,7 @@ export function orgSchema() {
     url: SITE_URL,
     logo: `${SITE_URL}/zolarux_logo.png`,
     description:
-      "Nigeria's trust infrastructure for gadget commerce — verified vendors, escrow protection, product inspection.",
+      'Zolarux is a trusted gadget retailer selling phones, laptops, and accessories in Nigeria. 5 years in operation, 100+ customers, with a full money-back guarantee on every order.',
   }
 }
 

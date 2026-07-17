@@ -220,7 +220,7 @@ export default async function ListingDetailPage({ params }: Props) {
 
             {/* WhatsApp fallback */}
             <Link
-              href={`https://wa.me/2347063107314?text=${encodeURIComponent(`Hi, I'm interested in "${product.name}" on Zolarux`)}`}
+              href={`https://wa.me/2348120288390?text=${encodeURIComponent(`Hi, I'm interested in "${product.name}" on Zolarux`)}`}
               target="_blank"
               className="mt-3 flex items-center justify-center gap-2 w-full border border-gray-200 text-gray-600 text-sm font-600 py-3 rounded-xl hover:bg-gray-50 transition-all"
             >

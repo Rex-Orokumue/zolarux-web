@@ -178,7 +178,7 @@ export default function RefundPolicyPage() {
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
-                href="https://wa.me/2347063107314?text=I want to raise a dispute/refund request for order:"
+                href="https://wa.me/2348120288390?text=I want to raise a dispute/refund request for order:"
                 target="_blank"
                 className="inline-flex items-center gap-2 bg-green-500 text-white font-700 px-5 py-3 rounded-xl hover:bg-green-600 transition-all text-sm"
               >

@@ -137,7 +137,7 @@ export default function PrivacyPolicyPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
                 { icon: Mail, label: 'Email Us', value: 'zolaruxlimited@gmail.com', href: 'mailto:zolaruxlimited@gmail.com' },
-                { icon: MessageCircle, label: 'WhatsApp Support', value: '+234 706 310 7314', href: 'https://wa.me/2347063107314' },
+                { icon: MessageCircle, label: 'WhatsApp Support', value: '+234 812 028 8390', href: 'https://wa.me/2348120288390' },
                 { icon: Shield, label: 'Office', value: 'Oleh, Delta State, Nigeria', href: null },
               ].map(({ icon: Icon, label, value, href }) => (
                 <div key={label} className="bg-surface rounded-2xl p-4 text-center">

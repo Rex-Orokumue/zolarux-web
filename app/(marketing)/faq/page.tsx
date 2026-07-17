@@ -159,7 +159,7 @@ export default function FAQPage() {
               Our team is available on WhatsApp. We typically respond within minutes during business hours.
             </p>
             <Link
-              href="https://wa.me/2347063107314?text=Hi, I have a question about Zolarux"
+              href="https://wa.me/2348120288390?text=Hi, I have a question about Zolarux"
               target="_blank"
               className="inline-flex items-center gap-2 bg-white text-primary font-display font-700 px-6 py-3 rounded-xl hover:bg-gray-50 transition-all"
             >

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import {
-  Shield, CheckCircle, Lock, ArrowRight,
+  Shield, Lock, ArrowRight,
   Smartphone, Laptop, Headphones, Zap,
   Search, ClipboardCheck, Truck, ThumbsUp,
   Star, AlertTriangle, Link2, Flag, Play
@@ -9,18 +9,17 @@ import {
 import VendorCheckerInline from '@/components/trust/VendorCheckerInline'
 
 const STATS = [
-  { value: '₦2M+', label: 'Protected in Escrow' },
-  { value: '100+', label: 'Transactions Completed' },
-  { value: '0',    label: 'Confirmed Scams' },
-  { value: '5yrs', label: 'Building Trust' },
+  { value: '100+',    label: 'Happy Customers' },
+  { value: '5 Years', label: 'Track Record' },
+  { value: 'Zero',    label: 'Losses. Ever.' },
 ]
 
 const STEPS = [
-  { number: '01', icon: Search,       title: 'Inquiry',           desc: 'You contact Zolarux about a gadget. We negotiate with the vendor — no direct friction.' },
-  { number: '02', icon: Lock,         title: 'Escrow Payment',    desc: 'You pay the product price plus a small protection fee. Funds held by Zolarux — not the vendor.' },
-  { number: '03', icon: ClipboardCheck, title: 'Verification',    desc: 'We verify the physical gadget via video or photos before shipping is approved.' },
-  { number: '04', icon: Truck,        title: 'Fulfillment',       desc: 'Vendor delivers. We monitor logistics and timelines. You inspect on arrival.' },
-  { number: '05', icon: ThumbsUp,     title: 'You Confirm. We Pay.', desc: 'Only after you confirm satisfaction do we release payment to the vendor.' },
+  { number: '01', icon: Search,       title: 'Tell me what you need', desc: 'WhatsApp Rex with the gadget you want. Confirm availability and price before anything else.' },
+  { number: '02', icon: Lock,         title: 'Make payment',          desc: 'Pay securely. Your money is protected and held until you confirm delivery.' },
+  { number: '03', icon: ClipboardCheck, title: 'We verify the item',  desc: 'Before anything ships, the gadget is inspected and confirmed against exactly what you ordered.' },
+  { number: '04', icon: Truck,        title: 'Delivered to you',      desc: 'We track the delivery and stay involved until it reaches you in the right condition.' },
+  { number: '05', icon: ThumbsUp,     title: 'You confirm, we\'re done', desc: 'Happy with your order? That\'s the only outcome we accept. Something wrong? We sort it.' },
 ]
 
 const CATEGORIES = [
@@ -85,19 +84,19 @@ export default function HomePage() {
               <div className="inline-flex items-center gap-2 bg-white/15 border border-white/20 rounded-full px-4 py-1.5 mb-8">
                 <Shield size={13} className="text-accent" />
                 <span className="text-white/90 text-xs font-600 tracking-wide">
-                  Trust Infrastructure for Nigerian Gadget Commerce
+                  Trusted Gadget Seller · 5 Years · 100+ Customers
                 </span>
               </div>
 
               <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white leading-[1.08] mb-6">
-                Buy Gadgets Online{' '}
-                <span className="text-accent">Without Fear.</span>
+                You get exactly what you ordered{' '}
+                <span className="text-accent">— or your money back.</span>
               </h1>
 
               <p className="text-white/75 text-lg leading-relaxed mb-10 max-w-xl">
-                We verify the vendor, hold your payment in escrow, and inspect
-                the gadget before you approve payout. No more scams. No more fake
-                phones. No more money lost.
+                I&apos;ve been selling gadgets for 5 years. Over 100 customers.
+                Nobody has ever lost money buying from me. You get exactly what
+                you ordered — or I sort it. Simple.
               </p>
 
               <div className="flex flex-wrap gap-4 mb-10">
@@ -105,18 +104,20 @@ export default function HomePage() {
                   href="/listings"
                   className="inline-flex items-center gap-2 bg-white text-primary font-display font-700 px-8 py-4 rounded-xl hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                 >
-                  Browse Verified Listings <ArrowRight size={18} />
+                  Browse Available Gadgets <ArrowRight size={18} />
                 </Link>
-                <Link
-                  href="/how-it-works"
+                <a
+                  href="https://wa.me/2348120288390"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 border-2 border-white/30 text-white font-display font-700 px-8 py-4 rounded-xl hover:border-white/60 hover:bg-white/10 transition-all"
                 >
-                  How Escrow Works
-                </Link>
+                  WhatsApp Rex to Order
+                </a>
               </div>
 
               <div className="flex flex-wrap gap-6">
-                {['✓ Vendor Verified', '✓ Escrow Protected', '✓ Dispute Resolved'].map((item) => (
+                {['✓ Verified Stock', '✓ Fair Prices', '✓ 5 Years of Zero Losses', '✓ Flexible Payment Plans'].map((item) => (
                   <span key={item} className="text-white/70 text-sm font-500">{item}</span>
                 ))}
               </div>
@@ -142,7 +143,7 @@ export default function HomePage() {
       {/* ── STATS BAR ─────────────────────────────────────────────────────── */}
       <section className="bg-gray-950 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-gray-800">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-0 md:divide-x md:divide-gray-800">
             {STATS.map((stat) => (
               <div key={stat.label} className="text-center px-6 py-2">
                 <p className="font-display text-3xl font-800 text-white">{stat.value}</p>
@@ -218,7 +219,7 @@ export default function HomePage() {
               Browse by Category
             </h2>
             <p className="text-gray-500 text-lg max-w-xl mx-auto">
-              Every listing is from a verified vendor. Every transaction is escrow-protected.
+              Every gadget is checked before it ships. Every order is guaranteed.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -266,10 +267,10 @@ export default function HomePage() {
               The Operating Model
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-800 text-gray-900 mb-4">
-              We Control the Money &amp; The Process
+              How It Works
             </h2>
             <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-              We sit between you and the vendor. Funds are only released when every step below is completed.
+              Simple, transparent, and guaranteed from start to finish.
             </p>
           </div>
 
@@ -386,38 +387,6 @@ export default function HomePage() {
             >
               Download Free <ArrowRight size={18} />
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── DUAL CTA ──────────────────────────────────────────────────────── */}
-      <section className="py-20 bg-primary">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white/10 border border-white/20 rounded-3xl p-8">
-              <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center mb-6">
-                <Shield size={22} className="text-white" />
-              </div>
-              <h3 className="font-display text-2xl font-800 text-white mb-3">Ready to buy safely?</h3>
-              <p className="text-white/70 mb-6 leading-relaxed">
-                Browse verified gadget listings. Every seller is vetted. Every payment is protected until you confirm delivery.
-              </p>
-              <Link href="/listings" className="inline-flex items-center gap-2 bg-white text-primary font-display font-700 px-6 py-3.5 rounded-xl hover:bg-gray-50 transition-all">
-                Browse Listings <ArrowRight size={16} />
-              </Link>
-            </div>
-            <div className="bg-accent/20 border border-accent/30 rounded-3xl p-8">
-              <div className="w-12 h-12 bg-accent/20 rounded-2xl flex items-center justify-center mb-6">
-                <CheckCircle size={22} className="text-accent" />
-              </div>
-              <h3 className="font-display text-2xl font-800 text-white mb-3">Sell more. Sell safely.</h3>
-              <p className="text-white/70 mb-6 leading-relaxed">
-                Get the Zolarux Verified badge. Buyers trust you instantly. No more &ldquo;send me a video first&rdquo; back-and-forth.
-              </p>
-              <Link href="/register/vendor" className="inline-flex items-center gap-2 bg-accent text-white font-display font-700 px-6 py-3.5 rounded-xl hover:bg-accent-dark transition-all">
-                Become a Vendor <ArrowRight size={16} />
-              </Link>
-            </div>
           </div>
         </div>
       </section>

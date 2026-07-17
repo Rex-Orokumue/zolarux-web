@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og'
 
-export const alt = 'Zolarux — Buy Gadgets Online Without Fear'
+export const alt = 'Zolarux — You get exactly what you ordered'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -31,7 +31,7 @@ export default function Image() {
             opacity: 0.9,
           }}
         >
-          🛡️ Verified vendors · Escrow-protected
+          Or your money back. No arguments.
         </div>
         <div
           style={{
@@ -43,10 +43,13 @@ export default function Image() {
             lineHeight: 1.05,
           }}
         >
-          <span>Buy Gadgets Online</span>
-          <span>Without Fear</span>
+          <span>You get exactly</span>
+          <span>what you ordered.</span>
         </div>
-        <div style={{ fontSize: 44, fontWeight: 800, marginTop: 40, opacity: 0.95 }}>
+        <div style={{ fontSize: 36, fontWeight: 700, marginTop: 24, opacity: 0.85 }}>
+          5 years · 100+ customers · Zero losses
+        </div>
+        <div style={{ fontSize: 44, fontWeight: 800, marginTop: 24, opacity: 0.95 }}>
           Zolarux
         </div>
       </div>

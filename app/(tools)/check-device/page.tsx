@@ -202,7 +202,7 @@ export default function CheckDevicePage() {
                     <p className="text-red-800 text-sm font-500">Do not purchase this device. Buying stolen property is a criminal offence. If a vendor is selling this, report them immediately.</p>
                   </div>
                   <Link
-                    href="https://wa.me/2347063107314?text=I found a stolen device being sold. IMEI/Serial: "
+                    href="https://wa.me/2348120288390?text=I found a stolen device being sold. IMEI/Serial: "
                     target="_blank"
                     className="inline-flex items-center gap-2 bg-red-600 text-white text-sm font-700 px-4 py-2.5 rounded-xl hover:bg-red-700 transition-all"
                   >

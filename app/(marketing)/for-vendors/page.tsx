@@ -96,7 +96,7 @@ export default function ForVendorsPage() {
                 Apply to Become a Vendor <ArrowRight size={18} />
               </Link>
               <Link
-                href="https://wa.me/2347063107314?text=Hi, I want to become a Zolarux verified vendor"
+                href="https://wa.me/2348120288390?text=Hi, I want to become a Zolarux verified vendor"
                 target="_blank"
                 className="inline-flex items-center gap-2 border-2 border-white/20 text-white font-display font-700 px-7 py-4 rounded-xl hover:border-white/40 hover:bg-white/5 transition-all">
                 <MessageCircle size={18} /> Ask Questions First

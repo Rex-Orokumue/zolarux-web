@@ -22,7 +22,7 @@ export function formatDate(dateString: string): string {
   }).format(new Date(dateString))
 }
 
-export function buildWhatsAppUrl(message: string, phone: string = '2347063107314'): string {
+export function buildWhatsAppUrl(message: string, phone: string = '2348120288390'): string {
   const encoded = encodeURIComponent(message)
   return `https://wa.me/${phone}?text=${encoded}`
 }

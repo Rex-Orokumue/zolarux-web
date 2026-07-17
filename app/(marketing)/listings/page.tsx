@@ -222,7 +222,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
               <h3 className="font-display text-xl font-700 text-gray-900 mb-2">No listings yet in this category</h3>
               <p className="text-gray-500 mb-6">We are actively onboarding verified vendors. Check back soon.</p>
               <Link
-                href={`https://wa.me/2347063107314?text=Hi, I'm looking for ${activeCategory === 'All' ? 'a gadget' : activeCategory} on Zolarux`}
+                href={`https://wa.me/2348120288390?text=Hi, I'm looking for ${activeCategory === 'All' ? 'a gadget' : activeCategory} on Zolarux`}
                 target="_blank"
                 className="inline-flex items-center gap-2 bg-primary text-white font-700 px-6 py-3 rounded-xl hover:bg-primary-dark transition-all"
               >
@@ -305,7 +305,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             Tell us exactly what you need. Our team will source it from a verified vendor for you.
           </p>
           <Link
-            href="https://wa.me/2347063107314?text=Hi, I'd like to request a product on Zolarux"
+            href="https://wa.me/2348120288390?text=Hi, I'd like to request a product on Zolarux"
             target="_blank"
             className="inline-flex items-center gap-2 bg-green-500 text-white font-700 px-6 py-3 rounded-xl hover:bg-green-600 transition-all"
           >
@@ -405,7 +405,7 @@ function ProductCard({
             <div className="mt-1"><PriceNote /></div>
           </div>
           <Link
-            href={`https://wa.me/2347063107314?text=${encodeURIComponent(whatsappMsg)}`}
+            href={`https://wa.me/2348120288390?text=${encodeURIComponent(whatsappMsg)}`}
             target="_blank"
             className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors"
             title="Inquire on WhatsApp"

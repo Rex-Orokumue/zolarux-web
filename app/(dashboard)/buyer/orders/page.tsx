@@ -255,14 +255,14 @@ export default async function BuyerOrdersPage() {
                       </p>
                       <div className="flex gap-3">
                         <Link
-                          href={`https://wa.me/2347063107314?text=${encodeURIComponent(`I confirm delivery and satisfaction for order ${order.order_ref}. Please release payment to the vendor.`)}`}
+                          href={`https://wa.me/2348120288390?text=${encodeURIComponent(`I confirm delivery and satisfaction for order ${order.order_ref}. Please release payment to the vendor.`)}`}
                           target="_blank"
                           className="flex-1 bg-green-600 text-white text-sm font-700 py-2.5 rounded-xl text-center hover:bg-green-700 transition-all"
                         >
                           ✓ Confirm Receipt
                         </Link>
                         <Link
-                          href={`https://wa.me/2347063107314?text=${encodeURIComponent(`I want to raise a dispute for order ${order.order_ref}. Reason: `)}`}
+                          href={`https://wa.me/2348120288390?text=${encodeURIComponent(`I want to raise a dispute for order ${order.order_ref}. Reason: `)}`}
                           target="_blank"
                           className="flex-1 border border-red-200 text-red-600 text-sm font-700 py-2.5 rounded-xl text-center hover:bg-red-50 transition-all"
                         >
@@ -281,7 +281,7 @@ export default async function BuyerOrdersPage() {
                         Zolarux needs your evidence. Submit immediately via WhatsApp.
                       </p>
                       <Link
-                        href={`https://wa.me/2347063107314?text=${encodeURIComponent(`I am submitting evidence for dispute on order ${order.order_ref}:`)}`}
+                        href={`https://wa.me/2348120288390?text=${encodeURIComponent(`I am submitting evidence for dispute on order ${order.order_ref}:`)}`}
                         target="_blank"
                         className="flex items-center justify-center gap-2 w-full bg-red-600 text-white text-sm font-700 py-2.5 rounded-xl hover:bg-red-700 transition-all"
                       >

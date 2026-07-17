@@ -96,7 +96,7 @@ export default async function VendorProfilePage() {
           Contact Zolarux support to update your business information or request re-verification.
         </p>
         <Link
-          href={`https://wa.me/2347063107314?text=Hi, I need to update my vendor profile. My Vendor ID is: ${vendor.vendor_id}`}
+          href={`https://wa.me/2348120288390?text=Hi, I need to update my vendor profile. My Vendor ID is: ${vendor.vendor_id}`}
           target="_blank"
           className="inline-flex items-center gap-2 bg-primary text-white text-sm font-700 px-4 py-2.5 rounded-xl hover:bg-primary-dark transition-all"
         >

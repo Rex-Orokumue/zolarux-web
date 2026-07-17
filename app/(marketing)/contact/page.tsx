@@ -13,8 +13,8 @@ const CONTACT_OPTIONS = [
     icon: MessageCircle,
     title: 'WhatsApp',
     desc: 'Fastest response. Most transactions start here.',
-    value: '+234 706 310 7314',
-    href: 'https://wa.me/2347063107314?text=Hi Zolarux, I need help with:',
+    value: '+234 812 028 8390',
+    href: 'https://wa.me/2348120288390?text=Hi Zolarux, I need help with:',
     cta: 'Chat on WhatsApp',
     color: 'bg-green-500',
     available: 'Mon–Sat, 8am–8pm',
@@ -66,7 +66,7 @@ export default function ContactPage() {
     setLoading(true)
     // Send via WhatsApp as fallback since no email server yet
     const msg = `New contact form submission:\n\nName: ${form.name.trim()}\nPhone: ${form.phone.trim()}\nSubject: ${form.subject}\nMessage: ${form.message.trim()}`
-    window.open(`https://wa.me/2347063107314?text=${encodeURIComponent(msg)}`, '_blank')
+    window.open(`https://wa.me/2348120288390?text=${encodeURIComponent(msg)}`, '_blank')
     await new Promise(r => setTimeout(r, 1000))
     setSubmitted(true)
     setLoading(false)
@@ -134,7 +134,7 @@ export default function ContactPage() {
                   {COMMON_TOPICS.map(({ label, msg }) => (
                     <Link
                       key={label}
-                      href={`https://wa.me/2347063107314?text=${encodeURIComponent(msg)}`}
+                      href={`https://wa.me/2348120288390?text=${encodeURIComponent(msg)}`}
                       target="_blank"
                       className="flex items-center gap-2 p-3 rounded-xl border border-gray-100 hover:border-primary hover:bg-primary-light text-sm text-gray-700 hover:text-primary font-500 transition-all group"
                     >

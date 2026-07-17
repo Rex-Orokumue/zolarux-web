@@ -297,20 +297,12 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/register/vendor"
-                  className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 border border-gray-200 transition-all"
-                >
-                  Sell on Zolarux
-                </Link>
-              </>
+              <Link
+                href="/login"
+                className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all"
+              >
+                Sign In
+              </Link>
             )}
             <Link
               href="/downloads"

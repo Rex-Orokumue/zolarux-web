@@ -1,7 +1,7 @@
 export const SITE_NAME = 'Zolarux'
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://zolarux.com.ng'
 export const SITE_TAGLINE = 'Buy Gadgets Online Without Fear'
-export const WHATSAPP_NUMBER = '2347063107314'
+export const WHATSAPP_NUMBER = '2348120288390'
 
 export const COLORS = {
   primary: '#4064D7',
@@ -91,11 +91,11 @@ export const ORDER_PIPELINE = [
 ] as const
 
 export const NAV_LINKS = [
-  { label: 'For Buyers',   href: '/for-buyers' },
-  { label: 'For Vendors',  href: '/for-vendors' },
-  { label: 'Listings',     href: '/listings' },
-  { label: 'About',        href: '/about' },
+  { label: 'Gadgets',      href: '/listings' },
+  { label: 'How to Buy',   href: '/for-buyers' },
   { label: 'How It Works', href: '/how-it-works' },
+  { label: 'About',        href: '/about' },
+  { label: 'Contact',      href: '/contact' },
 ] as const
 
 export const TRUST_TOOLS = [

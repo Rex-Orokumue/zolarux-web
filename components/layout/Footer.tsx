@@ -53,11 +53,12 @@ export default function Footer() {
               <span className="font-display font-700 text-white text-lg">Zolarux</span>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-xs">
-              Nigeria&apos;s trust infrastructure for gadget commerce. Verified vendors,
-              escrow protection, and real transaction safety.
+              Trusted gadget retailer selling phones, laptops, and accessories across
+              Nigeria. 5 years in operation. 100+ customers. You get exactly what you
+              ordered — or your money back.
             </p>
             <a
-              href="https://wa.me/2347063107314"
+              href="https://wa.me/2348120288390"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-green-400 hover:text-green-300 font-medium transition-colors"
@@ -98,7 +99,7 @@ export default function Footer() {
           </p>
           <div className="flex items-center gap-2 text-gray-500 text-sm">
             <Shield size={14} className="text-primary" />
-            <span>Escrow Protected · Vendor Verified · Dispute Resolved</span>
+            <span>Verified Stock · Fair Prices · Money-Back Guarantee</span>
           </div>
         </div>
       </div>

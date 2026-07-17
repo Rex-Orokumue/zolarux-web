@@ -228,7 +228,7 @@ export default function ListingActions({ product, protectionFee, isLoggedIn, use
     return (
       <div className="space-y-3">
         <a
-          href={`https://wa.me/2347063107314?text=${encodeURIComponent(`Hi, I want to get a price quote for "${product.name}" on Zolarux`)}`}
+          href={`https://wa.me/2348120288390?text=${encodeURIComponent(`Hi, I want to get a price quote for "${product.name}" on Zolarux`)}`}
           target="_blank"
           className="flex items-center justify-center gap-2 w-full bg-primary text-white font-display font-700 py-4 rounded-2xl hover:bg-primary-dark transition-all shadow-primary"
         >

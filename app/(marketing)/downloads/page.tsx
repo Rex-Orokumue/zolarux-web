@@ -249,7 +249,7 @@ export default function DownloadsPage() {
             through our website or reach us via WhatsApp.
           </p>
           <Link
-            href="https://wa.me/2347063107314?text=I use iPhone — how can I use Zolarux?"
+            href="https://wa.me/2348120288390?text=I use iPhone — how can I use Zolarux?"
             target="_blank"
             className="inline-flex items-center gap-2 text-primary font-700 text-sm hover:underline"
           >

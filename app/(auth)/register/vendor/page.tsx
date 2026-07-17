@@ -176,7 +176,7 @@ export default function VendorRegisterPage() {
 
       // Send WhatsApp backup
       const summary = `New Vendor Application:\n\nRef: ${ref}\nBusiness: ${form.business_name}\nCategory: ${categories.join(', ')}\nPhone: ${form.phone_number}\nWhatsApp: ${form.whatsapp_number}\nOwner: ${form.owner_full_name}\nNIN: ${form.nin_number}\nSupplier: ${form.supplier_name}`
-      window.open(`https://wa.me/2347063107314?text=${encodeURIComponent(summary)}`, '_blank')
+      window.open(`https://wa.me/2348120288390?text=${encodeURIComponent(summary)}`, '_blank')
 
       setReference(ref)
       setStep('success')

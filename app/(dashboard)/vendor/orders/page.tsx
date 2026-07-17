@@ -231,7 +231,7 @@ export default async function VendorOrdersPage() {
                 {/* Action CTAs */}
                 {isNew && (
                   <div className="px-5 pb-4">
-                    <Link href={`https://wa.me/2347063107314?text=${encodeURIComponent(`New order received: ${order.order_ref} for ${order.product_name}. I am preparing it for verification.`)}`}
+                    <Link href={`https://wa.me/2348120288390?text=${encodeURIComponent(`New order received: ${order.order_ref} for ${order.product_name}. I am preparing it for verification.`)}`}
                       target="_blank"
                       className="inline-flex items-center gap-2 bg-amber-600 text-white text-sm font-700 px-4 py-2.5 rounded-xl hover:bg-amber-700 transition-all">
                       <MessageCircle size={14} /> Notify Zolarux
@@ -241,7 +241,7 @@ export default async function VendorOrdersPage() {
 
                 {needsVerification && (
                   <div className="px-5 pb-4">
-                    <Link href={`https://wa.me/2347063107314?text=${encodeURIComponent(`I am ready to submit pre-shipment evidence for order ${order.order_ref}`)}`}
+                    <Link href={`https://wa.me/2348120288390?text=${encodeURIComponent(`I am ready to submit pre-shipment evidence for order ${order.order_ref}`)}`}
                       target="_blank"
                       className="inline-flex items-center gap-2 bg-blue-600 text-white text-sm font-700 px-4 py-2.5 rounded-xl hover:bg-blue-700 transition-all">
                       <MessageCircle size={14} /> Submit Evidence
@@ -251,7 +251,7 @@ export default async function VendorOrdersPage() {
 
                 {needsEvidence && (
                   <div className="px-5 pb-4">
-                    <Link href={`https://wa.me/2347063107314?text=${encodeURIComponent(`I am submitting dispute evidence for order ${order.order_ref}:`)}`}
+                    <Link href={`https://wa.me/2348120288390?text=${encodeURIComponent(`I am submitting dispute evidence for order ${order.order_ref}:`)}`}
                       target="_blank"
                       className="inline-flex items-center gap-2 bg-red-600 text-white text-sm font-700 px-4 py-2.5 rounded-xl hover:bg-red-700 transition-all">
                       <MessageCircle size={14} /> Submit Dispute Evidence
@@ -279,7 +279,7 @@ export default async function VendorOrdersPage() {
         <Shield size={18} className="text-primary mx-auto mb-2" />
         <p className="text-gray-500 text-sm mb-1 font-600">All orders are managed by Zolarux</p>
         <p className="text-gray-400 text-xs mb-3">Contact Zolarux to update any order status or resolve issues.</p>
-        <Link href="https://wa.me/2347063107314?text=Hi, I need help with an order"
+        <Link href="https://wa.me/2348120288390?text=Hi, I need help with an order"
           target="_blank"
           className="inline-flex items-center gap-2 text-sm text-primary font-700 hover:underline">
           <MessageCircle size={14} /> Contact Zolarux Support

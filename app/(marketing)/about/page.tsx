@@ -1,41 +1,54 @@
 import type { Metadata } from 'next'
-import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
-import { Shield, Target, Eye, Heart, Play, ArrowRight } from 'lucide-react'
+import { Shield, Search, Truck, Wrench, CreditCard, Play, ArrowRight, MessageCircle } from 'lucide-react'
 import PageHero from '@/components/layout/PageHero'
 
-export const metadata: Metadata = pageMeta({
-  title: 'About Us',
-  description: "Learn about Zolarux — Nigeria's trust infrastructure for gadget commerce.",
-  path: '/about',
-})
+const TITLE = 'About Zolarux | Trusted Gadget Seller in Nigeria'
+const DESCRIPTION = 'Zolarux is a trusted gadget retail business run by Rex Orokumue. 5 years. 100+ customers. Phones, laptops, and accessories with a full money-back guarantee.'
+
+export const metadata: Metadata = {
+  title: { absolute: TITLE },
+  description: DESCRIPTION,
+  keywords: [
+    'trusted gadget seller Nigeria',
+    'buy phones Nigeria',
+    'Zolarux',
+    'Rex Orokumue',
+    'buy laptops Nigeria',
+    'gadget seller guarantee',
+    'UK used phones Nigeria',
+  ],
+  alternates: { canonical: '/about' },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: '/about' },
+  twitter: { title: TITLE, description: DESCRIPTION },
+}
 
 const TEAM = [
   {
     name: 'Rex Orokumue',
-    role: 'Founder & CEO',
-    bio: 'Software developer, educator, and entrepreneur. Rex built Zolarux from personal frustration with Nigerian social commerce scams into a structured trust platform that has protected over ₦2M in transactions.',
+    role: 'Founder',
+    bio: 'Rex handles sourcing, sales, and every customer relationship personally. Five years, 100+ customers, zero losses.',
     initial: 'R',
   },
   {
     name: 'Karen',
     role: 'Operations',
-    bio: 'Handles vendor verification, dispute resolution, and the day-to-day operational discipline that makes Zolarux reliable.',
+    bio: 'Coordinates logistics, supplier communication, and order fulfilment tracking.',
     initial: 'K',
   },
   {
     name: 'Precious',
     role: 'Customer Relations',
-    bio: 'First point of contact for buyers and vendors. Ensures every transaction is coordinated with clarity and care.',
+    bio: 'First point of contact for buyers. Makes sure every order is clear and every question gets answered.',
     initial: 'P',
   },
 ]
 
 const VALUES = [
-  { icon: Shield, title: 'Trust Over Speed', desc: "We never rush a transaction. Verification takes time. That time protects you." },
-  { icon: Target, title: 'Process Over Emotion', desc: "Every decision is evidence-based. We don't release funds on promises — only on confirmation." },
-  { icon: Eye, title: 'Transparency Always', desc: "You know where your money is at every step. No hidden fees. No surprises." },
-  { icon: Heart, title: 'Buyer Money is Sacred', desc: "This is our core internal principle. The moment your payment enters escrow, it is untouchable until you approve." },
+  { icon: Search,     title: 'Verify before payment clears', desc: "Rex confirms the item exists and matches your order before your money goes anywhere it can't come back from." },
+  { icon: Truck,      title: 'Stay involved until delivery',  desc: "Rex doesn't hand off and disappear. Every order is tracked until you confirm it arrived correctly." },
+  { icon: Wrench,     title: 'Fix problems, not excuses',     desc: 'When something goes wrong — and occasionally things do — the response is always action, not explanation.' },
+  { icon: CreditCard, title: 'Payment plans when you need them', desc: "Can't pay the full amount at once? Pay in parts, collect your gadget when it's fully settled. WhatsApp Rex to arrange." },
 ]
 
 export default function AboutPage() {
@@ -45,47 +58,37 @@ export default function AboutPage() {
       <PageHero
         imageUrl="https://images.unsplash.com/photo-1655720357872-ce227e4164ba?w=1600&q=70&auto=format&fit=crop"
         eyebrow="Our Story"
-        title="We Exist Because Trust is Broken in Nigerian Commerce"
-        subtitle="Zolarux was not built from a business idea. It was built from real pain — watching people lose money to fake gadgets, disappearing vendors, and undelivered orders on WhatsApp and Instagram every single day."
+        title="Built on One Simple Promise"
+        subtitle="Five years ago Rex started selling gadgets because he saw the same thing happening over and over — people losing money to sellers who disappeared, phones that arrived broken, orders that never came. His answer was simple: be the person who never lets that happen. That's still the answer today."
       />
 
-      {/* Story */}
+      {/* How Zolarux Works + Stats */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="font-display text-3xl font-800 text-gray-900 mb-6">
-                Five Years of Building Trust Infrastructure
+                How Zolarux Works
               </h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
-                  Social commerce in Nigeria is massive. Millions of people buy and sell
-                  through WhatsApp, Instagram, and Facebook every day. The demand exists.
-                  The problem has always been trust.
-                </p>
-                <p>
-                  Buyers are afraid of scams. Vendors lose legitimate sales because
-                  customers do not trust them enough to pay upfront. Both sides are losing.
-                </p>
-                <p>
-                  Zolarux sits between both parties as a controlled transaction layer —
-                  verifying vendors, holding funds in escrow, inspecting products,
-                  monitoring fulfillment, and only releasing payment when the buyer confirms.
-                </p>
-                <p>
-                  We have processed over <strong>₦2 million in protected transactions</strong>,
-                  served <strong>100+ customers</strong>, and maintained a{' '}
-                  <strong>zero confirmed scam record</strong> since inception.
+                  Zolarux is a gadget retail business. Rex sources phones, laptops, and
+                  accessories from verified suppliers and sells them directly to customers
+                  across Nigeria. Every order is coordinated personally — from confirming
+                  the item exists and is in the condition described, to tracking delivery
+                  until it&apos;s in your hands. There is no middleman you can&apos;t reach.
+                  There is no vendor you have to trust blindly. You deal with Rex, and Rex
+                  deals with everything else.
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               {[
-                { number: '₦2M+', label: 'Transactions Protected' },
-                { number: '100+', label: 'Happy Customers' },
-                { number: '5yrs', label: 'In Operation' },
-                { number: '0',    label: 'Confirmed Scams' },
+                { number: '100+',  label: 'Happy Customers' },
+                { number: '5 Years', label: 'In Operation' },
+                { number: 'Zero',  label: 'Losses. Ever.' },
+                { number: '₦0',    label: 'Lost to Scams' },
               ].map((stat) => (
                 <div key={stat.label} className="bg-surface rounded-2xl p-6 text-center border border-gray-100">
                   <p className="font-display text-4xl font-800 text-primary mb-2">{stat.number}</p>
@@ -97,18 +100,41 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Values */}
+      {/* The Guarantee */}
       <section className="py-20 bg-surface">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="flex items-start gap-5 bg-white rounded-2xl p-8 border border-gray-100 shadow-card">
+            <div className="shrink-0 w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-primary">
+              <Shield size={20} className="text-white" />
+            </div>
+            <div>
+              <h2 className="font-display text-2xl sm:text-3xl font-800 text-gray-900 mb-3">
+                The Guarantee
+              </h2>
+              <p className="text-gray-500 text-lg leading-relaxed">
+                Every order comes with one unconditional rule: you get exactly what you
+                ordered, or Rex sorts it. Wrong model, wrong condition, wrong spec — full
+                refund or replacement, no arguments. This guarantee has held for five years
+                across 100+ transactions. It is not a policy. It is how every single order
+                works.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How We Operate */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="font-display text-3xl font-800 text-gray-900 mb-4">Our Operating Philosophy</h2>
+            <h2 className="font-display text-3xl font-800 text-gray-900 mb-4">How We Operate</h2>
             <p className="text-gray-500 text-lg max-w-xl mx-auto">
               These are not marketing slogans. They are the rules we follow internally on every single transaction.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {VALUES.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-card">
+              <div key={title} className="bg-surface rounded-2xl p-6 border border-gray-100 shadow-card">
                 <div className="w-10 h-10 bg-primary-light rounded-xl flex items-center justify-center mb-4">
                   <Icon size={18} className="text-primary" />
                 </div>
@@ -121,7 +147,7 @@ export default function AboutPage() {
       </section>
 
       {/* About video */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-surface">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-8">
             <h2 className="font-display text-2xl font-800 text-gray-900 mb-2">Meet Zolarux</h2>
@@ -142,8 +168,8 @@ export default function AboutPage() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
-            <h2 className="font-display text-3xl font-800 text-gray-900 mb-4">The People Behind Every Transaction</h2>
-            <p className="text-gray-500 text-lg">Small team. Deep commitment. Every transaction has a real human watching it.</p>
+            <h2 className="font-display text-3xl font-800 text-gray-900 mb-4">The People Behind Every Order</h2>
+            <p className="text-gray-500 text-lg">Small team. Personal accountability on every transaction.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {TEAM.map((member) => (
@@ -164,19 +190,20 @@ export default function AboutPage() {
       <section className="py-16 bg-primary">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="font-display text-3xl font-800 text-white mb-4">
-            Ready to Experience Trusted Commerce?
+            Ready to Order?
           </h2>
           <p className="text-white/70 mb-8">
-            Whether you want to buy safely or sell with full buyer trust — Zolarux is where you start.
+            WhatsApp Rex directly and tell him what you&apos;re looking for. He&apos;ll confirm
+            availability, show you the item, and take it from there.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/listings"
+            <Link href="https://wa.me/2348120288390" target="_blank"
               className="inline-flex items-center gap-2 bg-white text-primary font-display font-700 px-7 py-4 rounded-xl hover:bg-gray-50 transition-all">
-              Browse Verified Listings <ArrowRight size={18} />
+              <MessageCircle size={18} /> WhatsApp Rex
             </Link>
-            <Link href="/register/vendor"
+            <Link href="/listings"
               className="inline-flex items-center gap-2 bg-accent text-white font-display font-700 px-7 py-4 rounded-xl hover:bg-accent-dark transition-all">
-              Become a Vendor <ArrowRight size={18} />
+              Browse Gadgets <ArrowRight size={18} />
             </Link>
           </div>
         </div>

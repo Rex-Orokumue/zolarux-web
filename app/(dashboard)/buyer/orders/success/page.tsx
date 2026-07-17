@@ -68,7 +68,7 @@ function SuccessContent() {
                 Our team will contact you within minutes during business hours.
               </p>
               <Link
-                href={`https://wa.me/2347063107314?text=${encodeURIComponent(whatsappMsg)}`}
+                href={`https://wa.me/2348120288390?text=${encodeURIComponent(whatsappMsg)}`}
                 target="_blank"
                 className="flex items-center justify-center gap-2 w-full bg-green-500 text-white font-display font-700 py-3.5 rounded-xl hover:bg-green-600 transition-all"
               >

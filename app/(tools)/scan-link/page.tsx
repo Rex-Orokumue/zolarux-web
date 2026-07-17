@@ -281,7 +281,7 @@ export default function ScanLinkPage() {
                 <p className="text-green-600 text-xs">Describe the product on WhatsApp and we will check it manually.</p>
               </div>
               <Link
-                href="https://wa.me/2347063107314?text=Hi, I want you to check if this product is safe to buy: "
+                href="https://wa.me/2348120288390?text=Hi, I want you to check if this product is safe to buy: "
                 target="_blank"
                 className="shrink-0 inline-flex items-center gap-1.5 bg-green-600 text-white text-xs font-700 px-3 py-2 rounded-lg hover:bg-green-700 transition-all"
               >

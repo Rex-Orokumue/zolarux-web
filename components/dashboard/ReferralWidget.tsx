@@ -172,7 +172,7 @@ export default function ReferralWidget({ userId, userType }: ReferralWidgetProps
                 
                 {stats!.walletBalance >= MIN_WITHDRAWAL_AMOUNT ? (
                   <a
-                    href={`https://wa.me/2347063107314?text=${encodeURIComponent(
+                    href={`https://wa.me/2348120288390?text=${encodeURIComponent(
                       `Hi Zolarux Support,\n\nI would like to request a withdrawal of my referral earnings.\n\n*Referral Details:*\n- Account Type: ${userType === 'buyer' ? 'Buyer' : 'Vendor'}\n- Email: ${userEmail || 'My Account'}\n- User ID: ${userId}\n- Withdrawable Balance: ₦${stats!.walletBalance.toLocaleString()}\n\nPlease verify and process my payout. Thank you!`
                     )}`}
                     target="_blank"
