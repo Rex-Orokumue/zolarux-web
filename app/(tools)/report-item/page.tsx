@@ -120,30 +120,27 @@ export default function ReportItemPage() {
     setLoading(true)
     try {
       const supabase = createClient()
-      const ref = `ZLX-RPT-${Date.now().toString(36).toUpperCase()}`
 
-      const { error: dbError } = await supabase
-        .from('stolen_registry')
+      const { data: inserted, error: dbError } = await supabase
+        .from('stolen_reports')
         .insert({
-          device_name: form.device_name,
+          item_name: form.device_name,
           imei: form.imei || null,
           serial_number: form.serial_number || null,
           date_stolen: form.date_stolen || null,
           location_stolen: form.location_stolen || null,
-          reporter_phone: form.reporter_phone,
-          reporter_name: form.reporter_name,
-          additional_info: form.additional_info || null,
-          status: 'reported',
-          report_reference: ref,
-          reported_at: new Date().toISOString(),
+          owner_contact: `${form.reporter_name} — ${form.reporter_phone}`,
+          description: form.additional_info || null,
         })
+        .select('id')
+        .single()
 
-      if (dbError) {
+      if (dbError || !inserted) {
         setError('Failed to submit report. Please try again or contact us on WhatsApp.')
         return
       }
 
-      setReference(ref)
+      setReference(`ZLX-RPT-${inserted.id.slice(0, 8).toUpperCase()}`)
       setStep('success')
     } catch {
       setError('Something went wrong. Please try again.')

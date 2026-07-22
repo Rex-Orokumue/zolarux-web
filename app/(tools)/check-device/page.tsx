@@ -12,8 +12,8 @@ interface StolenRecord {
   id: string
   imei?: string
   serial_number?: string
-  device_name: string
-  reported_at: string
+  item_name: string
+  created_at: string
   status: string
 }
 
@@ -192,11 +192,11 @@ export default function CheckDevicePage() {
                 <div className="p-5 space-y-3">
                   <div>
                     <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Device</p>
-                    <p className="font-700 text-gray-900">{record.device_name}</p>
+                    <p className="font-700 text-gray-900">{record.item_name}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">Reported</p>
-                    <p className="text-gray-700 text-sm">{new Date(record.reported_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                    <p className="text-gray-700 text-sm">{new Date(record.created_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                   </div>
                   <div className="bg-red-100 rounded-xl p-3">
                     <p className="text-red-800 text-sm font-500">Do not purchase this device. Buying stolen property is a criminal offence. If a vendor is selling this, report them immediately.</p>
