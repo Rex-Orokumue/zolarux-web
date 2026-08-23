@@ -28,9 +28,11 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname)
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname)
     setMobileOpen(false)
-  }, [pathname])
+  }
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
 
