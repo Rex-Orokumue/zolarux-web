@@ -95,7 +95,7 @@ export default function Navbar() {
               </button>
 
               {safetyOpen && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[480px]">
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[480px] animate-fade-up">
                   <div className="bg-white rounded-2xl shadow-card-hover border border-gray-100 p-3 grid grid-cols-2 gap-1">
                     {SAFETY_TOOLS.map((tool) => {
                       const Icon = tool.icon
@@ -152,7 +152,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg">
+        <div className="lg:hidden bg-white border-t border-gray-100 shadow-lg animate-fade-up">
           <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
             {NAV_LINKS.map((link) => (
               <Link
