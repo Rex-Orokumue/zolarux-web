@@ -6,6 +6,9 @@ import {
   Star, AlertTriangle
 } from 'lucide-react'
 import { WHATSAPP_NUMBER } from '@/lib/constants'
+import { getFeaturedProducts } from '@/lib/products'
+import { ProductCard } from '@/components/ui/ProductCard'
+import { StatTile } from '@/components/ui/StatTile'
 
 // ── Stats ────────────────────────────────────────────────────────────────────
 const STATS = [
@@ -111,7 +114,8 @@ const TESTIMONIALS = [
   },
 ]
 
-export default function HomePage() {
+export default async function HomePage() {
+  const featuredProducts = await getFeaturedProducts(4)
   return (
     <div className="overflow-x-hidden">
 
@@ -122,9 +126,10 @@ export default function HomePage() {
           <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-white/20 -translate-y-1/2 translate-x-1/3" />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-white/10 translate-y-1/2 -translate-x-1/4" />
         </div>
+        <div className="absolute top-1/3 left-1/4 w-[300px] h-[300px] rounded-full bg-accent/10 blur-3xl" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-24 md:py-32">
-          <div className="max-w-3xl">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-28 md:py-40">
+          <div className="max-w-3xl animate-fade-up">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-white/15 border border-white/20 rounded-full px-4 py-1.5 mb-8">
               <Shield size={13} className="text-accent" />
@@ -134,7 +139,7 @@ export default function HomePage() {
             </div>
 
             {/* Headline */}
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white leading-[1.05] mb-6">
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-800 text-white leading-[1.05] mb-6">
               Buy Gadgets Online{' '}
               <span className="text-accent">Without Fear.</span>
             </h1>
@@ -183,10 +188,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-gray-800">
             {STATS.map((stat) => (
-              <div key={stat.label} className="text-center px-6 py-2">
-                <p className="font-display text-3xl font-800 text-white">{stat.value}</p>
-                <p className="text-gray-500 text-sm mt-1">{stat.label}</p>
-              </div>
+              <StatTile key={stat.label} value={stat.value} label={stat.label} variant="dark" />
             ))}
           </div>
         </div>
@@ -234,6 +236,36 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── FEATURED PRODUCTS ─────────────────────────────────────────────── */}
+      {featuredProducts.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <h2 className="font-display text-3xl sm:text-4xl font-800 text-gray-900 mb-3">
+                  Featured Right Now
+                </h2>
+                <p className="text-gray-500 text-lg">
+                  Hand-picked, verified, escrow-protected.
+                </p>
+              </div>
+              <Link
+                href="/listings"
+                className="hidden sm:inline-flex items-center gap-2 text-primary font-700 hover:gap-3 transition-all shrink-0"
+              >
+                See all listings <ArrowRight size={16} />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── HOW IT WORKS ──────────────────────────────────────────────────── */}
       <section id="trust-flow" className="py-20 bg-white">
