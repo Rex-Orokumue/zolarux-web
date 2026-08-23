@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Shield, Target, Eye, Heart } from 'lucide-react'
+import { StatTile } from '@/components/ui/StatTile'
 
 export const metadata: Metadata = {
   title: 'About Us',
@@ -61,7 +62,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="font-display text-3xl font-800 text-gray-900 mb-6">
+              <h2 className="font-display text-3xl sm:text-4xl font-800 text-gray-900 mb-6 leading-[1.1] tracking-tight">
                 Five Years of Building Trust Infrastructure
               </h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
@@ -94,9 +95,8 @@ export default function AboutPage() {
                 { number: '5yrs', label: 'In Operation' },
                 { number: '0',    label: 'Confirmed Scams' },
               ].map((stat) => (
-                <div key={stat.label} className="bg-surface rounded-2xl p-6 text-center border border-gray-100">
-                  <p className="font-display text-4xl font-800 text-primary mb-2">{stat.number}</p>
-                  <p className="text-gray-500 text-sm">{stat.label}</p>
+                <div key={stat.label} className="bg-surface rounded-2xl p-2 text-center border border-gray-100">
+                  <StatTile value={stat.number} label={stat.label} />
                 </div>
               ))}
             </div>
