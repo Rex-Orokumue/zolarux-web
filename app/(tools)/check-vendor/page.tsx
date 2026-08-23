@@ -78,7 +78,7 @@ export default function CheckVendorPage() {
       {/* Search */}
       <section className="py-12 bg-surface">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
-          <div className="bg-white rounded-3xl p-8 shadow-card border border-gray-100">
+          <div className="bg-white rounded-3xl p-8 shadow-card hover:shadow-card-hover transition-shadow duration-300 border border-gray-100">
             <label className="block text-sm font-700 text-gray-700 mb-2">
               Vendor ID, Phone Number, or Business Name
             </label>
@@ -107,7 +107,7 @@ export default function CheckVendorPage() {
 
             {/* Result */}
             {result && (
-              <div className="mt-6">
+              <div className="mt-6 animate-fade-up">
                 {result.type === 'verified' && <VendorResult vendor={result.vendor} />}
                 {result.type === 'flagged' && <FlaggedResult entity={result.entity} />}
                 {result.type === 'not_found' && <NotFoundResult query={query} />}
@@ -127,7 +127,7 @@ export default function CheckVendorPage() {
               { icon: Clock, color: 'text-amber-600 bg-amber-50', label: 'Pending', desc: 'Under review. Proceed with caution.' },
               { icon: XCircle, color: 'text-red-600 bg-red-50', label: 'Flagged', desc: 'Reported for fraud. Do not transact.' },
             ].map(({ icon: Icon, color, label, desc }) => (
-              <div key={label} className="bg-white rounded-2xl p-4 border border-gray-100 text-center">
+              <div key={label} className="bg-white rounded-2xl p-4 border border-gray-100 text-center hover:-translate-y-0.5 hover:shadow-card transition-all duration-300">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2 ${color.split(' ')[1]}`}>
                   <Icon size={16} className={color.split(' ')[0]} />
                 </div>
