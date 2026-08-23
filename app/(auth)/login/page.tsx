@@ -60,7 +60,7 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-md">
-      <div className="bg-white rounded-3xl shadow-card border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-card-hover border border-gray-100 overflow-hidden animate-fade-up">
         {/* Top */}
         <div className="bg-primary p-6 text-center">
           <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center mx-auto mb-3">
@@ -72,7 +72,7 @@ export default function LoginPage() {
 
         <div className="p-6">
           {step === 'phone' ? (
-            <div className="space-y-4">
+            <div className="space-y-4 animate-fade-up" key="phone-step">
               <div>
                 <label className="block text-sm font-700 text-gray-700 mb-1.5">
                   Phone Number
@@ -107,7 +107,7 @@ export default function LoginPage() {
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 animate-fade-up" key="otp-step">
               <div className="text-center mb-4">
                 <div className="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-2">
                   <Phone size={18} className="text-green-600" />
