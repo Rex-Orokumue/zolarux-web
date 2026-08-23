@@ -1,31 +1,21 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
-import { formatPrice } from '@/lib/utils'
-import { Shield, MessageCircle, ArrowLeft, CheckCircle, Lock } from 'lucide-react'
-import type { Product } from '@/types/product'
+import { getProductById, getRelatedProducts } from '@/lib/products'
+import { formatPrice, buildWhatsAppUrl } from '@/lib/utils'
+import { CheckCircle, Lock, ArrowLeft, MessageCircle } from 'lucide-react'
+import { Gallery } from '@/components/ui/Gallery'
+import { SpecsTable } from '@/components/ui/SpecsTable'
+import { Badge } from '@/components/ui/Badge'
+import { ProductCard } from '@/components/ui/ProductCard'
 
 interface Props {
   params: Promise<{ id: string }>
 }
 
-async function getProduct(id: string): Promise<Product | null> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .eq('id', id)
-    .eq('is_active', true)
-    .single()
-
-  if (error || !data) return null
-  return data as Product
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
-  const product = await getProduct(id)
+  const product = await getProductById(id)
   if (!product) return { title: 'Product Not Found' }
   return {
     title: product.name,
@@ -35,17 +25,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ListingDetailPage({ params }: Props) {
   const { id } = await params
-  const product = await getProduct(id)
+  const product = await getProductById(id)
   if (!product) notFound()
 
-  const imageUrl = product.main_image_url || product.image_url || (product.image_urls?.[0]) || null
+  const imageUrl = product.main_image_url || product.image_url || product.image_urls?.[0] || null
   const allImages = [imageUrl, ...(product.image_urls || [])].filter(Boolean) as string[]
+  const uniqueImages = Array.from(new Set(allImages))
   const whatsappMsg = `Hi, I want to buy "${product.name}" on Zolarux. Can you help me start the escrow process?`
+  const relatedProducts = await getRelatedProducts(product.category, product.id)
 
   return (
     <div className="py-10 bg-surface min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Back */}
         <Link
           href="/listings"
           className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-8 transition-colors"
@@ -55,41 +46,18 @@ export default async function ListingDetailPage({ params }: Props) {
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Images */}
-          <div className="space-y-3">
-            <div className="aspect-square bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-card">
-              {imageUrl ? (
-                <img src={imageUrl} alt={product.name} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-300">
-                  No image available
-                </div>
-              )}
-            </div>
-            {allImages.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto">
-                {allImages.slice(0, 5).map((img, i) => (
-                  <div
-                    key={i}
-                    className="w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-gray-100"
-                  >
-                    <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <Gallery images={uniqueImages} alt={product.name} />
 
-          {/* Details */}
           <div>
-            {/* Verified badge */}
-            <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-xs font-700 px-3 py-1.5 rounded-full mb-4">
-              <Shield size={11} />
-              Verified Listing · Escrow Protected
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              <Badge variant="verified" />
+              {product.condition && <Badge variant="condition" condition={product.condition} />}
             </div>
 
             <h1 className="font-display text-3xl font-800 text-gray-900 mb-2">{product.name}</h1>
-            <p className="text-gray-400 text-sm mb-4">{product.category}</p>
+            <p className="text-gray-400 text-sm mb-4">
+              {product.brand ? `${product.brand} · ${product.category}` : product.category}
+            </p>
 
             <div className="mb-6">
               {product.pricing_type === 'quote' ? (
@@ -107,7 +75,8 @@ export default async function ListingDetailPage({ params }: Props) {
               </div>
             )}
 
-            {/* Vendor */}
+            <SpecsTable specs={product.specs} />
+
             <div className="bg-white rounded-2xl p-4 border border-gray-100 mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
@@ -123,9 +92,8 @@ export default async function ListingDetailPage({ params }: Props) {
               </div>
             </div>
 
-            {/* CTA */}
             <Link
-              href={`https://wa.me/2347063107314?text=${encodeURIComponent(whatsappMsg)}`}
+              href={buildWhatsAppUrl(whatsappMsg)}
               target="_blank"
               className="flex items-center justify-center gap-2 w-full bg-primary text-white font-display font-700 py-4 rounded-2xl hover:bg-primary-dark transition-all shadow-primary hover:shadow-primary-lg hover:-translate-y-0.5 mb-4"
             >
@@ -133,7 +101,6 @@ export default async function ListingDetailPage({ params }: Props) {
               Start Escrow Purchase
             </Link>
 
-            {/* Trust note */}
             <div className="flex items-start gap-2 bg-primary-light rounded-xl p-4">
               <Lock size={14} className="text-primary mt-0.5 shrink-0" />
               <p className="text-primary text-xs leading-relaxed">
@@ -143,6 +110,17 @@ export default async function ListingDetailPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        {relatedProducts.length > 0 && (
+          <div className="mt-16">
+            <h2 className="font-display text-2xl font-800 text-gray-900 mb-6">You Might Also Like</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {relatedProducts.map((related) => (
+                <ProductCard key={related.id} product={related} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
