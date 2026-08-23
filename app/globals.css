@@ -1,0 +1,76 @@
+/* Self-hosted fonts via npm packages */
+@import '@fontsource/syne/400.css';
+@import '@fontsource/syne/600.css';
+@import '@fontsource/syne/700.css';
+@import '@fontsource/syne/800.css';
+@import '@fontsource/dm-sans/300.css';
+@import '@fontsource/dm-sans/400.css';
+@import '@fontsource/dm-sans/500.css';
+@import '@fontsource/dm-sans/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: #4064D7;
+    --primary-dark: #2E4FBF;
+    --primary-light: #EEF2FF;
+    --accent: #FFA600;
+    --accent-dark: #E69500;
+    --foreground: #111827;
+    --muted: #6B7280;
+    --border: #E5E7EB;
+    --background: #FFFFFF;
+    --surface: #F9FAFB;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    color: var(--foreground);
+    background: var(--background);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Syne', system-ui, sans-serif;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: 'Syne', system-ui, sans-serif; }
+  .font-sans { font-family: 'DM Sans', system-ui, sans-serif; }
+
+  .text-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, #6B8EF5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .animate-fade-up {
+    animation: fadeSlideUp 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+
+  @keyframes nav-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 166, 0, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(255, 166, 0, 0); }
+  }
+  .animate-nav-pulse { animation: nav-pulse 2.5s ease-in-out infinite; }
+}
