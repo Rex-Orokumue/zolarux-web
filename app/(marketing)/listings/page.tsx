@@ -1,11 +1,14 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { formatPrice, buildWhatsAppUrl } from '@/lib/utils'
-import { LISTING_CATEGORIES } from '@/lib/constants'
+import { LISTING_CATEGORIES, CONDITION_MAP, type ListingSort } from '@/lib/constants'
 import { buildCategoryOrFilter } from '@/lib/category-filter'
+import { buildSearchOrFilter, sortToOrderClauses } from '@/lib/listing-filters'
 import SupplyNotice, { PriceNote } from '@/components/listings/SupplyNotice'
+import FilterBar from '@/components/listings/FilterBar'
 import JsonLd from '@/components/seo/JsonLd'
 import { SITE_URL, pageMeta } from '@/lib/seo'
 import { Shield, ShoppingBag, ArrowRight, MessageCircle, Link2, Play, Star } from 'lucide-react'
@@ -21,12 +24,36 @@ export const metadata: Metadata = pageMeta({
 const PAGE_SIZE = 12
 
 interface ListingsPageProps {
-  searchParams: Promise<{ category?: string; page?: string; vendor?: string }>
+  searchParams: Promise<{
+    category?: string
+    page?: string
+    vendor?: string
+    search?: string
+    brand?: string
+    condition?: string
+    minPrice?: string
+    maxPrice?: string
+    sort?: string
+  }>
 }
 
 const GADGET_CATEGORIES = ['phones', 'laptop', 'accessories', 'electronics', 'gadget', 'gaming', 'tablet', 'computer']
 
-async function getProducts(category: string, page: number, vendor?: string): Promise<{ products: Product[]; total: number }> {
+interface DiscoveryFilters {
+  search?: string
+  brand?: string
+  condition?: string
+  minPrice?: number
+  maxPrice?: number
+  sort?: ListingSort
+}
+
+async function getProducts(
+  category: string,
+  page: number,
+  vendor?: string,
+  filters: DiscoveryFilters = {}
+): Promise<{ products: Product[]; total: number }> {
   const supabase = await createClient()
   const from = (page - 1) * PAGE_SIZE
   const to = from + PAGE_SIZE - 1
@@ -35,18 +62,37 @@ async function getProducts(category: string, page: number, vendor?: string): Pro
     .from('products')
     .select('*', { count: 'exact' })
     .eq('is_active', true)
-    .order('is_featured', { ascending: false })
-    .order('created_at', { ascending: false })
-    .range(from, to)
 
   const orFilter = buildCategoryOrFilter(category)
   if (orFilter) {
     query = query.or(orFilter)
   }
 
+  const searchOrFilter = buildSearchOrFilter(filters.search)
+  if (searchOrFilter) {
+    query = query.or(searchOrFilter)
+  }
+
   if (vendor) {
     query = query.eq('vendor_id', vendor)
   }
+  if (filters.brand) {
+    query = query.ilike('brand', `%${filters.brand}%`)
+  }
+  if (filters.condition) {
+    query = query.eq('condition', filters.condition)
+  }
+  if (filters.minPrice !== undefined) {
+    query = query.gte('price', filters.minPrice)
+  }
+  if (filters.maxPrice !== undefined) {
+    query = query.lte('price', filters.maxPrice)
+  }
+
+  for (const { column, ascending } of sortToOrderClauses(filters.sort)) {
+    query = query.order(column, { ascending })
+  }
+  query = query.range(from, to)
 
   const { data, error, count } = await query
 
@@ -56,6 +102,13 @@ async function getProducts(category: string, page: number, vendor?: string): Pro
   }
 
   const products = (data as Product[]) || []
+
+  // Only apply the legacy gadget-priority nudge when no explicit sort was
+  // requested — an explicit sort (e.g. price) should not be overridden.
+  if (filters.sort) {
+    return { products, total: count || 0 }
+  }
+
   const sorted = [
     ...products.filter(p => GADGET_CATEGORIES.some(g => p.category?.toLowerCase().includes(g))),
     ...products.filter(p => !GADGET_CATEGORIES.some(g => p.category?.toLowerCase().includes(g))),
@@ -112,11 +165,39 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
   const activeCategory = params.category || 'All'
   const currentPage = parseInt(params.page || '1', 10)
   const vendorFilter = params.vendor || ''
-  const { products, total } = await getProducts(activeCategory, currentPage, vendorFilter)
+  const hasActiveFilters = Boolean(
+    params.search || params.brand || params.condition || params.minPrice || params.maxPrice
+  )
+  const discoveryFilters: DiscoveryFilters = {
+    search: params.search,
+    brand: params.brand,
+    condition: params.condition,
+    minPrice: params.minPrice ? Number(params.minPrice) : undefined,
+    maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined,
+    sort: params.sort as ListingSort | undefined,
+  }
+  const { products, total } = await getProducts(activeCategory, currentPage, vendorFilter, discoveryFilters)
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
-  // Featured products only on the first page
-  const featured = currentPage === 1 ? await getFeaturedProducts(activeCategory, vendorFilter) : []
+  // Featured products only on the first page, and only when no discovery
+  // filters are active — mixing an unfiltered "Featured" band with heavily
+  // filtered results would be confusing.
+  const featured = currentPage === 1 && !hasActiveFilters ? await getFeaturedProducts(activeCategory, vendorFilter) : []
+
+  const pageHref = (page: number) => {
+    const qs = new URLSearchParams()
+    if (activeCategory !== 'All') qs.set('category', activeCategory)
+    if (vendorFilter) qs.set('vendor', vendorFilter)
+    if (params.search) qs.set('search', params.search)
+    if (params.brand) qs.set('brand', params.brand)
+    if (params.condition) qs.set('condition', params.condition)
+    if (params.minPrice) qs.set('minPrice', params.minPrice)
+    if (params.maxPrice) qs.set('maxPrice', params.maxPrice)
+    if (params.sort) qs.set('sort', params.sort)
+    qs.set('page', String(page))
+    return `/listings?${qs.toString()}`
+  }
+  const clearFiltersHref = activeCategory !== 'All' ? `/listings?category=${activeCategory}` : '/listings'
 
   // Fetch vendor ratings for all products shown on this page (grid + featured)
   const vendorIds = [...new Set([...products, ...featured].map(p => p.vendor_id).filter(Boolean))]
@@ -211,64 +292,90 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       {/* Products Grid */}
       <section className="py-12 bg-surface min-h-[50vh]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          {featured.length > 0 && products.length > 0 && (
-            <h2 className="font-display text-xl font-800 text-gray-900 mb-5">All Listings</h2>
-          )}
-          {products.length === 0 ? (
-            <div className="text-center py-24">
-              <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
-                <ShoppingBag size={24} className="text-primary" />
-              </div>
-              <h3 className="font-display text-xl font-700 text-gray-900 mb-2">No listings yet in this category</h3>
-              <p className="text-gray-500 mb-6">We are actively onboarding verified vendors. Check back soon.</p>
-              <Link
-                href={`https://wa.me/2348120288390?text=Hi, I'm looking for ${activeCategory === 'All' ? 'a gadget' : activeCategory} on Zolarux`}
-                target="_blank"
-                className="inline-flex items-center gap-2 bg-primary text-white font-700 px-6 py-3 rounded-xl hover:bg-primary-dark transition-all"
-              >
-                <MessageCircle size={16} />
-                Request via WhatsApp
-              </Link>
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
-                {products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    avgRating={vendorRatings[product.vendor_id]?.avg_rating ?? 0}
-                    reviewCount={vendorRatings[product.vendor_id]?.review_count ?? 0}
-                  />
-                ))}
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
+            <aside>
+              <Suspense fallback={<div className="h-12 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 animate-pulse" />}>
+                <FilterBar />
+              </Suspense>
+            </aside>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-12">
-                  {currentPage > 1 && (
-                    <Link
-                      href={`/listings?category=${activeCategory}&page=${currentPage - 1}`}
-                      className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-600 text-gray-600 hover:bg-gray-50 transition-all"
-                    >
-                      Previous
-                    </Link>
-                  )}
-                  <span className="px-4 py-2 text-sm text-gray-500">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  {currentPage < totalPages && (
-                    <Link
-                      href={`/listings?category=${activeCategory}&page=${currentPage + 1}`}
-                      className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-600 text-gray-600 hover:bg-gray-50 transition-all"
-                    >
-                      Next
-                    </Link>
-                  )}
-                </div>
+            <div>
+              {featured.length > 0 && products.length > 0 && (
+                <h2 className="font-display text-xl font-800 text-gray-900 mb-5">All Listings</h2>
               )}
-            </>
-          )}
+              {products.length === 0 ? (
+                hasActiveFilters ? (
+                  <div className="text-center py-24">
+                    <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
+                      <ShoppingBag size={24} className="text-primary" />
+                    </div>
+                    <h3 className="font-display text-xl font-700 text-gray-900 mb-2">No results match your filters</h3>
+                    <p className="text-gray-500 mb-6">Try widening your search or clearing a filter.</p>
+                    <Link
+                      href={clearFiltersHref}
+                      className="inline-flex items-center gap-2 bg-primary text-white font-700 px-6 py-3 rounded-xl hover:bg-primary-dark transition-all"
+                    >
+                      Clear Filters
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="text-center py-24">
+                    <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
+                      <ShoppingBag size={24} className="text-primary" />
+                    </div>
+                    <h3 className="font-display text-xl font-700 text-gray-900 mb-2">No listings yet in this category</h3>
+                    <p className="text-gray-500 mb-6">We are actively onboarding verified vendors. Check back soon.</p>
+                    <Link
+                      href={`https://wa.me/2348120288390?text=Hi, I'm looking for ${activeCategory === 'All' ? 'a gadget' : activeCategory} on Zolarux`}
+                      target="_blank"
+                      className="inline-flex items-center gap-2 bg-primary text-white font-700 px-6 py-3 rounded-xl hover:bg-primary-dark transition-all"
+                    >
+                      <MessageCircle size={16} />
+                      Request via WhatsApp
+                    </Link>
+                  </div>
+                )
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
+                    {products.map((product) => (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        avgRating={vendorRatings[product.vendor_id]?.avg_rating ?? 0}
+                        reviewCount={vendorRatings[product.vendor_id]?.review_count ?? 0}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 mt-12">
+                      {currentPage > 1 && (
+                        <Link
+                          href={pageHref(currentPage - 1)}
+                          className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-600 text-gray-600 hover:bg-gray-50 transition-all"
+                        >
+                          Previous
+                        </Link>
+                      )}
+                      <span className="px-4 py-2 text-sm text-gray-500">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      {currentPage < totalPages && (
+                        <Link
+                          href={pageHref(currentPage + 1)}
+                          className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-600 text-gray-600 hover:bg-gray-50 transition-all"
+                        >
+                          Next
+                        </Link>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -364,11 +471,18 @@ function ProductCard({
             <ShoppingBag size={32} className="text-gray-300" />
           </div>
         )}
-        {product.is_featured && (
-          <div className="absolute top-3 left-3 bg-accent text-white text-xs font-700 px-2.5 py-1 rounded-full">
-            Featured
-          </div>
-        )}
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
+          {product.is_featured && (
+            <div className="bg-accent text-white text-xs font-700 px-2.5 py-1 rounded-full">
+              Featured
+            </div>
+          )}
+          {product.condition && (
+            <div className={`text-xs font-700 px-2.5 py-1 rounded-full border ${CONDITION_MAP[product.condition].bg} ${CONDITION_MAP[product.condition].color} ${CONDITION_MAP[product.condition].border}`}>
+              {CONDITION_MAP[product.condition].label}
+            </div>
+          )}
+        </div>
         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm border border-green-200 text-green-700 text-xs font-700 px-2 py-1 rounded-full flex items-center gap-1">
           <Shield size={10} />
           Verified
@@ -382,7 +496,9 @@ function ProductCard({
             {product.name}
           </h3>
         </Link>
-        <p className="text-xs text-gray-400 mb-2">{product.category}</p>
+        <p className="text-xs text-gray-400 mb-2">
+          {product.brand ? `${product.brand} · ${product.category}` : product.category}
+        </p>
 
         {/* Star rating — only if vendor has reviews */}
         {avgRating > 0 && (

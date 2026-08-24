@@ -9,6 +9,8 @@ import ListingActions from './ListingActions'
 import ShareButton from './ShareButton'
 import ListingReviews from '@/components/reviews/ListingReviews'
 import { PriceNote } from '@/components/listings/SupplyNotice'
+import SpecsTable from '@/components/listings/SpecsTable'
+import { CONDITION_MAP } from '@/lib/constants'
 import JsonLd from '@/components/seo/JsonLd'
 import { productSchema, breadcrumbSchema } from '@/lib/seo'
 
@@ -138,14 +140,23 @@ export default async function ListingDetailPage({ params }: Props) {
           {/* Details */}
           <div>
             <div className="flex items-center justify-between gap-3 mb-4">
-              <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-xs font-700 px-3 py-1.5 rounded-full">
-                <Shield size={11} /> Verified Listing · Escrow Protected
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 text-xs font-700 px-3 py-1.5 rounded-full">
+                  <Shield size={11} /> Verified Listing · Escrow Protected
+                </div>
+                {product.condition && (
+                  <div className={`text-xs font-700 px-3 py-1.5 rounded-full border ${CONDITION_MAP[product.condition].bg} ${CONDITION_MAP[product.condition].color} ${CONDITION_MAP[product.condition].border}`}>
+                    {CONDITION_MAP[product.condition].label}
+                  </div>
+                )}
               </div>
               <ShareButton title={product.name} url={`/listings/${product.id}`} />
             </div>
 
             <h1 className="font-display text-3xl font-800 text-gray-900 mb-2">{product.name}</h1>
-            <p className="text-gray-400 text-sm mb-4">{product.category}</p>
+            <p className="text-gray-400 text-sm mb-4">
+              {product.brand ? `${product.brand} · ${product.category}` : product.category}
+            </p>
 
             {/* Price breakdown */}
             <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-6">
@@ -184,6 +195,8 @@ export default async function ListingDetailPage({ params }: Props) {
                 <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{product.description}</p>
               </div>
             )}
+
+            <SpecsTable specs={product.specs} />
 
             {/* Vendor */}
             <div className="bg-white rounded-2xl p-4 border border-gray-100 mb-5">

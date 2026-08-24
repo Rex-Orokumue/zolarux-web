@@ -1,4 +1,10 @@
 export type PricingType = 'fixed' | 'quote'
+export type ProductCondition = 'new' | 'uk_used' | 'refurbished' | 'used'
+
+export interface ProductSpec {
+  label: string
+  value: string
+}
 
 export interface Product {
   id: string
@@ -11,6 +17,9 @@ export interface Product {
   image_urls: string[]
   video_urls: string[]
   category: string
+  brand: string | null
+  condition: ProductCondition | null
+  specs: ProductSpec[] | null
   vendor_id: string
   vendor_name: string
   is_active: boolean

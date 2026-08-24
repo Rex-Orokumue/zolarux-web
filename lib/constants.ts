@@ -1,3 +1,5 @@
+import type { ProductCondition } from '@/types/product'
+
 export const SITE_NAME = 'Zolarux'
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://zolarux.com.ng'
 export const SITE_TAGLINE = 'Buy Gadgets Online Without Fear'
@@ -19,6 +21,44 @@ export const LISTING_CATEGORIES = [
 ] as const
 
 export type ListingCategory = typeof LISTING_CATEGORIES[number]
+
+export const PRODUCT_CONDITIONS: readonly ProductCondition[] = ['new', 'uk_used', 'refurbished', 'used']
+
+export const CONDITION_MAP: Record<ProductCondition, { label: string; color: string; bg: string; border: string }> = {
+  new: {
+    label: 'New',
+    color: 'text-green-700 dark:text-green-300',
+    bg: 'bg-green-50 dark:bg-green-950/40',
+    border: 'border-green-200 dark:border-green-900',
+  },
+  uk_used: {
+    label: 'UK Used',
+    color: 'text-blue-700 dark:text-blue-300',
+    bg: 'bg-blue-50 dark:bg-blue-950/40',
+    border: 'border-blue-200 dark:border-blue-900',
+  },
+  refurbished: {
+    label: 'Refurbished',
+    color: 'text-amber-700 dark:text-amber-300',
+    bg: 'bg-amber-50 dark:bg-amber-950/40',
+    border: 'border-amber-200 dark:border-amber-900',
+  },
+  used: {
+    label: 'Used',
+    color: 'text-gray-700 dark:text-gray-300',
+    bg: 'bg-gray-100 dark:bg-gray-800',
+    border: 'border-gray-200 dark:border-gray-700',
+  },
+}
+
+export const LISTING_SORT_OPTIONS = [
+  { value: 'featured', label: 'Featured' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'price_asc', label: 'Price: Low to High' },
+  { value: 'price_desc', label: 'Price: High to Low' },
+] as const
+
+export type ListingSort = typeof LISTING_SORT_OPTIONS[number]['value']
 
 // Keyword groups so a broad filter also matches sub-type products
 // (e.g. clicking "Accessories" surfaces earpods, power banks, selfie sticks).
