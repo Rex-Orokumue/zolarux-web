@@ -1,3 +1,5 @@
+import type { ProductCondition } from '@/types/product'
+
 export const SITE_NAME = 'Zolarux'
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://zolarux.com.ng'
 export const SITE_TAGLINE = 'Buy Gadgets Online Without Fear'
@@ -19,6 +21,24 @@ export const LISTING_CATEGORIES = [
 ] as const
 
 export type ListingCategory = typeof LISTING_CATEGORIES[number]
+
+export const PRODUCT_CONDITIONS: readonly ProductCondition[] = ['new', 'uk_used', 'refurbished', 'used']
+
+export const CONDITION_MAP: Record<ProductCondition, { label: string; color: string; bg: string; border: string }> = {
+  new: { label: 'New', color: 'text-green-700', bg: 'bg-green-50', border: 'border-green-200' },
+  uk_used: { label: 'UK Used', color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
+  refurbished: { label: 'Refurbished', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
+  used: { label: 'Used', color: 'text-gray-700', bg: 'bg-gray-100', border: 'border-gray-200' },
+}
+
+export const LISTING_SORT_OPTIONS = [
+  { value: 'featured', label: 'Featured' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'price_asc', label: 'Price: Low to High' },
+  { value: 'price_desc', label: 'Price: High to Low' },
+] as const
+
+export type ListingSort = typeof LISTING_SORT_OPTIONS[number]['value']
 
 // Keyword groups so a broad filter also matches sub-type products
 // (e.g. clicking "Accessories" surfaces earpods, power banks, selfie sticks).
