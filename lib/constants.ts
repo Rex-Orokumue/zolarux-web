@@ -25,10 +25,30 @@ export type ListingCategory = typeof LISTING_CATEGORIES[number]
 export const PRODUCT_CONDITIONS: readonly ProductCondition[] = ['new', 'uk_used', 'refurbished', 'used']
 
 export const CONDITION_MAP: Record<ProductCondition, { label: string; color: string; bg: string; border: string }> = {
-  new: { label: 'New', color: 'text-green-700', bg: 'bg-green-50', border: 'border-green-200' },
-  uk_used: { label: 'UK Used', color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
-  refurbished: { label: 'Refurbished', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
-  used: { label: 'Used', color: 'text-gray-700', bg: 'bg-gray-100', border: 'border-gray-200' },
+  new: {
+    label: 'New',
+    color: 'text-green-700 dark:text-green-300',
+    bg: 'bg-green-50 dark:bg-green-950/40',
+    border: 'border-green-200 dark:border-green-900',
+  },
+  uk_used: {
+    label: 'UK Used',
+    color: 'text-blue-700 dark:text-blue-300',
+    bg: 'bg-blue-50 dark:bg-blue-950/40',
+    border: 'border-blue-200 dark:border-blue-900',
+  },
+  refurbished: {
+    label: 'Refurbished',
+    color: 'text-amber-700 dark:text-amber-300',
+    bg: 'bg-amber-50 dark:bg-amber-950/40',
+    border: 'border-amber-200 dark:border-amber-900',
+  },
+  used: {
+    label: 'Used',
+    color: 'text-gray-700 dark:text-gray-300',
+    bg: 'bg-gray-100 dark:bg-gray-800',
+    border: 'border-gray-200 dark:border-gray-700',
+  },
 }
 
 export const LISTING_SORT_OPTIONS = [
