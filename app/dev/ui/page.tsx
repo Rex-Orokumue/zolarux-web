@@ -23,8 +23,14 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Textarea,
   ThemeToggle,
+  Tooltip,
+  Accordion,
 } from '@/components/ui'
 
 export default function DevUiPage() {
@@ -204,6 +210,41 @@ export default function DevUiPage() {
               <DropdownMenuItem disabled>Coming soon</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        </section>
+        <section id="tabs-tooltip-accordion">
+          <h2 className="mb-4 text-xl">Tabs, Tooltip, Accordion</h2>
+          <Tabs defaultValue="specs">
+            <TabsList>
+              <TabsTrigger value="specs">Specs</TabsTrigger>
+              <TabsTrigger value="delivery">Delivery</TabsTrigger>
+              <TabsTrigger value="vendor">Vendor</TabsTrigger>
+            </TabsList>
+            <TabsContent value="specs">
+              <p className="text-sm text-ink-soft">Spec rows…</p>
+            </TabsContent>
+            <TabsContent value="delivery">
+              <p className="text-sm text-ink-soft">Delivery info…</p>
+            </TabsContent>
+            <TabsContent value="vendor">
+              <p className="text-sm text-ink-soft">Vendor profile…</p>
+            </TabsContent>
+          </Tabs>
+
+          <div className="mt-6">
+            <Tooltip content="Held in escrow until you confirm the device">
+              <Button variant="ghost">Hover for protection info</Button>
+            </Tooltip>
+          </div>
+
+          <div className="mt-6 max-w-lg">
+            <Accordion
+              defaultValue="a"
+              items={[
+                { value: 'a', trigger: 'How does the protection fee work?', content: 'We hold funds until you confirm the device in hand.' },
+                { value: 'b', trigger: 'Where does the deal happen?', content: 'On WhatsApp, with the verified vendor.' },
+              ]}
+            />
+          </div>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}
       </div>

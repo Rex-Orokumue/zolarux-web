@@ -19,3 +19,6 @@ export {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from './DropdownMenu'
+export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs'
+export { Tooltip } from './Tooltip'
+export { Accordion, type AccordionItemData } from './Accordion'
