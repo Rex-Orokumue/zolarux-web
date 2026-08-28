@@ -38,6 +38,8 @@ import {
   Breadcrumbs,
   Pagination,
   Reveal,
+  StatTile,
+  SpecsTable,
 } from '@/components/ui'
 
 export default function DevUiPage() {
@@ -295,6 +297,26 @@ export default function DevUiPage() {
               </Reveal>
             ))}
           </div>
+        </section>
+        <section id="refit">
+          <h2 className="mb-4 text-xl">Refitted components</h2>
+          <div className="grid grid-cols-2 gap-4 rounded-md bg-primary p-6 sm:grid-cols-4">
+            <StatTile value="1,240" label="Listings" variant="dark" />
+            <StatTile value="38" label="Vendors" variant="dark" />
+          </div>
+          <div className="mt-6 max-w-md">
+            <SpecsTable
+              specs={[
+                { label: 'Display', value: '6.1" OLED' },
+                { label: 'Storage', value: '128GB' },
+                { label: 'Battery', value: '3095 mAh' },
+              ]}
+            />
+          </div>
+          <p className="mt-2 text-sm text-ink-soft">
+            ProductCard, Gallery, and FilterBar are exercised on <code>/listings</code> and{' '}
+            <code>/listings/[id]</code>.
+          </p>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}
       </div>

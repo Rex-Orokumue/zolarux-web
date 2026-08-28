@@ -5,12 +5,12 @@ export function SpecsTable({ specs }: { specs: ProductSpec[] | null }) {
 
   return (
     <div className="mb-6">
-      <h3 className="font-display font-700 text-gray-900 mb-3">Specifications</h3>
-      <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100 overflow-hidden">
+      <h3 className="mb-3 font-display font-bold text-ink">Specifications</h3>
+      <div className="divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
         {specs.map((spec) => (
           <div key={spec.label} className="flex items-center justify-between px-4 py-3 text-sm">
-            <span className="text-gray-500">{spec.label}</span>
-            <span className="text-gray-900 font-600">{spec.value}</span>
+            <span className="text-ink-soft">{spec.label}</span>
+            <span className="font-600 text-ink">{spec.value}</span>
           </div>
         ))}
       </div>

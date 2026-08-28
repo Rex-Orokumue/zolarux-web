@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { MessageCircle, ShoppingBag } from 'lucide-react'
 import { formatPrice, buildWhatsAppUrl } from '@/lib/utils'
 import { Badge } from '@/components/ui/Badge'
+import { Card } from '@/components/ui/Card'
 import type { Product } from '@/types/product'
 
 export function ProductCard({ product }: { product: Product }) {
@@ -9,56 +10,59 @@ export function ProductCard({ product }: { product: Product }) {
   const whatsappMsg = `Hi, I'm interested in "${product.name}" on Zolarux. Can I get more details?`
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 overflow-hidden group">
-      <Link href={`/listings/${product.id}`} className="block relative aspect-square bg-gray-50 overflow-hidden">
+    <Card interactive className="group overflow-hidden">
+      <Link
+        href={`/listings/${product.id}`}
+        className="relative block aspect-square overflow-hidden bg-primary-soft"
+      >
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <ShoppingBag size={32} className="text-gray-300" />
+          <div className="flex h-full w-full items-center justify-center">
+            <ShoppingBag size={32} className="text-ink-soft" />
           </div>
         )}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
+        <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
           {product.is_featured && <Badge variant="featured" />}
           {product.condition && <Badge variant="condition" condition={product.condition} />}
         </div>
-        <div className="absolute top-3 right-3">
+        <div className="absolute right-3 top-3">
           <Badge variant="verified" />
         </div>
       </Link>
 
       <div className="p-4">
         <Link href={`/listings/${product.id}`}>
-          <h3 className="font-display font-700 text-gray-900 mb-1 group-hover:text-primary transition-colors line-clamp-2 text-sm">
+          <h3 className="mb-1 line-clamp-2 font-display text-sm font-bold text-ink transition-colors group-hover:text-primary">
             {product.name}
           </h3>
         </Link>
-        <p className="text-xs text-gray-400 mb-3">
+        <p className="mb-3 text-xs text-ink-soft">
           {product.brand ? `${product.brand} · ${product.category}` : product.category}
         </p>
 
         <div className="flex items-center justify-between">
-          <div>
-            {product.pricing_type === 'quote' ? (
-              <span className="text-primary font-700 text-sm">Price on request</span>
-            ) : (
-              <span className="font-display font-800 text-gray-900">{formatPrice(product.price)}</span>
-            )}
-          </div>
+          {product.pricing_type === 'quote' ? (
+            <span className="text-sm font-bold text-primary">Price on request</span>
+          ) : (
+            <span className="font-display text-base font-extrabold text-ink [font-variant-numeric:tabular-nums]">
+              {formatPrice(product.price)}
+            </span>
+          )}
           <Link
             href={buildWhatsAppUrl(whatsappMsg)}
             target="_blank"
-            className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors"
             title="Inquire on WhatsApp"
+            className="flex h-8 w-8 items-center justify-center rounded-md bg-verified text-white transition-micro hover:brightness-110"
           >
-            <MessageCircle size={14} className="text-white" />
+            <MessageCircle size={14} />
           </Link>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }

@@ -2,13 +2,14 @@
 
 import { useState } from 'react'
 import { ShoppingBag } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export function Gallery({ images, alt }: { images: string[]; alt: string }) {
   const [activeIndex, setActiveIndex] = useState(0)
 
   if (images.length === 0) {
     return (
-      <div className="aspect-square bg-white rounded-3xl border border-gray-100 shadow-card flex items-center justify-center text-gray-300">
+      <div className="flex aspect-square items-center justify-center rounded-lg border border-line bg-surface text-ink-soft shadow-md">
         <ShoppingBag size={48} />
       </div>
     )
@@ -16,11 +17,11 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
 
   return (
     <div className="space-y-3">
-      <div className="aspect-square bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-card group">
+      <div className="group aspect-square overflow-hidden rounded-lg border border-line bg-surface shadow-md">
         <img
           src={images[activeIndex]}
           alt={alt}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
       {images.length > 1 && (
@@ -30,11 +31,12 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
               key={img + i}
               type="button"
               onClick={() => setActiveIndex(i)}
-              className={`w-16 h-16 shrink-0 rounded-xl overflow-hidden border-2 transition-all ${
-                activeIndex === i ? 'border-primary' : 'border-gray-100 hover:border-gray-300'
-              }`}
+              className={cn(
+                'h-16 w-16 shrink-0 overflow-hidden rounded-md border-2 transition-micro',
+                activeIndex === i ? 'border-primary' : 'border-line hover:border-primary/40'
+              )}
             >
-              <img src={img} alt={`${alt} ${i + 1}`} className="w-full h-full object-cover" />
+              <img src={img} alt={`${alt} ${i + 1}`} className="h-full w-full object-cover" />
             </button>
           ))}
         </div>
