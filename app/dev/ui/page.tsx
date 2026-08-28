@@ -1,5 +1,15 @@
 import { Plus, Trash2 } from 'lucide-react'
-import { Button, Field, IconButton, Input, Textarea, ThemeToggle } from '@/components/ui'
+import {
+  Button,
+  Checkbox,
+  Field,
+  IconButton,
+  Input,
+  RadioGroup,
+  Select,
+  Textarea,
+  ThemeToggle,
+} from '@/components/ui'
 
 export default function DevUiPage() {
   return (
@@ -60,6 +70,37 @@ export default function DevUiPage() {
             <Field label="Disabled" htmlFor="f-dis">
               <Input id="f-dis" disabled defaultValue="Locked" />
             </Field>
+          </div>
+        </section>
+        <section id="select-choice">
+          <h2 className="mb-4 text-xl">Select, Checkbox, RadioGroup</h2>
+          <div className="grid gap-6 sm:max-w-sm">
+            <Field label="Condition" htmlFor="d-cond">
+              <Select
+                aria-label="Condition"
+                placeholder="Any condition"
+                options={[
+                  { value: 'new', label: 'New' },
+                  { value: 'uk_used', label: 'UK Used' },
+                  { value: 'refurbished', label: 'Refurbished' },
+                  { value: 'used', label: 'Used' },
+                ]}
+              />
+            </Field>
+            <div className="flex flex-col gap-2">
+              <Checkbox id="d-c1" label="Only verified vendors" defaultChecked />
+              <Checkbox id="d-c2" label="In stock" />
+              <Checkbox id="d-c3" label="Disabled" disabled />
+            </div>
+            <RadioGroup
+              aria-label="Sort"
+              defaultValue="featured"
+              options={[
+                { value: 'featured', label: 'Featured' },
+                { value: 'newest', label: 'Newest' },
+                { value: 'price_asc', label: 'Price: low to high' },
+              ]}
+            />
           </div>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}
