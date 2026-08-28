@@ -32,6 +32,11 @@ import {
   ThemeToggle,
   Tooltip,
   Accordion,
+  Skeleton,
+  Avatar,
+  Separator,
+  Breadcrumbs,
+  Pagination,
 } from '@/components/ui'
 
 export default function DevUiPage() {
@@ -250,6 +255,32 @@ export default function DevUiPage() {
         <section id="toast">
           <h2 className="mb-4 text-xl">Toast</h2>
           <ToastDemo />
+        </section>
+        <section id="misc">
+          <h2 className="mb-4 text-xl">Skeleton, Avatar, Separator, Breadcrumbs, Pagination</h2>
+          <div className="space-y-5">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-12 w-12 rounded-pill" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-1/3" />
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Avatar name="TechHub Lagos" size="sm" />
+              <Avatar name="GadgetPlug NG" size="md" />
+              <Avatar name="Naija Devices" size="lg" />
+            </div>
+            <Separator />
+            <Breadcrumbs
+              items={[
+                { label: 'Listings', href: '/listings' },
+                { label: 'Phones', href: '/listings?category=Phones' },
+                { label: 'iPhone 13 Pro' },
+              ]}
+            />
+            <Pagination page={3} totalPages={8} hrefFor={(p) => `/dev/ui?page=${p}`} />
+          </div>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}
       </div>
