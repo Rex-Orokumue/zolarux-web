@@ -5,12 +5,18 @@ import {
   Card,
   CardBody,
   Checkbox,
+  Dialog,
+  DialogContent,
+  DialogTrigger,
   Field,
   FilterPill,
   IconButton,
   Input,
   RadioGroup,
   Select,
+  Sheet,
+  SheetContent,
+  SheetTrigger,
   Textarea,
   ThemeToggle,
 } from '@/components/ui'
@@ -146,6 +152,35 @@ export default function DevUiPage() {
                 <p className="text-sm text-ink-soft">Hover to lift.</p>
               </CardBody>
             </Card>
+          </div>
+        </section>
+        <section id="overlays">
+          <h2 className="mb-4 text-xl">Dialog &amp; Sheet</h2>
+          <div className="flex flex-wrap gap-3">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="secondary">Open dialog</Button>
+              </DialogTrigger>
+              <DialogContent title="Confirm payout" description="Release the protection fee to the vendor?">
+                <p className="text-sm text-ink-soft">This continues the deal on WhatsApp.</p>
+              </DialogContent>
+            </Dialog>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="secondary">Open sheet (bottom)</Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" title="Filters">
+                <p className="text-sm text-ink-soft">Filter controls would go here.</p>
+              </SheetContent>
+            </Sheet>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="secondary">Open sheet (right)</Button>
+              </SheetTrigger>
+              <SheetContent side="right" title="Menu">
+                <p className="text-sm text-ink-soft">Nav links would go here.</p>
+              </SheetContent>
+            </Sheet>
           </div>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}
