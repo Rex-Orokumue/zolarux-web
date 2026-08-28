@@ -306,9 +306,26 @@ scope here.
 
 ## 11. Open items requiring user input
 
-- Confirm `flagship-v2` as the branch name (§2).
-- `sonner` vs. `@radix-ui/react-toast` for toasts — spec assumes `sonner`;
-  flag if you'd rather keep the dependency surface to Radix only.
-- Whether `/dev/ui` should ship on the branch permanently or be removed before
-  the program's final merge to `main` (spec assumes it stays through the
-  program and is removed at the end).
+- ~~Confirm `flagship-v2` as the branch name (§2).~~ **Resolved:** confirmed;
+  branch cut from `flagship-redesign` tip `67a2b22`.
+- ~~`sonner` vs. `@radix-ui/react-toast` for toasts.~~ **Resolved:** `sonner`
+  (implemented in `components/ui/Toast.tsx`, mounted in the root layout).
+- ~~Whether `/dev/ui` ships permanently.~~ **Resolved:** it stays on the branch
+  through the program and is removed before the final merge to `main` — tracked
+  as an integration-phase task.
+
+## 12. Phase 0 completion (2026-08-28)
+
+All 16 plan tasks committed to `flagship-v2`. `npx tsc --noEmit` clean;
+`npm run lint` clean (6 pre-existing-style `<img>` / unused-var **warnings**,
+0 errors); `next build` succeeds with the route table unchanged except the
+added static `/dev/ui`. Component library verified on `/dev/ui` in light and
+dark at desktop width; the six existing pages (`/`, `/about`, `/listings`,
+`/listings/[id]`, `/check-vendor`, `/login`) still render (only pre-existing
+Supabase "table not found" fetch errors, unrelated to this work).
+
+**Known deferred to Phase 1** (cosmetic, on un-migrated page markup — not
+Phase 0's job): white full-bleed strips against the dark background on
+`/listings` and `/check-vendor`; low-contrast hardcoded `text-gray-*` in some
+page-level empty states; hero sections using `bg-primary` now render with the
+dark-theme blue. These pages are fully redesigned in Phase 1.
