@@ -37,6 +37,7 @@ import {
   Separator,
   Breadcrumbs,
   Pagination,
+  Reveal,
 } from '@/components/ui'
 
 export default function DevUiPage() {
@@ -280,6 +281,19 @@ export default function DevUiPage() {
               ]}
             />
             <Pagination page={3} totalPages={8} hrefFor={(p) => `/dev/ui?page=${p}`} />
+          </div>
+        </section>
+        <section id="reveal">
+          <h2 className="mb-4 text-xl">Reveal (scroll into view)</h2>
+          <p className="text-ink-soft">Scroll so these enter from the bottom of the viewport.</p>
+          <div className="mt-[60vh] space-y-4">
+            {[1, 2, 3].map((n) => (
+              <Reveal key={n} delay={n * 80}>
+                <Card>
+                  <CardBody>Revealed block {n}</CardBody>
+                </Card>
+              </Reveal>
+            ))}
           </div>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}

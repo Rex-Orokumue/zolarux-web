@@ -204,7 +204,8 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  [data-reveal] { opacity: 0; transform: translateY(16px); }
+  /* Reveal: visible by default (SSR / no-JS safe); armed client-side after mount. */
+  [data-reveal][data-reveal-armed='true'] { opacity: 0; transform: translateY(16px); }
   [data-reveal][data-revealed='true'] {
     opacity: 1;
     transform: translateY(0);
