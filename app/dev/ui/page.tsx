@@ -2,6 +2,8 @@ import { Plus, Trash2 } from 'lucide-react'
 import {
   Badge,
   Button,
+  Card,
+  CardBody,
   Checkbox,
   Field,
   FilterPill,
@@ -121,6 +123,29 @@ export default function DevUiPage() {
             <FilterPill>Phones</FilterPill>
             <FilterPill>Laptops</FilterPill>
             <FilterPill>Under ₦500k</FilterPill>
+          </div>
+        </section>
+        <section id="card">
+          <h2 className="mb-4 text-xl">Card</h2>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Card variant="flat">
+              <CardBody>
+                <p className="font-600">Flat</p>
+                <p className="text-sm text-ink-soft">No shadow, border only.</p>
+              </CardBody>
+            </Card>
+            <Card>
+              <CardBody>
+                <p className="font-600">Raised</p>
+                <p className="text-sm text-ink-soft">Default md shadow.</p>
+              </CardBody>
+            </Card>
+            <Card interactive>
+              <CardBody>
+                <p className="font-600">Interactive</p>
+                <p className="text-sm text-ink-soft">Hover to lift.</p>
+              </CardBody>
+            </Card>
           </div>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}
