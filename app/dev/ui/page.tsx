@@ -1,4 +1,5 @@
-import { ThemeToggle } from '@/components/ui'
+import { Plus, Trash2 } from 'lucide-react'
+import { Button, IconButton, ThemeToggle } from '@/components/ui'
 
 export default function DevUiPage() {
   return (
@@ -19,6 +20,29 @@ export default function DevUiPage() {
           </p>
           <div className="mt-4">
             <ThemeToggle />
+          </div>
+        </section>
+
+        <section id="buttons">
+          <h2 className="mb-4 text-xl">Button</h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button>Primary</Button>
+            <Button variant="secondary">Secondary</Button>
+            <Button variant="ghost">Ghost</Button>
+            <Button variant="danger">Danger</Button>
+            <Button variant="link">Link</Button>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <Button size="sm">Small</Button>
+            <Button size="md">Medium</Button>
+            <Button size="lg">Large</Button>
+            <Button loading>Loading</Button>
+            <Button disabled>Disabled</Button>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <IconButton label="Add" variant="solid"><Plus size={16} /></IconButton>
+            <IconButton label="Add" variant="outline"><Plus size={16} /></IconButton>
+            <IconButton label="Delete" variant="ghost"><Trash2 size={16} /></IconButton>
           </div>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}
