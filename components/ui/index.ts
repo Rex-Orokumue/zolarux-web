@@ -22,3 +22,4 @@ export {
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs'
 export { Tooltip } from './Tooltip'
 export { Accordion, type AccordionItemData } from './Accordion'
+export { Toaster, toast } from './Toast'

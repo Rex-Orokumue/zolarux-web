@@ -1,4 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react'
+import { ToastDemo } from './ToastDemo'
 import {
   Badge,
   Button,
@@ -245,6 +246,10 @@ export default function DevUiPage() {
               ]}
             />
           </div>
+        </section>
+        <section id="toast">
+          <h2 className="mb-4 text-xl">Toast</h2>
+          <ToastDemo />
         </section>
         {/* LATER TASKS: append one <section> per component group here */}
       </div>
