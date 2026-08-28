@@ -1,5 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react'
-import { Button, IconButton, ThemeToggle } from '@/components/ui'
+import { Button, Field, IconButton, Input, Textarea, ThemeToggle } from '@/components/ui'
 
 export default function DevUiPage() {
   return (
@@ -43,6 +43,23 @@ export default function DevUiPage() {
             <IconButton label="Add" variant="solid"><Plus size={16} /></IconButton>
             <IconButton label="Add" variant="outline"><Plus size={16} /></IconButton>
             <IconButton label="Delete" variant="ghost"><Trash2 size={16} /></IconButton>
+          </div>
+        </section>
+        <section id="inputs">
+          <h2 className="mb-4 text-xl">Input &amp; Textarea</h2>
+          <div className="grid gap-4 sm:max-w-sm">
+            <Field label="Full name" htmlFor="f-name" hint="As it appears on your ID">
+              <Input id="f-name" placeholder="Ada Obi" />
+            </Field>
+            <Field label="Email" htmlFor="f-email" required error="Enter a valid email address">
+              <Input id="f-email" type="email" invalid defaultValue="not-an-email" />
+            </Field>
+            <Field label="Message" htmlFor="f-msg">
+              <Textarea id="f-msg" placeholder="How can we help?" />
+            </Field>
+            <Field label="Disabled" htmlFor="f-dis">
+              <Input id="f-dis" disabled defaultValue="Locked" />
+            </Field>
           </div>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}

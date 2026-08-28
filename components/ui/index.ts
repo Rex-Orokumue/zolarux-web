@@ -1,3 +1,5 @@
 export { ThemeToggle } from './ThemeToggle'
 export { Button, buttonVariants, type ButtonProps } from './Button'
 export { IconButton, type IconButtonProps } from './IconButton'
+export { Input, Field, type InputProps } from './Input'
+export { Textarea, type TextareaProps } from './Textarea'
