@@ -1,8 +1,10 @@
 import { Plus, Trash2 } from 'lucide-react'
 import {
+  Badge,
   Button,
   Checkbox,
   Field,
+  FilterPill,
   IconButton,
   Input,
   RadioGroup,
@@ -101,6 +103,24 @@ export default function DevUiPage() {
                 { value: 'price_asc', label: 'Price: low to high' },
               ]}
             />
+          </div>
+        </section>
+        <section id="badges">
+          <h2 className="mb-4 text-xl">Badge &amp; FilterPill</h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="verified" />
+            <Badge variant="featured" />
+            <Badge variant="condition" condition="new" />
+            <Badge variant="condition" condition="uk_used" />
+            <Badge variant="condition" condition="refurbished" />
+            <Badge variant="condition" condition="used" />
+            <Badge variant="neutral">In stock</Badge>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <FilterPill active>All</FilterPill>
+            <FilterPill>Phones</FilterPill>
+            <FilterPill>Laptops</FilterPill>
+            <FilterPill>Under ₦500k</FilterPill>
           </div>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}

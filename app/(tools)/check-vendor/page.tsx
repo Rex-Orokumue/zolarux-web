@@ -146,8 +146,8 @@ function VendorResult({ vendor }: { vendor: Vendor }) {
   const statusConfig = VENDOR_STATUS_MAP[vendor.status] || VENDOR_STATUS_MAP.pending
 
   return (
-    <div className={`rounded-2xl border ${statusConfig.border} ${statusConfig.bg} overflow-hidden`}>
-      <div className="p-4" style={{ backgroundColor: statusConfig.headerBg }}>
+    <div className={`rounded-2xl border ${statusConfig.className} overflow-hidden`}>
+      <div className="p-4" style={{ backgroundColor: statusConfig.headerToken }}>
         <div className="flex items-center gap-2">
           <CheckCircle size={18} className="text-white" />
           <span className="font-display font-700 text-white">{statusConfig.label}</span>

@@ -53,7 +53,7 @@ export function FilterBar() {
               className={cn(
                 'px-3 py-1.5 rounded-full text-xs font-600 border transition-all',
                 activeCondition === condition
-                  ? `${CONDITION_MAP[condition].bg} ${CONDITION_MAP[condition].color} ${CONDITION_MAP[condition].border}`
+                  ? CONDITION_MAP[condition].className
                   : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
               )}
             >

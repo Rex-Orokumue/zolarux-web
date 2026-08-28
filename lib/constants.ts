@@ -24,11 +24,11 @@ export type ListingCategory = typeof LISTING_CATEGORIES[number]
 
 export const PRODUCT_CONDITIONS: readonly ProductCondition[] = ['new', 'uk_used', 'refurbished', 'used']
 
-export const CONDITION_MAP: Record<ProductCondition, { label: string; color: string; bg: string; border: string }> = {
-  new: { label: 'New', color: 'text-green-700', bg: 'bg-green-50', border: 'border-green-200' },
-  uk_used: { label: 'UK Used', color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
-  refurbished: { label: 'Refurbished', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
-  used: { label: 'Used', color: 'text-gray-700', bg: 'bg-gray-100', border: 'border-gray-200' },
+export const CONDITION_MAP: Record<ProductCondition, { label: string; className: string }> = {
+  new:         { label: 'New',         className: 'text-verified bg-verified/12 border-verified/30' },
+  uk_used:     { label: 'UK Used',     className: 'text-primary bg-primary/12 border-primary/30' },
+  refurbished: { label: 'Refurbished', className: 'text-refurb bg-refurb/12 border-refurb/30' },
+  used:        { label: 'Used',        className: 'text-ink-soft bg-ink-soft/12 border-ink-soft/30' },
 }
 
 export const LISTING_SORT_OPTIONS = [
@@ -51,38 +51,10 @@ export const VENDOR_CATEGORIES = [
 ] as const
 
 export const VENDOR_STATUS_MAP = {
-  verified: {
-    label: 'Verified Vendor',
-    color: 'text-green-700',
-    bg: 'bg-green-50',
-    border: 'border-green-200',
-    headerBg: '#16a34a',
-    safe: true,
-  },
-  pending: {
-    label: 'Pending Verification',
-    color: 'text-amber-700',
-    bg: 'bg-amber-50',
-    border: 'border-amber-200',
-    headerBg: '#d97706',
-    safe: false,
-  },
-  suspended: {
-    label: 'Vendor Suspended',
-    color: 'text-red-700',
-    bg: 'bg-red-50',
-    border: 'border-red-200',
-    headerBg: '#dc2626',
-    safe: false,
-  },
-  rejected: {
-    label: 'Registration Rejected',
-    color: 'text-red-700',
-    bg: 'bg-red-50',
-    border: 'border-red-200',
-    headerBg: '#dc2626',
-    safe: false,
-  },
+  verified:  { label: 'Verified Vendor',       safe: true,  className: 'text-verified bg-verified/12 border-verified/30', headerToken: 'var(--verified)' },
+  pending:   { label: 'Pending Verification',  safe: false, className: 'text-action bg-action/14 border-action/35',       headerToken: 'var(--action)' },
+  suspended: { label: 'Vendor Suspended',      safe: false, className: 'text-danger bg-danger/12 border-danger/30',        headerToken: 'var(--danger)' },
+  rejected:  { label: 'Registration Rejected', safe: false, className: 'text-danger bg-danger/12 border-danger/30',        headerToken: 'var(--danger)' },
 } as const
 
 export const ORDER_PIPELINE = [
