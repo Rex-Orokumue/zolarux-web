@@ -3,6 +3,7 @@ import { MetadataRoute } from 'next'
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://zolarux.com.ng'
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  // NOTE: /dev/* is intentionally excluded from the sitemap (internal only).
   const staticPages = [
     { url: BASE_URL, priority: 1.0, changeFrequency: 'weekly' as const },
     { url: `${BASE_URL}/listings`, priority: 0.9, changeFrequency: 'daily' as const },
