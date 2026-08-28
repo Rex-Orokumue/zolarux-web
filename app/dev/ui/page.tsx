@@ -8,6 +8,12 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Field,
   FilterPill,
   IconButton,
@@ -182,6 +188,22 @@ export default function DevUiPage() {
               </SheetContent>
             </Sheet>
           </div>
+        </section>
+        <section id="dropdown">
+          <h2 className="mb-4 text-xl">DropdownMenu</h2>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary">Safety tools</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Verify</DropdownMenuLabel>
+              <DropdownMenuItem>Check vendor</DropdownMenuItem>
+              <DropdownMenuItem>Check device</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem destructive>Report stolen</DropdownMenuItem>
+              <DropdownMenuItem disabled>Coming soon</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}
       </div>

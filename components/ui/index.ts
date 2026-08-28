@@ -11,3 +11,11 @@ export { FilterPill, type FilterPillProps } from './FilterPill'
 export { Card, CardHeader, CardBody, CardFooter, type CardProps } from './Card'
 export { Dialog, DialogTrigger, DialogClose, DialogContent } from './Dialog'
 export { Sheet, SheetTrigger, SheetClose, SheetContent } from './Sheet'
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from './DropdownMenu'
