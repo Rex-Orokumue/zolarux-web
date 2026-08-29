@@ -40,6 +40,9 @@ import {
   Reveal,
   StatTile,
   SpecsTable,
+  StarRating,
+  ReviewCard,
+  ReviewSummary,
 } from '@/components/ui'
 
 export default function DevUiPage() {
@@ -317,6 +320,20 @@ export default function DevUiPage() {
             ProductCard, Gallery, and FilterBar are exercised on <code>/listings</code> and{' '}
             <code>/listings/[id]</code>.
           </p>
+        </section>
+        <section id="reviews-ui">
+          <h2 className="mb-4 text-xl">Reviews (display)</h2>
+          <div className="space-y-4">
+            <StarRating value={4.3} size={20} />
+            <ReviewSummary average={4.6} count={87} distribution={{ 1: 2, 2: 3, 3: 6, 4: 20, 5: 56 }} />
+            <ReviewSummary average={4.6} count={87} compact />
+            <div className="max-w-lg">
+              <ReviewCard
+                review={{ id: 'x', rating: 5, body: 'Exactly as described. Fast delivery to Lagos.', created_at: '2026-07-14T10:00:00Z' }}
+              />
+              <ReviewCard review={{ id: 'y', rating: 4, body: null, created_at: '2026-06-02T10:00:00Z' }} />
+            </div>
+          </div>
         </section>
         {/* LATER TASKS: append one <section> per component group here */}
       </div>
