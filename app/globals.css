@@ -123,9 +123,6 @@
   --color-section:        var(--section);
   --color-ring:           var(--ring);
 
-  /* legacy compat — removed in Phase 1 */
-  --color-accent:         var(--amber-500);
-
   --font-display: 'Syne', system-ui, sans-serif;
   --font-body:    'DM Sans', system-ui, sans-serif;
 
@@ -228,9 +225,12 @@
   }
 }
 
-/* ---------- Legacy utility compat (removed page-by-page in Phase 1) ---------- */
-@utility font-300 { font-weight: 300; }
-@utility font-400 { font-weight: 400; }
+/* ---------- Legacy utility compat ----------
+   font-500/600: still used by the Phase 0 components/ui/* library.
+   font-700/800, shadow-card, shadow-card-hover: only the unlinked
+   app/(tools)/check-vendor page and the not-yet-redesigned app/(marketing)/about
+   page. Everything with zero usage (font-300/400, shadow-primary, --color-accent)
+   was removed in Phase 1. */
 @utility font-500 { font-weight: 500; }
 @utility font-600 { font-weight: 600; }
 @utility font-700 { font-weight: 700; }
@@ -238,7 +238,6 @@
 
 @utility shadow-card       { box-shadow: var(--elevation-md); }
 @utility shadow-card-hover { box-shadow: var(--elevation-lg); }
-@utility shadow-primary    { box-shadow: 0 8px 32px rgb(64 100 215 / .25); }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
