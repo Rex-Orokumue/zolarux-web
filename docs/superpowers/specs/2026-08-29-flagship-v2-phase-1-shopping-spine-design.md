@@ -143,10 +143,20 @@ constants**, and **trimming the Phase 0 compat shim** as pages migrate.
     `updated_at`. RLS: policy "public can read published reviews"
     (`status = 'published'`) — anon read works. **No `title` column; no anon
     access to buyer names** (`buyers` has no public read policy).
-  - **Data is messy:** many products have `null` price / brand / condition and
-    `is_featured = null`. Buyer-facing code MUST render `null` price as
-    "Price on request" (or similar) — never `formatPrice(null)` → "₦0"/"NaN".
-    `getListings` etc. already return the empty path on any query error.
+  - **Data reality (214 active products, checked 2026-08-29):** `is_featured =
+    true` on exactly **4**; **0** products have a `brand`, **0** have a
+    `condition`, **0** have `specs`; **3** have `null` price. Categories are
+    free-text and messy ("Phones & Tablets" ×120, "Laptops & Computers" ×50,
+    "Home & Kitchen" ×13, "Accessories" ×12, "Gaming" ×5, plus comma-joined
+    multi-category strings) — `getListings` matches with `ilike '%cat%'` which
+    tolerates this.
+  - **Consequences:** buyer-facing code MUST render `null` price as "Price on
+    request" (never `formatPrice(null)` → "₦0"/"NaN"). Condition badges, brand
+    lines, `SpecsTable`, and the condition/brand filters render **nothing** on
+    today's data — keep them (graceful, future-ready for when vendor tooling
+    populates the fields) but do not make them prominent. `LISTING_CATEGORIES`
+    is updated to the real top categories. The Listing-Detail "condition
+    report" / "what's included" degrade to their generic explainer only.
 
 ## 5. Approach
 
