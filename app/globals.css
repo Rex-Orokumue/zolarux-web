@@ -204,6 +204,14 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* Home hero entrance — staggered via inline animation-delay. `both` fill-mode
+     + the reduced-motion guard below leave elements at the end state. */
+  .hero-rise { animation: heroRise .7s var(--ease-out) both; }
+  @keyframes heroRise {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
   /* Reveal: visible by default (SSR / no-JS safe); armed client-side after mount. */
   [data-reveal][data-reveal-armed='true'] { opacity: 0; transform: translateY(16px); }
   [data-reveal][data-revealed='true'] {
