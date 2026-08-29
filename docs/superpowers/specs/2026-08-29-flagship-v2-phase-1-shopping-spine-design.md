@@ -450,6 +450,38 @@ until then; not blocking the plan):
 - **Real buyer testimonials** — 3+ genuine buyer quotes (name, city, what
   happened) to replace the current vendor quotes.
 
-**Verified at build time** (not user input): which of `/privacy`, `/terms`,
-`/refund-policy`, `/faq` resolve on this branch — the Footer omits any that
-404.
+**Verified at build time** (not user input): none of `/privacy`, `/terms`,
+`/refund-policy`, `/faq`, `/blog`, `/contact`, `/how-it-works` exist on this
+branch — the Footer links only to `/`, `/#the-guarantee`, `/#reviews`,
+`/about`, `/login`, the filtered `/listings`, and WhatsApp.
+
+---
+
+## 18. Phase 1 completion (2026-08-29)
+
+All 15 plan tasks committed to `flagship-v2`. **Verification:** `npx tsc
+--noEmit` clean; `npm run lint` — 0 errors, 5 warnings (all pre-existing-style
+`<img>` in Gallery/ProductCard/HeroSequence); `npm run build` succeeds with the
+route table unchanged from the Phase 0 baseline. All six surfaces + `/dev/ui` +
+`/check-vendor` return 200. Content verified end-to-end via page-text extraction
+(Home / Listings / Listing Detail / Login) — retailer restructure complete, no
+"vendor" or "escrow" anywhere in the buyer-facing surfaces, real Supabase data
+flowing, `null`-price → "Price on request", review surfaces show their empty
+state (table has 0 rows).
+
+**Bug fixed en route:** the Phase 0 `Button` component broke Radix `Slot` when
+`asChild` was combined with the `{loading && …}` sibling
+(`React.Children.only`) — `asChild` now passes `children` through untouched.
+
+**Deferred:**
+- **Visual QA in dark mode + at mobile widths** — the Claude-in-Chrome
+  screenshot tool was erroring throughout execution
+  (`Failed to deserialize params.clip.scale`). Structure/content is verified;
+  colour rendering relies on the Phase 0 token system (both themes verified
+  then). A human eyeball of `/`, `/listings`, a listing, and `/login` in dark
+  mode and at ~375px is the one open verification item.
+- **Real content** (spec §17): hero line, track-record numbers, buyer
+  testimonials — placeholders shipped, clearly labelled in the UI.
+- **Stale root metadata** — `app/layout.tsx` `metadata.keywords` still say
+  "verified phone vendors" / "escrow payment" / "check stolen phone". Out of
+  the Phase 1 surface list; worth a follow-up one-liner.
