@@ -1,100 +1,85 @@
 import Link from 'next/link'
-import { Shield, MessageCircle } from 'lucide-react'
+import { MessageCircle, ShieldCheck } from 'lucide-react'
+import { buildWhatsAppUrl } from '@/lib/utils'
+import { SHOP_MENU, NAV_LINKS } from '@/lib/constants'
 
-const FOOTER_LINKS = {
-  Platform: [
-    { label: 'How It Works',     href: '/how-it-works' },
-    { label: 'Verified Listings', href: '/listings' },
-    { label: 'Verified Vendors', href: '/verified-vendors' },
-    { label: 'For Buyers',       href: '/for-buyers' },
-    { label: 'For Vendors',      href: '/for-vendors' },
-  ],
-  'Safety Tools': [
-    { label: 'Check Vendor',     href: '/check-vendor' },
-    { label: 'Check Device',     href: '/check-device' },
-    { label: 'Verify Original',  href: '/check-original' },
-    { label: 'Report Stolen',    href: '/report-item' },
-    { label: 'Scan a Link',      href: '/scan-link' },
-  ],
-  Company: [
-    { label: 'About Us',         href: '/about' },
-    { label: 'Blog',             href: '/blog' },
-    { label: 'Contact',          href: '/contact' },
-    { label: 'FAQ',              href: '/faq' },
-    { label: 'Download App',     href: '/downloads' },
-  ],
-  Legal: [
-    { label: 'Privacy Policy',   href: '/privacy' },
-    { label: 'Terms of Service', href: '/terms' },
-    { label: 'Refund Policy',    href: '/refund-policy' },
-  ],
-}
+const WA_HREF = buildWhatsAppUrl('Hi Zolarux, I have a question about an order.')
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear()
-
+  const year = new Date().getFullYear()
   return (
-    <footer className="bg-gray-950 text-white">
-      {/* Main footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+    <footer className="border-t border-line bg-surface-raised">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div>
+          <Link href="/" className="mb-4 flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary font-display text-sm font-extrabold text-on-primary">
+              Z
+            </span>
+            <span className="font-display text-lg font-bold text-ink">Zolarux</span>
+          </Link>
+          <p className="mb-5 max-w-xs font-body text-sm leading-relaxed text-ink-soft">
+            Phones, laptops and gadgets you can trust. We inspect every unit before it ships —
+            you inspect it on delivery. Not as described? Full refund.
+          </p>
+          <a
+            href={WA_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 font-body text-sm font-medium text-verified transition-micro hover:brightness-110"
+          >
+            <MessageCircle size={16} />
+            Chat with us on WhatsApp
+          </a>
+        </div>
 
-          {/* Brand column */}
-          <div className="col-span-2 md:col-span-3 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-display font-800 text-sm">Z</span>
-              </div>
-              <span className="font-display font-700 text-white text-lg">Zolarux</span>
-            </Link>
-            <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-xs">
-              Nigeria&apos;s trust infrastructure for gadget commerce. Verified vendors,
-              escrow protection, and real transaction safety.
-            </p>
-            <a
-              href="https://wa.me/2347063107314"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-green-400 hover:text-green-300 font-medium transition-colors"
-            >
-              <MessageCircle size={16} />
-              Chat on WhatsApp
-            </a>
-          </div>
+        <div>
+          <h4 className="mb-4 font-display text-sm font-bold tracking-wide text-ink">Shop</h4>
+          <ul className="space-y-2.5">
+            {SHOP_MENU.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="font-body text-sm text-ink-soft transition-micro hover:text-ink"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-          {/* Link columns */}
-          {Object.entries(FOOTER_LINKS).map(([section, links]) => (
-            <div key={section}>
-              <h4 className="font-display font-700 text-white text-sm mb-4 tracking-wide">
-                {section}
-              </h4>
-              <ul className="space-y-2.5">
-                {links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-gray-400 hover:text-white hover:translate-x-0.5 inline-block text-sm transition-all"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+        <div>
+          <h4 className="mb-4 font-display text-sm font-bold tracking-wide text-ink">Zolarux</h4>
+          <ul className="space-y-2.5">
+            {NAV_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="font-body text-sm text-ink-soft transition-micro hover:text-ink"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                href="/login"
+                className="font-body text-sm text-ink-soft transition-micro hover:text-ink"
+              >
+                Sign in
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
 
-      {/* Trust bar */}
-      <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-gray-500 text-sm">
-            © {currentYear} Zolarux Limited. All rights reserved.
+      <div className="border-t border-line">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 sm:flex-row sm:px-6">
+          <p className="font-body text-sm text-ink-soft">© {year} Zolarux. All rights reserved.</p>
+          <p className="inline-flex items-center gap-2 font-body text-sm text-ink-soft">
+            <ShieldCheck size={14} className="text-verified" />
+            Inspected before dispatch · Guaranteed or refunded
           </p>
-          <div className="flex items-center gap-2 text-gray-500 text-sm">
-            <Shield size={14} className="text-primary" />
-            <span>Escrow Protected · Vendor Verified · Dispute Resolved</span>
-          </div>
         </div>
       </div>
     </footer>
