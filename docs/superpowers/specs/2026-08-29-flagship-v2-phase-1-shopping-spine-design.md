@@ -379,17 +379,12 @@ succeeds, route table sane. Manual QA of every changed surface + `/dev/ui` at
 **375 / 768 / 1280** in **light and dark**, keyboard focus, and
 `prefers-reduced-motion`.
 
-**Data-dependent QA gap:** Listings, Listing Detail, and reviews cannot be
-verified with real data locally (no Supabase). Required mitigation — pick one
-in the plan:
-1. Wire a Supabase connection locally (`.env.local` with the project's
-   `NEXT_PUBLIC_SUPABASE_URL` / `ANON_KEY`), **or**
-2. Verify data paths against a Vercel preview deploy of the branch, **or**
-3. Accept empty/error-state-only local QA for those three and flag real-data
-   verification as a post-merge checklist item.
-
-Empty states, error states, and reduced-motion **are** locally verifiable and
-must pass regardless.
+**Data-dependent QA — resolved:** the user adds
+`NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` to `.env.local`
+so Listings, Listing Detail, and reviews run against real data locally. The
+plan's first task confirms the connection works (a listing renders, the
+`reviews` table is reachable) before the data-page tasks start. Empty / error
+/ reduced-motion states are still verified explicitly.
 
 ## 16. Out of scope (recap)
 
@@ -397,20 +392,24 @@ Check Vendor redesign · all unbuilt pages · review **submission** · cart /
 checkout / payment / order records · middleware changes · new identity · test
 framework · `about` / `(tools)` restyling · vendor surfaces of any kind.
 
-## 17. Open items requiring user input
+## 17. Open items
 
-- **Voice:** brand-first "we" with an optional founder accent on Home/About —
-  confirm, or specify first-person throughout.
-- **Hero headline + supporting line** — draft is "Buy the gadget. Skip the
-  gamble." Provide the real line, or approve the draft.
-- **Track-record numbers** — confirm `₦2M+` / `100+` / `0 scams` / `5 years`
-  are current and stateable, or give the right figures.
-- **Real buyer testimonials** — provide 3+ genuine buyer quotes (name + city +
-  what happened) to replace the current vendor quotes.
-- **"The Guarantee" nav target** — Phase 1 points it at the Home `#the-guarantee`
-  section. OK, or do you want a standalone `/how-it-works` retailer page pulled
-  into Phase 1 scope?
-- **Legal/FAQ footer links** — confirm which of `/privacy`, `/terms`,
-  `/refund-policy`, `/faq` actually resolve on this branch (spec says omit any
-  that 404).
-- **Supabase for verification** — which of the three §15 options.
+**Resolved (2026-08-29):**
+- **"The Guarantee" nav target** → Home `#the-guarantee` anchor. Phase 1 stays
+  6 surfaces; no standalone page.
+- **Supabase for verification** → user adds env vars to `.env.local` (§15).
+
+**Content to be provided during implementation** (placeholder copy is used
+until then; not blocking the plan):
+- **Voice** — spec assumes brand-first "we" with an optional single founder
+  accent on Home. Confirm or override.
+- **Hero headline + supporting line** — placeholder "Buy the gadget. Skip the
+  gamble." Provide the real line.
+- **Track-record numbers** — placeholder `₦2M+` / `100+` / `0 scams` /
+  `5 years`. Confirm or correct.
+- **Real buyer testimonials** — 3+ genuine buyer quotes (name, city, what
+  happened) to replace the current vendor quotes.
+
+**Verified at build time** (not user input): which of `/privacy`, `/terms`,
+`/refund-policy`, `/faq` resolve on this branch — the Footer omits any that
+404.
