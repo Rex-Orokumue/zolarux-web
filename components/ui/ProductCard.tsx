@@ -50,7 +50,7 @@ export function ProductCard({ product }: { product: Product }) {
             <span className="text-sm font-bold text-primary">Price on request</span>
           ) : (
             <span className="font-display text-base font-extrabold text-ink [font-variant-numeric:tabular-nums]">
-              {formatPrice(product.price)}
+              {formatPrice(product.price ?? 0)}
             </span>
           )}
           <Link

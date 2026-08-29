@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!product) return { title: 'Product Not Found' }
   return {
     title: product.name,
-    description: `Buy ${product.name} safely on Zolarux. Vendor verified, escrow protected. ${product.pricing_type === 'fixed' ? formatPrice(product.price) : 'Price on request'}.`,
+    description: `Buy ${product.name} safely on Zolarux. Vendor verified, escrow protected. ${product.pricing_type === 'fixed' ? formatPrice(product.price ?? 0) : 'Price on request'}.`,
   }
 }
 
@@ -63,7 +63,7 @@ export default async function ListingDetailPage({ params }: Props) {
               {product.pricing_type === 'quote' ? (
                 <p className="font-display text-2xl font-800 text-primary">Price on Request</p>
               ) : (
-                <p className="font-display text-3xl font-800 text-gray-900">{formatPrice(product.price)}</p>
+                <p className="font-display text-3xl font-800 text-gray-900">{formatPrice(product.price ?? 0)}</p>
               )}
               <p className="text-xs text-gray-400 mt-1">+ small escrow protection fee</p>
             </div>

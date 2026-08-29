@@ -10,14 +10,15 @@ export const COLORS = {
   accent: '#FFA600',
 } as const
 
-// Gadgets-focused categories for Phase 1
+// Real top categories in the catalogue (free-text column, matched with ilike '%cat%').
 export const LISTING_CATEGORIES = [
   'All',
-  'Phones',
-  'Laptops',
+  'Phones & Tablets',
+  'Laptops & Computers',
   'Accessories',
-  'Electronics',
+  'Home & Kitchen',
   'Gaming',
+  'Cameras & Photography',
 ] as const
 
 export type ListingCategory = typeof LISTING_CATEGORIES[number]
@@ -40,16 +41,7 @@ export const LISTING_SORT_OPTIONS = [
 
 export type ListingSort = typeof LISTING_SORT_OPTIONS[number]['value']
 
-// Vendor registration categories (gadgets-first)
-export const VENDOR_CATEGORIES = [
-  'Phones & Tablets',
-  'Laptops & Computers',
-  'Accessories',
-  'Electronics',
-  'Gaming',
-  'Other Gadgets',
-] as const
-
+// Kept only for the unlinked app/(tools)/check-vendor page (out of Phase 1 scope).
 export const VENDOR_STATUS_MAP = {
   verified:  { label: 'Verified Vendor',       safe: true,  className: 'text-verified bg-verified/12 border-verified/30', headerToken: 'var(--verified)' },
   pending:   { label: 'Pending Verification',  safe: false, className: 'text-action bg-action/14 border-action/35',       headerToken: 'var(--action)' },
@@ -66,17 +58,17 @@ export const ORDER_PIPELINE = [
 ] as const
 
 export const NAV_LINKS = [
-  { label: 'For Buyers',   href: '/for-buyers' },
-  { label: 'For Vendors',  href: '/for-vendors' },
-  { label: 'Listings',     href: '/listings' },
-  { label: 'About',        href: '/about' },
-  { label: 'How It Works', href: '/how-it-works' },
+  { label: 'The Guarantee', href: '/#the-guarantee' },
+  { label: 'Reviews',       href: '/#reviews' },
+  { label: 'About',         href: '/about' },
 ] as const
 
-export const TRUST_TOOLS = [
-  { label: 'Check Vendor',    href: '/check-vendor',   icon: 'shield-check' },
-  { label: 'Check Device',    href: '/check-device',   icon: 'smartphone' },
-  { label: 'Verify Original', href: '/check-original', icon: 'scan' },
-  { label: 'Report Stolen',   href: '/report-item',    icon: 'flag' },
-  { label: 'Scan a Link',     href: '/scan-link',      icon: 'link' },
+export const SHOP_MENU = [
+  { label: 'Phones & Tablets',    href: '/listings?category=Phones+%26+Tablets' },
+  { label: 'Laptops & Computers', href: '/listings?category=Laptops+%26+Computers' },
+  { label: 'Accessories',         href: '/listings?category=Accessories' },
+  { label: 'Home & Kitchen',      href: '/listings?category=Home+%26+Kitchen' },
+  { label: 'Gaming',              href: '/listings?category=Gaming' },
+  { label: 'New arrivals',        href: '/listings?sort=newest' },
+  { label: 'Under ₦200k',    href: '/listings?maxPrice=200000' },
 ] as const

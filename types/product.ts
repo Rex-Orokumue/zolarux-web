@@ -9,10 +9,10 @@ export interface ProductSpec {
 export interface Product {
   id: string
   name: string
-  description: string
-  price: number
+  description: string | null
+  price: number | null
   pricing_type: PricingType
-  image_url: string
+  image_url: string | null
   main_image_url: string | null
   image_urls: string[]
   video_urls: string[]
@@ -20,9 +20,9 @@ export interface Product {
   brand: string | null
   condition: ProductCondition | null
   specs: ProductSpec[] | null
-  vendor_id: string
-  vendor_name: string
+  vendor_id: string | null
+  vendor_name: string | null
   is_active: boolean
-  is_featured: boolean
+  is_featured: boolean | null
   created_at?: string
 }

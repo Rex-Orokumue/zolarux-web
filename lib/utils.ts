@@ -14,6 +14,11 @@ export function formatPrice(amount: number): string {
   }).format(amount)
 }
 
+export function formatPriceMaybe(price: number | null | undefined): string | null {
+  if (typeof price !== 'number' || !Number.isFinite(price) || price <= 0) return null
+  return formatPrice(price)
+}
+
 export function formatDate(dateString: string): string {
   return new Intl.DateTimeFormat('en-NG', {
     day: 'numeric',

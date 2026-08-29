@@ -86,6 +86,22 @@ export async function getFeaturedProducts(limit = 4): Promise<Product[]> {
   return (data as Product[]) || []
 }
 
+export async function getNewArrivals(limit = 8): Promise<Product[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    console.error('New arrivals fetch error:', error)
+    return []
+  }
+  return (data as Product[]) || []
+}
+
 export async function getRelatedProducts(category: string, excludeId: string, limit = 4): Promise<Product[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
