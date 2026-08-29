@@ -5,17 +5,18 @@ import { Toaster } from '@/components/ui/Toast'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Zolarux | Buy Gadgets Online Without Fear',
+    default: 'Zolarux — Phones, Laptops & Gadgets You Can Trust',
     template: '%s | Zolarux',
   },
   description:
-    "Zolarux is Nigeria's trust infrastructure for gadget commerce. We verify vendors, hold funds in escrow, and inspect products before you approve payout.",
+    'Zolarux sources and inspects every phone, laptop and gadget before it ships. You inspect it on delivery — if it is not exactly as described, you get a full refund. Order on WhatsApp.',
   keywords: [
-    'buy gadgets safely Nigeria',
-    'verified phone vendors Nigeria',
-    'escrow payment Nigeria',
-    'check stolen phone Nigeria',
-    'safe online shopping Nigeria',
+    'buy phones Nigeria',
+    'buy laptops Nigeria',
+    'buy gadgets Nigeria',
+    'UK used phones Nigeria',
+    'trusted gadget store Nigeria',
+    'guaranteed or refunded gadgets',
     'Zolarux',
   ],
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://zolarux.com.ng'),
@@ -23,8 +24,9 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_NG',
     siteName: 'Zolarux',
-    title: 'Zolarux | Buy Gadgets Online Without Fear',
-    description: "Nigeria's safest place to buy phones, laptops, and electronics online.",
+    title: 'Zolarux — Phones, Laptops & Gadgets You Can Trust',
+    description:
+      'Every unit inspected before dispatch. You inspect it on delivery. Not as described? Full refund. Order on WhatsApp.',
   },
   robots: { index: true, follow: true },
 }
