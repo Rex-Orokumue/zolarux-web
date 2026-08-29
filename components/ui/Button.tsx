@@ -35,16 +35,24 @@ export interface ButtonProps
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, loading = false, disabled, children, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button'
+    // With asChild, Radix Slot requires exactly one child — pass `children`
+    // through untouched (loading spinners aren't supported in that mode).
     return (
       <Comp
         ref={ref}
         className={cn(buttonVariants({ variant, size }), className)}
-        disabled={disabled || loading}
+        disabled={asChild ? undefined : disabled || loading}
         aria-busy={loading || undefined}
         {...props}
       >
-        {loading && <Loader2 className="animate-spin" size={16} aria-hidden />}
-        {children}
+        {asChild ? (
+          children
+        ) : (
+          <>
+            {loading && <Loader2 className="animate-spin" size={16} aria-hidden />}
+            {children}
+          </>
+        )}
       </Comp>
     )
   }
