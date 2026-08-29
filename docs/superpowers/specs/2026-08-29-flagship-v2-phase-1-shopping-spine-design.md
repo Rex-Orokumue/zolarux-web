@@ -124,8 +124,29 @@ constants**, and **trimming the Phase 0 compat shim** as pages migrate.
   (`setState synchronously within an effect`) is enforced; honor it (Phase 0's
   `ThemeToggle` / `Reveal` use `useSyncExternalStore` / DOM-dataset patterns to
   comply).
-- **Supabase is not configured locally** — `getListings` etc. return the empty
-  path. Real-data QA requires a Supabase connection or a preview deploy (§15).
+- **Supabase — confirmed 2026-08-29.** Real data lives in project
+  `ugieujaerhfqomvhqoie` ("Zolarux"), `https://ugieujaerhfqomvhqoie.supabase.co`.
+  `.env.local` (gitignored) now points there — `/listings` and `/` load real
+  products locally. ([[zolarux-supabase-projects]] — a decoy "SentinelX" gaming
+  project had broken this.)
+  - **`products`** (~326 rows): `id` uuid, `name` text, `description` text,
+    `price` **numeric, nullable**, `image_url` / `main_image_url` text,
+    `image_urls` / `video_urls` text[], `category` text, `brand` text nullable,
+    `condition` text nullable (free text), `pricing_type` text default
+    `'fixed'`, `specs` **jsonb** nullable, `is_active` bool, `is_featured` bool
+    **nullable** (often `null`, not `false`), `vendor_id` / `vendor_name` text.
+    RLS: public/anon `SELECT` allowed (`qual: true`).
+  - **`reviews`** (**0 rows**, table exists): `id` uuid, `order_id` uuid,
+    `vendor_id` text, `buyer_id` uuid, `listing_id` uuid nullable,
+    `listing_title` text, `rating` **smallint** (1–5), `comment` text,
+    `vendor_reply` text, `status` text default `'published'`, `created_at`,
+    `updated_at`. RLS: policy "public can read published reviews"
+    (`status = 'published'`) — anon read works. **No `title` column; no anon
+    access to buyer names** (`buyers` has no public read policy).
+  - **Data is messy:** many products have `null` price / brand / condition and
+    `is_featured = null`. Buyer-facing code MUST render `null` price as
+    "Price on request" (or similar) — never `formatPrice(null)` → "₦0"/"NaN".
+    `getListings` etc. already return the empty path on any query error.
 
 ## 5. Approach
 
@@ -311,15 +332,22 @@ Closing line: the "guaranteed or refunded" promise, bold.
 
 ## 11. Reviews — read-only display
 
-**Data:** the `reviews` table exists in the Supabase project (used by `main`).
-**Task 1 of the reviews work must confirm its schema** via the Supabase MCP or
-`main:lib/reviews.ts` as reference; adapt, do not assume columns.
+**Data:** the `reviews` table exists (schema confirmed — §4), currently
+**0 rows**. Phase 1 builds the read path + display; every review surface
+renders its empty state until real reviews exist. Anon can `SELECT` rows where
+`status = 'published'`; anon cannot read buyer names.
 
-- **New `lib/reviews.ts`** (read-only): `getProductReviews(productId)` →
-  `{ reviews: Review[]; average: number; count: number }`;
-  `getReviewSummary()` → site-wide `{ average, count }` for Home.
-  `Review` type: `{ id, rating (1-5), title?, body, author_name, created_at,
-  verified? }` — match to the real table.
+- **New `lib/reviews.ts`** (read-only, uses `@/lib/supabase/server`):
+  - `getProductReviews(productId: string)` →
+    `{ reviews: Review[]; average: number; count: number; distribution: Record<1|2|3|4|5, number> }`
+    — query `reviews` where `listing_id = productId` and `status = 'published'`,
+    order `created_at` desc.
+  - `getReviewSummary()` → `{ average: number; count: number }` site-wide
+    (`status = 'published'`), for Home.
+  - `Review` type: `{ id: string; rating: 1|2|3|4|5; body: string | null;
+    created_at: string }`. **No title, no author name** — every review has an
+    `order_id`, so the UI labels all of them "Verified buyer" / "Verified
+    purchase". (`body` maps to the `comment` column.)
 - **New components** (`components/ui/`, on tokens, using Phase 0 primitives):
   - `StarRating` — display + optional size; half-stars.
   - `ReviewCard` — avatar (initials), name, date, stars, title, body,
@@ -379,12 +407,14 @@ succeeds, route table sane. Manual QA of every changed surface + `/dev/ui` at
 **375 / 768 / 1280** in **light and dark**, keyboard focus, and
 `prefers-reduced-motion`.
 
-**Data-dependent QA — resolved:** the user adds
-`NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` to `.env.local`
-so Listings, Listing Detail, and reviews run against real data locally. The
-plan's first task confirms the connection works (a listing renders, the
-`reviews` table is reachable) before the data-page tasks start. Empty / error
-/ reduced-motion states are still verified explicitly.
+**Data-dependent QA — resolved (2026-08-29):** `.env.local` now points at the
+real Zolarux project (`ugieujaerhfqomvhqoie`); `/listings` and `/` load real
+products locally. Listings + Listing Detail get real-data QA. **Reviews:** the
+table is empty, so review surfaces are QA'd for their **empty state**; the
+query shape is verified structurally (and, optionally, by inserting + deleting
+one throwaway `status='published'` row via the Supabase MCP during the reviews
+task — the plan makes this optional). Empty / error / reduced-motion states are
+verified explicitly throughout.
 
 ## 16. Out of scope (recap)
 
