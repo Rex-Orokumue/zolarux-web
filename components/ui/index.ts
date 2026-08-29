@@ -37,3 +37,6 @@ export { FilterBar } from './FilterBar'
 export { StarRating } from './StarRating'
 export { ReviewCard } from './ReviewCard'
 export { ReviewSummary } from './ReviewSummary'
+// NOTE: ProductReviews (server component, pulls lib/supabase/server → next/headers)
+// is intentionally NOT re-exported here — the barrel is imported by client
+// components. Import it directly from '@/components/ui/ProductReviews'.

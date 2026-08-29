@@ -1,11 +1,15 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getProductById } from '@/lib/products'
-import { formatPriceMaybe } from '@/lib/utils'
+import { MessageCircle, ShieldCheck } from 'lucide-react'
+import { getProductById, getRelatedProducts } from '@/lib/products'
+import { formatPriceMaybe, buildWhatsAppUrl } from '@/lib/utils'
 import { Gallery } from '@/components/ui/Gallery'
 import { SpecsTable } from '@/components/ui/SpecsTable'
 import { Badge } from '@/components/ui/Badge'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
+import { Card } from '@/components/ui/Card'
+import { ProductCard } from '@/components/ui/ProductCard'
+import { ProductReviews } from '@/components/ui/ProductReviews'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -27,12 +31,15 @@ export default async function ListingDetailPage({ params }: Props) {
   const product = await getProductById(id)
   if (!product) notFound()
 
+  const related = await getRelatedProducts(product.category, product.id)
+
   const imageUrl =
     product.main_image_url || product.image_url || product.image_urls?.[0] || null
   const images = Array.from(
     new Set([imageUrl, ...(product.image_urls || [])].filter(Boolean) as string[])
   )
   const price = formatPriceMaybe(product.price)
+  const orderMsg = `Hi Zolarux, I'd like to order: ${product.name}${price ? ` (${price})` : ''}. Is it available?`
 
   return (
     <div className="bg-background py-10">
@@ -84,11 +91,46 @@ export default async function ListingDetailPage({ params }: Props) {
               <SpecsTable specs={product.specs} />
             </div>
 
-            {/* Task 12: trust panel + Order on WhatsApp + what-happens-next */}
+            <div className="mt-6 space-y-4">
+              <a
+                href={buildWhatsAppUrl(orderMsg)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-verified py-4 font-display text-base font-bold text-white transition-micro hover:brightness-110"
+              >
+                <MessageCircle size={18} />
+                Order on WhatsApp
+              </a>
+
+              <Card variant="flat">
+                <div className="space-y-3 p-5">
+                  <p className="inline-flex items-center gap-2 font-display text-sm font-bold text-ink">
+                    <ShieldCheck size={16} className="text-verified" />
+                    Guaranteed or refunded
+                  </p>
+                  <ol className="space-y-2 font-body text-sm text-ink-soft">
+                    <li>1. Message us — we confirm stock, condition and delivery.</li>
+                    <li>2. Pay, and we dispatch your inspected unit.</li>
+                    <li>3. Inspect it on delivery. Not as described? Full refund.</li>
+                  </ol>
+                </div>
+              </Card>
+            </div>
           </div>
         </div>
 
-        {/* Task 12: related products + ProductReviews */}
+        <ProductReviews productId={product.id} />
+
+        {related.length > 0 && (
+          <div className="mt-16">
+            <h2 className="mb-6 font-display text-2xl font-extrabold text-ink">More gadgets like this</h2>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {related.map((r) => (
+                <ProductCard key={r.id} product={r} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
