@@ -237,3 +237,29 @@ backend · Phase 1 surface changes (beyond nav/footer links) · `(tools)` pages
   socials to list.
 - **Track-record numbers** (₦2M+ / 100+ / 0 / 5 yrs) — still the Phase 1
   placeholders; confirm once.
+---
+
+## 15. Phase 2 completion (2026-08-30)
+
+All 6 plan tasks committed to `flagship-v2`. **Verification:** `npx tsc
+--noEmit` clean; `npm run lint` — 0 errors, 5 warnings (pre-existing `<img>`);
+`npm run build` succeeds. Route table gains four statics: `○ /about`,
+`○ /how-it-works`, `○ /faq`, `○ /contact`; everything else unchanged from the
+Phase 1 baseline. Content verified via curl for all four pages + the updated
+Navbar/Footer — no vendor/escrow leakage (the one "vendors" on About is
+deliberate: Rex naming the scammy sellers he is *not*). The Contact page was
+also visually checked in the browser (dark) before the Chrome screenshot tool
+went intermittent again — PageHeader, WhatsApp CTA, and the form (with "Order
+help" default) all correct.
+
+**Compat shim:** re-grepped after About migrated — `font-700/800` +
+`shadow-card(-hover)` are now used only by the unlinked `check-vendor` page;
+comment updated, nothing deleted (all four still have use).
+
+**Deferred / pending:**
+- Dark-mode + mobile visual eyeball of `/about`, `/how-it-works`, `/faq` (the
+  Chrome screenshot tool is intermittent). `/contact` was checked in dark.
+- All §14 content items are still placeholders with visible "Draft — confirm"
+  markers: About story/headline/team bios, the inspection checklist, payment
+  methods, delivery timeframe/cost, refund window, FAQ answer specifics,
+  Contact hours/response-time, the track-record numbers.

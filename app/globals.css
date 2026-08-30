@@ -228,9 +228,9 @@
 /* ---------- Legacy utility compat ----------
    font-500/600: still used by the Phase 0 components/ui/* library.
    font-700/800, shadow-card, shadow-card-hover: only the unlinked
-   app/(tools)/check-vendor page and the not-yet-redesigned app/(marketing)/about
-   page. Everything with zero usage (font-300/400, shadow-primary, --color-accent)
-   was removed in Phase 1. */
+   app/(tools)/check-vendor page (About was redesigned in Phase 2).
+   Zero-usage entries (font-300/400, shadow-primary, --color-accent) were
+   removed in Phase 1. */
 @utility font-500 { font-weight: 500; }
 @utility font-600 { font-weight: 600; }
 @utility font-700 { font-weight: 700; }
