@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { MessageCircle, ShieldCheck } from 'lucide-react'
 import { buildWhatsAppUrl } from '@/lib/utils'
-import { SHOP_MENU, NAV_LINKS } from '@/lib/constants'
+import { SHOP_MENU, NAV_LINKS, HELP_LINKS } from '@/lib/constants'
 
 const WA_HREF = buildWhatsAppUrl('Hi Zolarux, I have a question about an order.')
 
@@ -9,7 +9,7 @@ export default function Footer() {
   const year = new Date().getFullYear()
   return (
     <footer className="border-t border-line bg-surface-raised">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
         <div>
           <Link href="/" className="mb-4 flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary font-display text-sm font-extrabold text-on-primary">
@@ -69,6 +69,22 @@ export default function Footer() {
                 Sign in
               </Link>
             </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="mb-4 font-display text-sm font-bold tracking-wide text-ink">Help</h4>
+          <ul className="space-y-2.5">
+            {HELP_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="font-body text-sm text-ink-soft transition-micro hover:text-ink"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       </div>

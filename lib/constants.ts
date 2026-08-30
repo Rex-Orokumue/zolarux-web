@@ -58,9 +58,15 @@ export const ORDER_PIPELINE = [
 ] as const
 
 export const NAV_LINKS = [
-  { label: 'The Guarantee', href: '/#the-guarantee' },
-  { label: 'Reviews',       href: '/#reviews' },
-  { label: 'About',         href: '/about' },
+  { label: 'How it works', href: '/how-it-works' },
+  { label: 'Reviews',      href: '/#reviews' },
+  { label: 'About',        href: '/about' },
+] as const
+
+export const HELP_LINKS = [
+  { label: 'How it works', href: '/how-it-works' },
+  { label: 'FAQ',          href: '/faq' },
+  { label: 'Contact',      href: '/contact' },
 ] as const
 
 export const SHOP_MENU = [
