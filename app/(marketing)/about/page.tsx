@@ -1,151 +1,164 @@
 import type { Metadata } from 'next'
-import { Shield, Target, Eye, Heart } from 'lucide-react'
-import { StatTile } from '@/components/ui/StatTile'
+import { Search, Camera, MessageCircle, RotateCcw } from 'lucide-react'
+import { StatTile, Card, Avatar, Reveal } from '@/components/ui'
 
 export const metadata: Metadata = {
-  title: 'About Us',
-  description: "Learn about Zolarux — Nigeria's trust infrastructure for gadget commerce.",
+  title: 'About',
+  description:
+    'Zolarux is a small Nigerian gadget store built on one rule: you get exactly what you ordered, or your money back. Meet the people behind it.',
 }
 
-const TEAM = [
+const VALUES = [
   {
-    name: 'Rex Orokumue',
-    role: 'Founder & CEO',
-    bio: 'Software developer, educator, and entrepreneur. Rex built Zolarux from personal frustration with Nigerian social commerce scams into a structured trust platform that has protected over ₦2M in transactions.',
-    initial: 'R',
+    icon: Search,
+    title: 'We inspect everything',
+    body: "Nothing ships that we haven't powered on, tested and graded ourselves.",
   },
   {
-    name: 'Karen',
-    role: 'Operations',
-    bio: 'Handles vendor verification, dispute resolution, and the day-to-day operational discipline that makes Zolarux reliable.',
-    initial: 'K',
+    icon: Camera,
+    title: "We're honest about condition",
+    body: 'Real photos of the real unit, real notes. No "as good as new" when it isn\'t.',
   },
   {
-    name: 'Precious',
-    role: 'Customer Relations',
-    bio: 'First point of contact for buyers and vendors. Ensures every transaction is coordinated with clarity and care.',
-    initial: 'P',
+    icon: MessageCircle,
+    title: "We're easy to reach",
+    body: 'A person on WhatsApp who knows your order — not a ticket queue.',
+  },
+  {
+    icon: RotateCcw,
+    title: 'Guaranteed or refunded',
+    body: "If it's not exactly as described when it reaches you, you get your money back.",
   },
 ]
 
-const VALUES = [
-  { icon: Shield, title: 'Trust Over Speed', desc: "We never rush a transaction. Verification takes time. That time protects you." },
-  { icon: Target, title: 'Process Over Emotion', desc: "Every decision is evidence-based. We don't release funds on promises — only on confirmation." },
-  { icon: Eye, title: 'Transparency Always', desc: "You know where your money is at every step. No hidden fees. No surprises." },
-  { icon: Heart, title: 'Buyer Money is Sacred', desc: "This is our core internal principle. The moment your payment enters escrow, it is untouchable until you approve." },
+// DRAFT — confirm names, roles and bios with the user.
+const TEAM = [
+  {
+    name: 'Rex Orokumue',
+    role: 'Founder',
+    bio: 'Started Zolarux after one too many friends lost money to fake phones online. Handles what gets bought and how it gets checked.',
+  },
+  {
+    name: 'Karen',
+    role: 'Sourcing & Inspection',
+    bio: 'Runs the bench — every device through her hands before it is listed or shipped.',
+  },
+  {
+    name: 'Precious',
+    role: 'Customer Care',
+    bio: 'The voice on WhatsApp. Keeps every order moving and every buyer in the loop.',
+  },
 ]
 
 export default function AboutPage() {
   return (
-    <div>
-      {/* Hero */}
-      <section className="bg-primary py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <div className="bg-background">
+      {/* Hero — founder voice */}
+      <section className="bg-primary py-16 text-on-primary sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="max-w-3xl">
-            <span className="inline-block bg-white/15 text-white text-xs font-700 uppercase tracking-wider px-3 py-1.5 rounded-full mb-6">
-              Our Story
-            </span>
-            <h1 className="font-display text-4xl sm:text-5xl font-800 text-white mb-6">
-              We Exist Because Trust is Broken in Nigerian Commerce
+            <p className="mb-3 font-body text-xs font-semibold uppercase tracking-[0.16em] text-on-primary/70">
+              Our story
+            </p>
+            {/* DRAFT headline — confirm */}
+            <h1 className="font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl xl:text-5xl">
+              I started Zolarux because I was tired of watching people get burned.
             </h1>
-            <p className="text-white/75 text-lg leading-relaxed">
-              Zolarux was not built from a business idea. It was built from real pain —
-              watching people lose money to fake gadgets, disappearing vendors, and
-              undelivered orders on WhatsApp and Instagram every single day.
+            <p className="mt-5 font-body text-lg leading-relaxed text-on-primary/80">
+              I&apos;m Rex. I&apos;ve been buying and selling gadgets in Nigeria for about five
+              years — and for most of that time I watched people lose real money to fake phones,
+              swapped parts and &ldquo;vendors&rdquo; who vanished the moment the transfer landed.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Story */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="font-display text-3xl sm:text-4xl font-800 text-gray-900 mb-6 leading-[1.1] tracking-tight">
-                Five Years of Building Trust Infrastructure
-              </h2>
-              <div className="space-y-4 text-gray-600 leading-relaxed">
-                <p>
-                  Social commerce in Nigeria is massive. Millions of people buy and sell
-                  through WhatsApp, Instagram, and Facebook every day. The demand exists.
-                  The problem has always been trust.
-                </p>
-                <p>
-                  Buyers are afraid of scams. Vendors lose legitimate sales because
-                  customers do not trust them enough to pay upfront. Both sides are losing.
-                </p>
-                <p>
-                  Zolarux sits between both parties as a controlled transaction layer —
-                  verifying vendors, holding funds in escrow, inspecting products,
-                  monitoring fulfillment, and only releasing payment when the buyer confirms.
-                </p>
-                <p>
-                  We have processed over <strong>₦2 million in protected transactions</strong>,
-                  served <strong>100+ customers</strong>, and maintained a{' '}
-                  <strong>zero confirmed scam record</strong> since inception.
-                </p>
+      {/* The story */}
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto grid max-w-7xl gap-14 px-4 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
+          <div className="space-y-4 font-body leading-relaxed text-ink-soft">
+            {/* DRAFT story — confirm the specifics */}
+            <p>
+              The demand was never the problem. Everyone wants a clean iPhone or a solid work
+              laptop at a fair price. The problem was trust — you send money to a stranger and
+              hope.
+            </p>
+            <p>
+              So I decided to be the seller people didn&apos;t have to hope about. Buy the stock
+              myself. Test every unit properly — not a glance, a real check. Be honest about what
+              it is, down to the scratch on the corner. And if I get it wrong, refund it, no
+              argument.
+            </p>
+            <p>
+              That&apos;s the whole business. Five years, ₦2M+ in orders, and nobody has ever
+              lost money buying from us.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {/* DRAFT numbers — same placeholders as Home; confirm once */}
+            {[
+              { value: '₦2M+', label: 'In orders' },
+              { value: '100+', label: 'Gadgets delivered' },
+              { value: '5 yrs', label: 'Doing this' },
+              { value: '0', label: 'Confirmed scams' },
+            ].map((s) => (
+              <div key={s.label} className="rounded-md border border-line bg-surface py-2">
+                <StatTile value={s.value} label={s.label} />
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { number: '₦2M+', label: 'Transactions Protected' },
-                { number: '100+', label: 'Happy Customers' },
-                { number: '5yrs', label: 'In Operation' },
-                { number: '0',    label: 'Confirmed Scams' },
-              ].map((stat) => (
-                <div key={stat.label} className="bg-surface rounded-2xl p-2 text-center border border-gray-100">
-                  <StatTile value={stat.number} label={stat.label} />
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Values */}
-      <section className="py-20 bg-surface">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-3xl font-800 text-gray-900 mb-4">Our Operating Philosophy</h2>
-            <p className="text-gray-500 text-lg max-w-xl mx-auto">
-              These are not marketing slogans. They are the rules we follow internally on every single transaction.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {VALUES.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-card">
-                <div className="w-10 h-10 bg-primary-light rounded-xl flex items-center justify-center mb-4">
-                  <Icon size={18} className="text-primary" />
-                </div>
-                <h3 className="font-display font-700 text-gray-900 mb-2">{title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
+      <section className="bg-section py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <h2 className="mb-10 font-display text-2xl font-extrabold text-ink sm:text-3xl">
+            What we stand for
+          </h2>
+          <Reveal>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {VALUES.map((v) => {
+                const Icon = v.icon
+                return (
+                  <div key={v.title} className="rounded-md border border-line bg-surface p-6">
+                    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-md bg-primary-soft text-primary">
+                      <Icon size={20} />
+                    </div>
+                    <h3 className="mb-2 font-display text-base font-bold text-ink">{v.title}</h3>
+                    <p className="font-body text-sm leading-relaxed text-ink-soft">{v.body}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Team */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-3xl font-800 text-gray-900 mb-4">The People Behind Every Transaction</h2>
-            <p className="text-gray-500 text-lg">Small team. Deep commitment. Every transaction has a real human watching it.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {TEAM.map((member) => (
-              <div key={member.name} className="bg-surface rounded-2xl p-6 border border-gray-100 text-center">
-                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mx-auto mb-4">
-                  <span className="font-display font-800 text-white text-xl">{member.initial}</span>
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <h2 className="mb-2 font-display text-2xl font-extrabold text-ink sm:text-3xl">
+            The people behind it
+          </h2>
+          <p className="mb-10 font-body text-ink-soft">
+            Small team. Every order has a real person watching it.
+          </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            {TEAM.map((m) => (
+              <Card key={m.name}>
+                <div className="p-6">
+                  <Avatar name={m.name} size="lg" />
+                  <h3 className="mt-4 font-display text-base font-bold text-ink">{m.name}</h3>
+                  <p className="font-body text-sm font-semibold text-primary">{m.role}</p>
+                  <p className="mt-2 font-body text-sm leading-relaxed text-ink-soft">{m.bio}</p>
                 </div>
-                <h3 className="font-display font-700 text-gray-900">{member.name}</h3>
-                <p className="text-primary text-sm font-600 mb-3">{member.role}</p>
-                <p className="text-gray-500 text-sm leading-relaxed">{member.bio}</p>
-              </div>
+              </Card>
             ))}
           </div>
+          <p className="mt-6 font-body text-xs text-ink-soft">
+            Draft — confirm team names, roles and bios.
+          </p>
         </div>
       </section>
     </div>
