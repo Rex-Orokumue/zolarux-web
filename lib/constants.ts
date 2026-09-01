@@ -41,14 +41,6 @@ export const LISTING_SORT_OPTIONS = [
 
 export type ListingSort = typeof LISTING_SORT_OPTIONS[number]['value']
 
-// Kept only for the unlinked app/(tools)/check-vendor page (out of Phase 1 scope).
-export const VENDOR_STATUS_MAP = {
-  verified:  { label: 'Verified Vendor',       safe: true,  className: 'text-verified bg-verified/12 border-verified/30', headerToken: 'var(--verified)' },
-  pending:   { label: 'Pending Verification',  safe: false, className: 'text-action bg-action/14 border-action/35',       headerToken: 'var(--action)' },
-  suspended: { label: 'Vendor Suspended',      safe: false, className: 'text-danger bg-danger/12 border-danger/30',        headerToken: 'var(--danger)' },
-  rejected:  { label: 'Registration Rejected', safe: false, className: 'text-danger bg-danger/12 border-danger/30',        headerToken: 'var(--danger)' },
-} as const
-
 export const ORDER_PIPELINE = [
   { status: 'pending',   label: 'Order Placed' },
   { status: 'confirmed', label: 'Confirmed' },
