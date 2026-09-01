@@ -3,9 +3,11 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, ChevronDown, MessageCircle } from 'lucide-react'
+import { Menu, ChevronDown, MessageCircle, Smartphone, ScanSearch, Flag, Link2 } from 'lucide-react'
 import { cn, buildWhatsAppUrl } from '@/lib/utils'
-import { NAV_LINKS, SHOP_MENU } from '@/lib/constants'
+import { NAV_LINKS, SHOP_MENU, SAFETY_TOOLS } from '@/lib/constants'
+
+const TOOL_ICON = { smartphone: Smartphone, 'scan-search': ScanSearch, flag: Flag, link: Link2 } as const
 import {
   Button,
   IconButton,
@@ -85,6 +87,32 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="inline-flex items-center gap-1 rounded-md px-3.5 py-2 font-body text-sm font-medium text-ink-soft transition-micro hover:bg-primary-soft hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+                Safety tools <ChevronDown size={14} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="min-w-72">
+              {SAFETY_TOOLS.map((tool) => {
+                const Icon = TOOL_ICON[tool.icon]
+                return (
+                  <DropdownMenuItem key={tool.href}>
+                    <Link href={tool.href} className="flex w-full items-start gap-3">
+                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary">
+                        <Icon size={14} />
+                      </span>
+                      <span>
+                        <span className="block font-medium text-ink">{tool.label}</span>
+                        <span className="block font-body text-xs text-ink-soft">{tool.desc}</span>
+                      </span>
+                    </Link>
+                  </DropdownMenuItem>
+                )
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
@@ -130,6 +158,16 @@ export default function Navbar() {
                   <SheetClose asChild key={link.href}>
                     <Link href={link.href} className="rounded-md px-1 py-2.5 font-body text-sm text-ink">
                       {link.label}
+                    </Link>
+                  </SheetClose>
+                ))}
+                <p className="px-1 pt-4 font-body text-xs font-semibold uppercase tracking-wider text-ink-soft">
+                  Safety tools
+                </p>
+                {SAFETY_TOOLS.map((tool) => (
+                  <SheetClose asChild key={tool.href}>
+                    <Link href={tool.href} className="rounded-md px-1 py-2.5 font-body text-sm text-ink">
+                      {tool.label}
                     </Link>
                   </SheetClose>
                 ))}

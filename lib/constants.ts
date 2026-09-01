@@ -69,6 +69,13 @@ export const HELP_LINKS = [
   { label: 'Contact',      href: '/contact' },
 ] as const
 
+export const SAFETY_TOOLS = [
+  { label: 'Check a device',         href: '/check-device',   icon: 'smartphone',  desc: 'Is this used phone stolen? Check the IMEI.' },
+  { label: "Verify it's genuine",    href: '/check-original', icon: 'scan-search', desc: "Confirm a serial number on the maker's own site." },
+  { label: 'Report a stolen device', href: '/report-item',    icon: 'flag',        desc: 'Add a stolen phone or laptop to the registry.' },
+  { label: 'Scan a link',            href: '/scan-link',      icon: 'link',        desc: 'Paste a listing link — we check it for scam signs.' },
+] as const
+
 export const SHOP_MENU = [
   { label: 'Phones & Tablets',    href: '/listings?category=Phones+%26+Tablets' },
   { label: 'Laptops & Computers', href: '/listings?category=Laptops+%26+Computers' },
