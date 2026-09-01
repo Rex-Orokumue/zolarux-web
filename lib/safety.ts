@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
+import type { Product } from '@/types/product'
 
 export interface StolenReportInput {
   item_name: string
@@ -76,4 +77,28 @@ export async function checkDevice(query: string): Promise<DeviceCheckResult> {
   if (rep.data && rep.data.length > 0) return { status: 'reported', record: rep.data[0] as StolenRecord }
 
   return { status: 'clean' }
+}
+
+export interface ScanOk {
+  riskLevel: 'safe' | 'caution' | 'danger'
+  riskScore: number
+  summary: string
+  flags: string[]
+  positives: string[]
+  similarProducts: Product[]
+}
+
+export async function scanLink(url: string): Promise<ScanOk | { error: string }> {
+  try {
+    const res = await fetch('/api/scan-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    })
+    const data = await res.json()
+    if (!res.ok) return { error: data.error || 'Scan failed. Try again.' }
+    return data as ScanOk
+  } catch {
+    return { error: 'Could not run the scan. Check your connection and try again.' }
+  }
 }
