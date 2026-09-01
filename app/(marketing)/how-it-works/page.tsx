@@ -154,7 +154,7 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      <section className="bg-primary py-16 text-on-primary sm:py-20">
+      <section className="bg-hero-primary py-16 text-white sm:py-20">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6">
           <h2 className="font-display text-2xl font-extrabold sm:text-3xl">Ready to shop?</h2>
           <div className="mt-6 flex justify-center">

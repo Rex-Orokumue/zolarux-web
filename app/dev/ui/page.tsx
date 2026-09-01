@@ -303,7 +303,7 @@ export default function DevUiPage() {
         </section>
         <section id="refit">
           <h2 className="mb-4 text-xl">Refitted components</h2>
-          <div className="grid grid-cols-2 gap-4 rounded-md bg-primary p-6 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 rounded-md bg-hero-primary p-6 sm:grid-cols-4">
             <StatTile value="1,240" label="Listings" variant="dark" />
             <StatTile value="38" label="Vendors" variant="dark" />
           </div>

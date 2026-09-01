@@ -53,12 +53,12 @@ export default function LoginPage() {
   return (
     <div className="w-full max-w-md">
       <Card className="overflow-hidden">
-        <div className="bg-primary p-6 text-center text-on-primary">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-md bg-on-primary/15">
+        <div className="bg-hero-primary p-6 text-center text-white">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-md bg-white/15">
             <ShieldCheck size={22} />
           </div>
           <h1 className="font-display text-xl font-extrabold">Welcome back</h1>
-          <p className="mt-1 font-body text-sm text-on-primary/75">Sign in to track your orders</p>
+          <p className="mt-1 font-body text-sm text-white/75">Sign in to track your orders</p>
         </div>
 
         <div className="p-6">

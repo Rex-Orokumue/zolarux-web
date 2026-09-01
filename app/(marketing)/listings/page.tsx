@@ -71,10 +71,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
   return (
     <div className="bg-background">
-      <section className="bg-primary py-14 text-on-primary sm:py-16">
+      <section className="bg-hero-primary py-14 text-white sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <h1 className="font-display text-3xl font-extrabold sm:text-4xl">Shop all gadgets</h1>
-          <p className="mt-2 font-body text-lg text-on-primary/80">
+          <p className="mt-2 font-body text-lg text-white/80">
             {total > 0
               ? `${total} product${total === 1 ? '' : 's'} — each one inspected before it ships.`
               : 'Every unit is inspected before dispatch. Guaranteed or refunded.'}

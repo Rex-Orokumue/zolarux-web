@@ -75,6 +75,12 @@
   --section:          var(--blue-50);
   --ring:             var(--blue-600);
 
+  /* Full-bleed hero / CTA bands. Light: the saturated brand colour. Dark:
+     a deep tint (see .dark) so the band anchors the page without glaring.
+     Always pair with `text-white`. */
+  --hero-primary:     var(--primary);
+  --hero-danger:      var(--danger);
+
   --elevation-sm: 0 1px 2px -1px rgb(0 0 0 / .08), 0 1px 3px -1px rgb(0 0 0 / .06);
   --elevation-md: 0 6px 16px -8px rgb(24 26 33 / .16), 0 2px 6px -3px rgb(24 26 33 / .10);
   --elevation-lg: 0 12px 28px -14px rgb(24 26 33 / .28), 0 3px 8px -4px rgb(24 26 33 / .12);
@@ -99,6 +105,9 @@
   --section:        #161B2B;
   --ring:           var(--blue-400);
 
+  --hero-primary:   #182142;
+  --hero-danger:    #4C1717;
+
   --elevation-sm: 0 1px 2px -1px rgb(0 0 0 / .5), 0 1px 3px -1px rgb(0 0 0 / .4);
   --elevation-md: 0 8px 20px -8px rgb(0 0 0 / .6), 0 3px 8px -4px rgb(0 0 0 / .45);
   --elevation-lg: 0 16px 34px -16px rgb(0 0 0 / .7), 0 4px 10px -5px rgb(0 0 0 / .5);
@@ -122,6 +131,8 @@
   --color-danger:         var(--danger);
   --color-section:        var(--section);
   --color-ring:           var(--ring);
+  --color-hero-primary:   var(--hero-primary);
+  --color-hero-danger:    var(--hero-danger);
 
   --font-display: 'Syne', system-ui, sans-serif;
   --font-body:    'DM Sans', system-ui, sans-serif;

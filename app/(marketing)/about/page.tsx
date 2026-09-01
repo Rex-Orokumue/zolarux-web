@@ -53,18 +53,18 @@ const TEAM = [
 export default function AboutPage() {
   return (
     <div className="bg-background">
-      {/* Hero — founder voice. Dark mode: deep tinted band, matches <PageHeader>. */}
-      <section className="bg-primary py-16 text-on-primary sm:py-24 dark:bg-[#182142] dark:text-white">
+      {/* Hero — founder voice. Shares the <PageHeader> band treatment. */}
+      <section className="bg-hero-primary py-16 text-white sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="max-w-3xl">
-            <p className="mb-3 font-body text-xs font-semibold uppercase tracking-[0.16em] text-on-primary/70 dark:text-white/70">
+            <p className="mb-3 font-body text-xs font-semibold uppercase tracking-[0.16em] text-white/70">
               Our story
             </p>
             {/* DRAFT headline — confirm */}
             <h1 className="font-display text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl xl:text-5xl">
               I started Zolarux because I was tired of watching people get burned.
             </h1>
-            <p className="mt-5 font-body text-lg leading-relaxed text-on-primary/80 dark:text-white/80">
+            <p className="mt-5 font-body text-lg leading-relaxed text-white/80">
               I&apos;m Rex. I&apos;ve been buying and selling gadgets in Nigeria for about five
               years — and for most of that time I watched people lose real money to fake phones,
               swapped parts and &ldquo;vendors&rdquo; who vanished the moment the transfer landed.

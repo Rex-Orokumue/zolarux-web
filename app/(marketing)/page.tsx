@@ -108,7 +108,7 @@ export default async function HomePage() {
 
       <section id="reviews" className="scroll-mt-20 bg-background py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid gap-4 rounded-lg bg-primary p-8 sm:grid-cols-4 sm:p-10">
+          <div className="grid gap-4 rounded-lg bg-hero-primary p-8 sm:grid-cols-4 sm:p-10">
             <StatTile value="₦2M+" label="Protected in orders" variant="dark" />
             <StatTile value="100+" label="Gadgets delivered" variant="dark" />
             <StatTile value="0" label="Confirmed scams" variant="dark" />
@@ -158,12 +158,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-primary py-16 text-on-primary sm:py-20">
+      <section className="bg-hero-primary py-16 text-white sm:py-20">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6">
           <h2 className="font-display text-3xl font-extrabold sm:text-4xl">
             Ready to buy without the anxiety?
           </h2>
-          <p className="mx-auto mt-3 max-w-xl font-body text-lg text-on-primary/80">
+          <p className="mx-auto mt-3 max-w-xl font-body text-lg text-white/80">
             Browse the catalogue. Every unit is inspected. Every order is guaranteed or refunded.
           </p>
           <div className="mt-8 flex justify-center">
