@@ -15,7 +15,11 @@ export function PageHeader({
     <section
       className={cn(
         'py-16 sm:py-20',
-        tone === 'danger' ? 'bg-danger text-white' : 'bg-primary text-on-primary'
+        // Dark mode: swap the bright semantic fill for a deep tinted band so the
+        // header anchors the page without glaring against dark surfaces.
+        tone === 'danger'
+          ? 'bg-danger text-white dark:bg-[#4C1717]'
+          : 'bg-primary text-on-primary dark:bg-[#182142] dark:text-white'
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
