@@ -303,3 +303,38 @@ surface changes beyond Navbar/Footer.
   `stolen_registry` (e.g. copy the pending `iPhone 14 Pro` report).
 - **Optional later:** wire `GROK_API_KEY` for `scan-link` Option B; wire
   `flagged_entities` into a contact-check tool.
+---
+
+## 16. Phase 3 completion (2026-09-01)
+
+All 8 plan tasks committed to `flagship-v2`. **Verification:** `npx tsc
+--noEmit` clean; `npm run lint` — 0 errors, ~5 warnings (pre-existing
+`<img>`/unused-var); `npm run build` succeeds. Route table **adds**
+`○ /check-device`, `○ /check-original`, `○ /report-item`, `○ /scan-link` +
+`ƒ /api/scan-link`; **removes** `/check-vendor` (now 404). Zero
+"vendor"/"escrow" strings on any of the four tool pages.
+
+**Wired paths verified live against the real Supabase project:**
+- `check-device`: IMEI `352130213565996` → "reported" with the real iPhone
+  14 Pro / Port Harcourt / 22 Jul 2026 record; other input → "clean"; short
+  input → "invalid". Danger-tone header renders red.
+- `scan-link`: `bit.ly/...` → "High risk" 80/100 + shortener/platform flags +
+  HTTPS positive + a 4-product "Buy it from Zolarux instead" rail;
+  `apple.com` → "safe" 10; `jiji.ng/....xyz` → danger; `127.0.0.1` → 400.
+- `report-item`: form + validation render; anon `INSERT` into
+  `stolen_reports` confirmed 201 during scoping — a live submit was **not**
+  re-run, to avoid another undeletable junk row.
+
+**Compat shim:** fully retired except `@utility font-500 / font-600` (still
+used by the Phase 0 `components/ui/*` library). `check-vendor`,
+`VENDOR_STATUS_MAP`, and the sitemap's dead marketplace-era routes are gone.
+
+**Still open (carried from §15):**
+- **Delete the junk `stolen_reports` row** `f7c56f5a-370c-491a-8b0b-3b74c07df327`.
+- Add one `stolen_registry` row to see `check-device`'s "stolen" path live.
+- Dark-mode + mobile eyeball of `/check-original` (other three checked in dark).
+- DRAFT copy across the four pages; optional `GROK_API_KEY`; optional
+  `flagged_entities` contact-check tool.
+
+**Program remnant (own brainstorm, not started):** Download App, Blog, legal
+pages (Privacy / Terms / Refund Policy), then the deliberate `main` cutover.
