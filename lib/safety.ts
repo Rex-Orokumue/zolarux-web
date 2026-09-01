@@ -35,3 +35,45 @@ export async function submitStolenReport(
   }
   return { ok: true }
 }
+
+export interface StolenRecord {
+  item_name: string | null
+  imei: string | null
+  serial_number: string | null
+  date_stolen?: string | null
+  location_stolen?: string | null
+  created_at: string
+}
+
+export interface DeviceCheckResult {
+  status: 'stolen' | 'reported' | 'clean' | 'error' | 'invalid'
+  record?: StolenRecord
+}
+
+export async function checkDevice(query: string): Promise<DeviceCheckResult> {
+  const q = query.trim().replace(/[^a-zA-Z0-9]/g, '')
+  if (q.length < 5 || q.length > 20) return { status: 'invalid' }
+
+  const supabase = createClient()
+
+  // 1. Confirmed registry
+  const reg = await supabase
+    .from('stolen_registry')
+    .select('item_name, imei, serial_number, created_at')
+    .or(`imei.eq.${q},serial_number.eq.${q}`)
+    .limit(1)
+  if (reg.error) return { status: 'error' }
+  if (reg.data && reg.data.length > 0) return { status: 'stolen', record: reg.data[0] as StolenRecord }
+
+  // 2. Pending reports
+  const rep = await supabase
+    .from('stolen_reports')
+    .select('item_name, imei, serial_number, date_stolen, location_stolen, created_at')
+    .eq('status', 'pending')
+    .or(`imei.eq.${q},serial_number.eq.${q}`)
+    .limit(1)
+  if (rep.error) return { status: 'error' }
+  if (rep.data && rep.data.length > 0) return { status: 'reported', record: rep.data[0] as StolenRecord }
+
+  return { status: 'clean' }
+}
